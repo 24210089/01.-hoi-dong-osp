@@ -1,9 +1,9 @@
-const pool = require('../config/database');
+const pool = require("../config/database");
 
 class BaseModel {
-  constructor({ tableName, primaryKey = 'id', softDeleteColumn = null } = {}) {
+  constructor({ tableName, primaryKey = "id", softDeleteColumn = null } = {}) {
     if (!tableName) {
-      throw new Error('BaseModel requires a tableName.');
+      throw new Error("BaseModel requires a tableName.");
     }
 
     this.tableName = tableName;
@@ -21,7 +21,7 @@ class BaseModel {
       }
 
       if (Array.isArray(value) && value.length > 0) {
-        clauses.push(`${key} IN (${value.map(() => '?').join(', ')})`);
+        clauses.push(`${key} IN (${value.map(() => "?").join(", ")})`);
         params.push(...value);
       } else {
         clauses.push(`${key} = ?`);
@@ -33,7 +33,7 @@ class BaseModel {
       clauses.push(`${this.softDeleteColumn} IS NULL`);
     }
 
-    const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
+    const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
 
     return { where, params };
   }
@@ -48,7 +48,7 @@ class BaseModel {
 
   async findById(id) {
     if (id === undefined || id === null) {
-      throw new Error('findById requires an id.');
+      throw new Error("findById requires an id.");
     }
 
     const clauses = [`${this.primaryKey} = ?`];
@@ -58,7 +58,9 @@ class BaseModel {
       clauses.push(`${this.softDeleteColumn} IS NULL`);
     }
 
-    const sql = `SELECT * FROM ${this.tableName} WHERE ${clauses.join(' AND ')} LIMIT 1`;
+    const sql = `SELECT * FROM ${this.tableName} WHERE ${clauses.join(
+      " AND "
+    )} LIMIT 1`;
     const rows = await this.executeQuery(sql, params);
     return rows[0] || null;
   }
@@ -66,27 +68,29 @@ class BaseModel {
   async create(data = {}) {
     const fields = Object.keys(data);
     if (!fields.length) {
-      throw new Error('create requires a data object with at least one field.');
+      throw new Error("create requires a data object with at least one field.");
     }
 
-    const placeholders = fields.map(() => '?').join(', ');
+    const placeholders = fields.map(() => "?").join(", ");
     const values = fields.map((field) => data[field]);
-    const sql = `INSERT INTO ${this.tableName} (${fields.join(', ')}) VALUES (${placeholders})`;
+    const sql = `INSERT INTO ${this.tableName} (${fields.join(
+      ", "
+    )}) VALUES (${placeholders})`;
     const result = await this.executeQuery(sql, values);
     return this.findById(result.insertId);
   }
 
   async update(id, data = {}) {
     if (id === undefined || id === null) {
-      throw new Error('update requires an id.');
+      throw new Error("update requires an id.");
     }
 
     const fields = Object.keys(data);
     if (!fields.length) {
-      throw new Error('update requires a data object with at least one field.');
+      throw new Error("update requires a data object with at least one field.");
     }
 
-    const setClause = fields.map((field) => `${field} = ?`).join(', ');
+    const setClause = fields.map((field) => `${field} = ?`).join(", ");
     const values = fields.map((field) => data[field]);
     const clauses = [`${this.primaryKey} = ?`];
 
@@ -94,14 +98,16 @@ class BaseModel {
       clauses.push(`${this.softDeleteColumn} IS NULL`);
     }
 
-    const sql = `UPDATE ${this.tableName} SET ${setClause} WHERE ${clauses.join(' AND ')}`;
+    const sql = `UPDATE ${this.tableName} SET ${setClause} WHERE ${clauses.join(
+      " AND "
+    )}`;
     await this.executeQuery(sql, [...values, id]);
     return this.findById(id);
   }
 
   async delete(id) {
     if (id === undefined || id === null) {
-      throw new Error('delete requires an id.');
+      throw new Error("delete requires an id.");
     }
 
     if (this.softDeleteColumn) {

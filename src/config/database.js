@@ -1,20 +1,14 @@
-const mysql = require('mysql2/promise');
-const path = require('path');
-const dotenv = require('dotenv');
+const mysql = require("mysql2/promise");
+const path = require("path");
+const dotenv = require("dotenv");
 
 // Ensure environment variables are loaded when this module is imported
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
-const {
-  DB_HOST,
-  DB_PORT,
-  DB_USER,
-  DB_PASSWORD,
-  DB_NAME
-} = process.env;
+const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
 
 if (!DB_HOST || !DB_USER || !DB_NAME) {
-  throw new Error('Missing required database environment variables.');
+  throw new Error("Missing required database environment variables.");
 }
 
 const pool = mysql.createPool({
@@ -25,16 +19,16 @@ const pool = mysql.createPool({
   database: DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
 });
 
 (async () => {
   try {
     const connection = await pool.getConnection();
     connection.release();
-    console.log('MySQL connection pool established successfully.');
+    console.log("MySQL connection pool established successfully.");
   } catch (error) {
-    console.error('Failed to initialize MySQL connection pool:', error.message);
+    console.error("Failed to initialize MySQL connection pool:", error.message);
     throw error;
   }
 })();
