@@ -5,6 +5,7 @@ const {
   validateCommunityCreate,
   handleValidationErrors,
 } = require("../middlewares/validation");
+const { cacheMiddleware } = require("../middlewares/cache");
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ const editorRoles = [
 
 router.use(authenticateToken);
 
-router.get("/", communityController.getAllCommunities);
+router.get("/", cacheMiddleware(600), communityController.getAllCommunities);
 router.get("/:id", communityController.getCommunityById);
 router.get("/:id/members", communityController.getCommunityMembers);
 

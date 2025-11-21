@@ -8,6 +8,7 @@ const {
 } = require("../middlewares/validation");
 const { uploadPhoto } = require("../middlewares/upload");
 const { logAction } = require("../middlewares/auditLog");
+const { cacheMiddleware } = require("../middlewares/cache");
 
 const router = express.Router();
 
@@ -28,7 +29,7 @@ const logSisterAction = (action) =>
 
 router.use(authenticateToken);
 
-router.get("/", sisterController.getAllSisters);
+router.get("/", cacheMiddleware(60), sisterController.getAllSisters);
 router.get("/search", sisterController.searchSisters);
 router.get("/:id", sisterController.getSisterById);
 

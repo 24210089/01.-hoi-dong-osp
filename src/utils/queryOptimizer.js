@@ -1,15 +1,7 @@
 const SAFE_IDENTIFIER = /^[a-zA-Z0-9_.]+$/;
 const DEFAULT_LIMIT = 20;
 const DEFAULT_PAGE = 1;
-const ALLOWED_OPERATORS = new Set([
-  "=",
-  "!=",
-  ">",
-  ">=",
-  "<",
-  "<=",
-  "LIKE",
-]);
+const ALLOWED_OPERATORS = new Set(["=", "!=", ">", ">=", "<", "<=", "LIKE"]);
 const ALLOWED_JOIN_TYPES = new Set(["INNER", "LEFT", "RIGHT"]);
 
 const sanitizeIdentifier = (identifier) => {
@@ -77,8 +69,13 @@ const buildWhereClause = (filters = {}) => {
   };
 };
 
-const buildPaginationQuery = (baseQuery, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT) => {
-  const safeLimit = Number.isInteger(limit) && limit > 0 ? limit : DEFAULT_LIMIT;
+const buildPaginationQuery = (
+  baseQuery,
+  page = DEFAULT_PAGE,
+  limit = DEFAULT_LIMIT
+) => {
+  const safeLimit =
+    Number.isInteger(limit) && limit > 0 ? limit : DEFAULT_LIMIT;
   const safePage = Number.isInteger(page) && page > 0 ? page : DEFAULT_PAGE;
   const offset = (safePage - 1) * safeLimit;
 
@@ -110,7 +107,9 @@ const buildJoinQuery = (baseQuery, joins = []) => {
     const alias = join.alias ? ` ${sanitizeIdentifier(join.alias)}` : "";
 
     if (!join.on || !join.on.base || !join.on.target) {
-      throw new Error("Join definition requires on.base and on.target properties.");
+      throw new Error(
+        "Join definition requires on.base and on.target properties."
+      );
     }
 
     const baseColumn = sanitizeIdentifier(join.on.base);
