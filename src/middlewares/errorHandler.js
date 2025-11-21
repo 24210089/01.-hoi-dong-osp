@@ -1,13 +1,13 @@
-const AuditLogModel = require('../models/AuditLogModel');
+const AuditLogModel = require("../models/AuditLogModel");
 
-const ENV = process.env.NODE_ENV || 'development';
+const ENV = process.env.NODE_ENV || "development";
 
 const ERROR_TYPES = {
-  VALIDATION: 'validation',
-  AUTHENTICATION: 'authentication',
-  AUTHORIZATION: 'authorization',
-  DATABASE: 'database',
-  SERVER: 'server'
+  VALIDATION: "validation",
+  AUTHENTICATION: "authentication",
+  AUTHORIZATION: "authorization",
+  DATABASE: "database",
+  SERVER: "server",
 };
 
 const formatErrorResponse = (error) => {
@@ -16,20 +16,20 @@ const formatErrorResponse = (error) => {
     [ERROR_TYPES.AUTHENTICATION]: 401,
     [ERROR_TYPES.AUTHORIZATION]: 403,
     [ERROR_TYPES.DATABASE]: 500,
-    [ERROR_TYPES.SERVER]: 500
+    [ERROR_TYPES.SERVER]: 500,
   };
 
   const status = statusMap[error.type] || error.status || 500;
 
   const payload = {
-    message: error.message || 'An unexpected error occurred'
+    message: error.message || "An unexpected error occurred",
   };
 
   if (error.details && error.type === ERROR_TYPES.VALIDATION) {
     payload.errors = error.details;
   }
 
-  if (ENV !== 'production' && error.stack) {
+  if (ENV !== "production" && error.stack) {
     payload.stack = error.stack;
   }
 
@@ -38,16 +38,20 @@ const formatErrorResponse = (error) => {
 
 const logError = (error) => {
   const logPayload = {
-    type: error.type || 'unknown',
+    type: error.type || "unknown",
     message: error.message,
-    stack: error.stack
+    stack: error.stack,
   };
   // eslint-disable-next-line no-console
-  console.error('Error captured:', logPayload);
+  console.error("Error captured:", logPayload);
 };
 
 const logAuditIfCritical = async (req, error) => {
-  const criticalTypes = [ERROR_TYPES.AUTHORIZATION, ERROR_TYPES.SERVER, ERROR_TYPES.DATABASE];
+  const criticalTypes = [
+    ERROR_TYPES.AUTHORIZATION,
+    ERROR_TYPES.SERVER,
+    ERROR_TYPES.DATABASE,
+  ];
   if (!criticalTypes.includes(error.type)) {
     return;
   }
@@ -55,19 +59,19 @@ const logAuditIfCritical = async (req, error) => {
   try {
     await AuditLogModel.create({
       user_id: req.user ? req.user.id : null,
-      action: 'error',
-      table_name: 'system',
+      action: "error",
+      table_name: "system",
       record_id: null,
       old_value: null,
       new_value: JSON.stringify({
         type: error.type,
         message: error.message,
-        path: req.originalUrl
+        path: req.originalUrl,
       }),
-      ip_address: req.ip
+      ip_address: req.ip,
     });
   } catch (auditError) {
-    console.error('Failed to record audit log for error:', auditError.message);
+    console.error("Failed to record audit log for error:", auditError.message);
   }
 };
 
@@ -76,15 +80,15 @@ const classifyError = (error) => {
     return error;
   }
 
-  if (error.name === 'UnauthorizedError') {
+  if (error.name === "UnauthorizedError") {
     return { ...error, type: ERROR_TYPES.AUTHENTICATION };
   }
 
-  if (error.name === 'ValidationError') {
+  if (error.name === "ValidationError") {
     return { ...error, type: ERROR_TYPES.VALIDATION };
   }
 
-  if (error.code && error.code.startsWith('ER_')) {
+  if (error.code && error.code.startsWith("ER_")) {
     return { ...error, type: ERROR_TYPES.DATABASE };
   }
 
@@ -112,5 +116,5 @@ const errorHandler = async (err, req, res, next) => {
 
 module.exports = {
   notFound,
-  errorHandler
+  errorHandler,
 };
