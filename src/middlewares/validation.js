@@ -13,28 +13,31 @@ const optionalDate = (field) =>
   body(field)
     .optional({ checkFalsy: true })
     .isISO8601()
-    .withMessage(`${field} must be a valid date`);
+    .withMessage(`${field} phải là ngày hợp lệ`);
 
 const optionalEmail = (field) =>
   body(field)
     .optional({ checkFalsy: true })
     .isEmail()
-    .withMessage(`${field} must be a valid email`);
+    .withMessage(`${field} phải là email hợp lệ`);
 
 const optionalPhone = (field) =>
   body(field)
     .optional({ checkFalsy: true })
-    .matches(/^[0-9+\-()\s]{6,}$/)
-    .withMessage(`${field} must be a valid phone number`);
+    .custom((value) => {
+      const digits = value.replace(/\D/g, "");
+      return digits.length === 10 || digits.length === 11;
+    })
+    .withMessage(`${field} phải là 10 số (di động) hoặc 11 số (bàn)`);
 
 const validateSisterCreate = [
-  body("birth_name").notEmpty().withMessage("birth_name is required"),
+  body("birth_name").notEmpty().withMessage("Tên khai sinh là bắt buộc"),
   body("date_of_birth")
     .notEmpty()
-    .withMessage("date_of_birth is required")
+    .withMessage("Ngày sinh là bắt buộc")
     .isISO8601()
-    .withMessage("date_of_birth must be a valid date"),
-  body("place_of_birth").notEmpty().withMessage("place_of_birth is required"),
+    .withMessage("Ngày sinh phải là ngày hợp lệ"),
+  body("place_of_birth").notEmpty().withMessage("Nơi sinh là bắt buộc"),
   optionalEmail("email"),
   optionalPhone("phone"),
   optionalPhone("emergency_contact_phone"),
@@ -47,15 +50,15 @@ const validateSisterUpdate = [
   body("birth_name")
     .optional()
     .notEmpty()
-    .withMessage("birth_name cannot be empty"),
+    .withMessage("Tên khai sinh không được để trống"),
   body("date_of_birth")
     .optional()
     .isISO8601()
-    .withMessage("date_of_birth must be a valid date"),
+    .withMessage("Ngày sinh phải là ngày hợp lệ"),
   body("place_of_birth")
     .optional()
     .notEmpty()
-    .withMessage("place_of_birth cannot be empty"),
+    .withMessage("Nơi sinh không được để trống"),
   optionalEmail("email"),
   optionalPhone("phone"),
   optionalPhone("emergency_contact_phone"),

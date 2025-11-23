@@ -1,4 +1,4 @@
-/**************************************
+﻿/**************************************
 
 Template Name: OSP 
 Template URL: https://www.radiustheme.com/demo/html/psdboss/OSP/
@@ -33,7 +33,7 @@ Version: 1.0
     5.4 Header Menu
     5.5 Sidebar Menu
 6. TEMPLATE STYLE
-    6.1 Student Page Style
+    6.1 Sister Page Style
     6.2 Notice Board
     6.3 Messaging
     6.4 Account Settings
@@ -2389,7 +2389,7 @@ ul {
 /*=======================================================================
 6. TEMPLATE STYLE
 =========================================================================*/
-/*=============== 6.1 Student Page Style ==================*/
+/*=============== 6.1 Sister Page Style ==================*/
 .single-info-details {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -3800,12 +3800,12 @@ ul {
   display: flex;
   justify-content: center;
 }
-.dashboard-card-three .card-body .student-report {
+.dashboard-card-three .card-body .sister-report {
   display: flex;
   justify-content: space-between;
   position: relative;
 }
-.dashboard-card-three .card-body .student-report:before {
+.dashboard-card-three .card-body .sister-report:before {
   content: "";
   height: 58px;
   width: 1px;
@@ -3815,20 +3815,20 @@ ul {
   right: 50%;
   transform: translateX(-50%);
 }
-.dashboard-card-three .card-body .student-report .student-count {
+.dashboard-card-three .card-body .sister-report .sister-count {
   position: relative;
 }
-.dashboard-card-three .card-body .student-report .student-count .item-title {
+.dashboard-card-three .card-body .sister-report .sister-count .item-title {
   font-size: 14px;
   color: #a5a5a5;
   margin-bottom: 2px;
 }
-.dashboard-card-three .card-body .student-report .student-count .item-number {
+.dashboard-card-three .card-body .sister-report .sister-count .item-number {
   font-size: 16px;
   color: #111111;
   font-weight: 500;
 }
-.dashboard-card-three .card-body .student-report .student-count:after {
+.dashboard-card-three .card-body .sister-report .sister-count:after {
   content: "";
   height: 6px;
   width: 49px;
@@ -3837,7 +3837,7 @@ ul {
   top: -18px;
   left: 0;
 }
-.dashboard-card-three .card-body .student-report .student-count:last-child:before {
+.dashboard-card-three .card-body .sister-report .sister-count:last-child:before {
   display: none;
 }
 .dashboard-card-four .card-body .calender-wrap .fc-calender .fc-view-container .fc-basicWeek-view table .fc-head .fc-head-container .fc-day-header {
@@ -3994,15 +3994,15 @@ ul {
   color: #ffffff;
 }
 /*=============== 7.2 Dashboard Page Two ==================*/
-.dashboard-card-ten .card-body .student-info .media {
+.dashboard-card-ten .card-body .sister-info .media {
   margin-bottom: 6px;
 }
 @media only screen and (max-width: 1499px) {
-  .dashboard-card-ten .card-body .student-info .media {
+  .dashboard-card-ten .card-body .sister-info .media {
     margin-bottom: 30px;
   }
 }
-.dashboard-card-ten .card-body .student-info .media .item-img {
+.dashboard-card-ten .card-body .sister-info .media .item-img {
   background-color: #4dd0e1;
   height: 115px;
   width: 115px;
@@ -4011,25 +4011,25 @@ ul {
   border-radius: 50%;
   overflow: hidden;
 }
-.dashboard-card-ten .card-body .student-info .media .item-img img {
+.dashboard-card-ten .card-body .sister-info .media .item-img img {
   margin-right: 5px;
 }
-.dashboard-card-ten .card-body .student-info .media .media-body .item-title {
+.dashboard-card-ten .card-body .sister-info .media .media-body .item-title {
   color: #111111;
   font-weight: 500;
   margin-bottom: 10px;
 }
 @media only screen and (max-width: 1499px) {
-  .dashboard-card-ten .card-body .student-info .info-table .table {
+  .dashboard-card-ten .card-body .sister-info .info-table .table {
     width: 70%;
   }
 }
 @media only screen and (max-width: 991px) {
-  .dashboard-card-ten .card-body .student-info .info-table .table {
+  .dashboard-card-ten .card-body .sister-info .info-table .table {
     width: 100%;
   }
 }
-.dashboard-card-ten .card-body .student-info .info-table .table tbody tr td {
+.dashboard-card-ten .card-body .sister-info .info-table .table tbody tr td {
   border: none;
   padding: 8px;
 }

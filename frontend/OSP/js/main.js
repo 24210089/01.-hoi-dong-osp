@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
   "use strict";
 
   /*-------------------------------------
@@ -393,14 +393,14 @@
     /*-------------------------------------
           Doughnut Chart 
       -------------------------------------*/
-    if ($("#student-doughnut-chart").length) {
+    if ($("#sister-doughnut-chart").length) {
 
       var doughnutChartData = {
-        labels: ["Female Students", "Male Students"],
+        labels: ["Female Ná»¯ tu", "Male Ná»¯ tu"],
         datasets: [{
           backgroundColor: ["#304ffe", "#ffa601"],
           data: [45000, 105000],
-          label: "Total Students"
+          label: "Total Ná»¯ tu"
         }, ]
       };
       var doughnutChartOptions = {
@@ -418,8 +418,8 @@
           enabled: true
         },
       };
-      var studentCanvas = $("#student-doughnut-chart").get(0).getContext("2d");
-      var studentChart = new Chart(studentCanvas, {
+      var sisterCanvas = $("#sister-doughnut-chart").get(0).getContext("2d");
+      var sisterChart = new Chart(sisterCanvas, {
         type: 'doughnut',
         data: doughnutChartData,
         options: doughnutChartOptions

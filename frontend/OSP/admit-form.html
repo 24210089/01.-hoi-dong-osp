@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html class="no-js" lang="">
 
 
@@ -28,6 +28,23 @@
     <link rel="stylesheet" href="css/datepicker.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
+    <style>
+        .new-added-form .form-control {
+            background-color: #f0f1f3;
+            border: 1px solid #cfcfcf;
+            border-radius: 4px;
+        }
+
+        .new-added-form .form-control:focus {
+            background-color: #ffffff;
+            border-color: #ffae01;
+        }
+
+        .new-added-form .form-control::placeholder {
+            color: #888;
+            font-style: italic;
+        }
+    </style>
     <!-- Modernize js -->
     <script src="js/modernizr-3.6.0.min.js"></script>
 </head>
@@ -118,7 +135,7 @@
                             <div class="item-content">
                                 <div class="media">
                                     <div class="item-img bg-skyblue author-online">
-                                        <img src="img/figure/student11.png" alt="img">
+                                        <img src="img/figure/sister11.png" alt="img">
                                     </div>
                                     <div class="media-body space-sm">
                                         <div class="item-title">
@@ -133,7 +150,7 @@
                                 </div>
                                 <div class="media">
                                     <div class="item-img bg-yellow author-online">
-                                        <img src="img/figure/student12.png" alt="img">
+                                        <img src="img/figure/sister12.png" alt="img">
                                     </div>
                                     <div class="media-body space-sm">
                                         <div class="item-title">
@@ -148,7 +165,7 @@
                                 </div>
                                 <div class="media">
                                     <div class="item-img bg-pink">
-                                        <img src="img/figure/student13.png" alt="img">
+                                        <img src="img/figure/sister13.png" alt="img">
                                     </div>
                                     <div class="media-body space-sm">
                                         <div class="item-title">
@@ -163,7 +180,7 @@
                                 </div>
                                 <div class="media">
                                     <div class="item-img bg-violet-blue">
-                                        <img src="img/figure/student11.png" alt="img">
+                                        <img src="img/figure/sister11.png" alt="img">
                                     </div>
                                     <div class="media-body space-sm">
                                         <div class="item-title">
@@ -255,7 +272,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="index3.html" class="nav-link"><i
-                                            class="fas fa-angle-right"></i>Students</a>
+                                            class="fas fa-angle-right"></i>Nữ tu</a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="index4.html" class="nav-link"><i class="fas fa-angle-right"></i>Parents</a>
@@ -267,23 +284,23 @@
                             </ul>
                         </li>
                         <li class="nav-item sidebar-nav-item">
-                            <a href="#" class="nav-link"><i class="flaticon-classmates"></i><span>Students</span></a>
+                            <a href="#" class="nav-link"><i class="flaticon-classmates"></i><span>Nữ tu</span></a>
                             <ul class="nav sub-group-menu sub-group-active">
                                 <li class="nav-item">
-                                    <a href="all-student.html" class="nav-link"><i class="fas fa-angle-right"></i>All
-                                        Students</a>
+                                    <a href="all-sister.html" class="nav-link"><i class="fas fa-angle-right"></i>All
+                                        Nữ tu</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="student-details.html" class="nav-link"><i
-                                            class="fas fa-angle-right"></i>Student Details</a>
+                                    <a href="sister-details.html" class="nav-link"><i
+                                            class="fas fa-angle-right"></i>Nữ tu Details</a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="admit-form.html" class="nav-link menu-active"><i
                                             class="fas fa-angle-right"></i>Admission Form</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="student-promotion.html" class="nav-link"><i
-                                            class="fas fa-angle-right"></i>Student Promotion</a>
+                                    <a href="sister-promotion.html" class="nav-link"><i
+                                            class="fas fa-angle-right"></i>Nữ tu Promotion</a>
                                 </li>
                             </ul>
                         </li>
@@ -379,7 +396,7 @@
                                     Routine</span></a>
                         </li>
                         <li class="nav-item">
-                            <a href="student-attendence.html" class="nav-link"><i
+                            <a href="sister-attendence.html" class="nav-link"><i
                                     class="flaticon-checklist"></i><span>Attendence</span></a>
                         </li>
                         <li class="nav-item sidebar-nav-item">
@@ -452,12 +469,12 @@
             <div class="dashboard-content-one">
                 <!-- Breadcubs Area Start Here -->
                 <div class="breadcrumbs-area">
-                    <h3>Students</h3>
+                    <h3>Nữ tu</h3>
                     <ul>
                         <li>
                             <a href="index.html">Home</a>
                         </li>
-                        <li>Student Admit Form</li>
+                        <li>Nữ tu Admit Form</li>
                     </ul>
                 </div>
                 <!-- Breadcubs Area End Here -->
@@ -466,122 +483,101 @@
                     <div class="card-body">
                         <div class="heading-layout1">
                             <div class="item-title">
-                                <h3>Add New Students</h3>
-                            </div>
-                            <div class="dropdown">
-                                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
-                                    aria-expanded="false">...</a>
-
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="#"><i
-                                            class="fas fa-times text-orange-red"></i>Close</a>
-                                    <a class="dropdown-item" href="#"><i
-                                            class="fas fa-cogs text-dark-pastel-green"></i>Edit</a>
-                                    <a class="dropdown-item" href="#"><i
-                                            class="fas fa-redo-alt text-orange-peel"></i>Refresh</a>
-                                </div>
+                                <h3>Thêm Nữ tu mới</h3>
                             </div>
                         </div>
-                        <form class="new-added-form">
+                        <form class="new-added-form" id="add-sister-form">
                             <div class="row">
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
-                                    <label>First Name *</label>
-                                    <input type="text" placeholder="" class="form-control">
+                                    <label>Tên khai sinh *</label>
+                                    <input type="text" name="birth_name" placeholder="Nhập tên khai sinh..." class="form-control" required>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
-                                    <label>Last Name *</label>
-                                    <input type="text" placeholder="" class="form-control">
-                                </div>
-                                <div class="col-xl-3 col-lg-6 col-12 form-group">
-                                    <label>Gender *</label>
-                                    <select class="select2">
-                                        <option value="">Please Select Gender *</option>
-                                        <option value="1">Male</option>
-                                        <option value="2">Female</option>
-                                        <option value="3">Others</option>
+                                    <label>Tên dòng *</label>
+                                    <select name="religious_name" class="form-control select2" required>
+                                        <option value="">Chọn tên dòng...</option>
+                                        <option value="Dòng Thánh Phalô Thiện Bản Sài Gòn">Dòng Thánh Phalô Thiện Bản Sài Gòn</option>
+                                        <option value="Dòng Thánh Phalô Thiện Bản Đà Lạt">Dòng Thánh Phalô Thiện Bản Đà Lạt</option>
+                                        <option value="Dòng Thánh Phalô Thiện Bản Bảo Lộc">Dòng Thánh Phalô Thiện Bản Bảo Lộc</option>
                                     </select>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
-                                    <label>Date Of Birth *</label>
-                                    <input type="text" placeholder="dd/mm/yyyy" class="form-control air-datepicker"
+                                    <label>Ngày sinh *</label>
+                                    <input type="text" name="date_of_birth" placeholder="Chọn ngày sinh (dd/mm/yyyy)..." class="form-control air-datepicker"
+                                        data-position='bottom right' required>
+                                    <i class="far fa-calendar-alt"></i>
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Nơi sinh *</label>
+                                    <input type="text" name="place_of_birth" placeholder="Nhập nơi sinh..." class="form-control" required>
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Quốc tịch</label>
+                                    <input type="text" name="nationality" placeholder="Nhập quốc tịch..." class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Tên cha</label>
+                                    <input type="text" name="father_name" placeholder="Nhập tên cha..." class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Tên mẹ</label>
+                                    <input type="text" name="mother_name" placeholder="Nhập tên mẹ..." class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Tôn giáo gia đình</label>
+                                    <input type="text" name="family_religion" placeholder="Nhập tôn giáo gia đình..." class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Ngày rửa tội</label>
+                                    <input type="text" name="baptism_date" placeholder="Chọn ngày rửa tội..." class="form-control air-datepicker"
                                         data-position='bottom right'>
                                     <i class="far fa-calendar-alt"></i>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
-                                    <label>Roll</label>
-                                    <input type="text" placeholder="" class="form-control">
+                                    <label>Nơi rửa tội</label>
+                                    <input type="text" name="baptism_place" placeholder="Nhập nơi rửa tội..." class="form-control">
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
-                                    <label>Blood Group *</label>
-                                    <select class="select2">
-                                        <option value="">Please Select Group *</option>
-                                        <option value="1">A+</option>
-                                        <option value="2">A-</option>
-                                        <option value="3">B+</option>
-                                        <option value="3">B-</option>
-                                        <option value="3">O+</option>
-                                        <option value="3">O-</option>
-                                    </select>
+                                    <label>Ngày thêm sức</label>
+                                    <input type="text" name="confirmation_date" placeholder="Chọn ngày thêm sức..." class="form-control air-datepicker"
+                                        data-position='bottom right'>
+                                    <i class="far fa-calendar-alt"></i>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
-                                    <label>Religion *</label>
-                                    <select class="select2">
-                                        <option value="">Please Select Religion *</option>
-                                        <option value="1">Islam</option>
-                                        <option value="2">Hindu</option>
-                                        <option value="3">Christian</option>
-                                        <option value="3">Buddish</option>
-                                        <option value="3">Others</option>
-                                    </select>
+                                    <label>Ngày rước lễ lần đầu</label>
+                                    <input type="text" name="first_communion_date" placeholder="Chọn ngày rước lễ..." class="form-control air-datepicker"
+                                        data-position='bottom right'>
+                                    <i class="far fa-calendar-alt"></i>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
-                                    <label>E-Mail</label>
-                                    <input type="email" placeholder="" class="form-control">
+                                    <label>Số điện thoại</label>
+                                    <input type="text" name="phone" placeholder="Nhập số điện thoại..." class="form-control">
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
-                                    <label>Class *</label>
-                                    <select class="select2">
-                                        <option value="">Please Select Class *</option>
-                                        <option value="1">Play</option>
-                                        <option value="2">Nursery</option>
-                                        <option value="3">One</option>
-                                        <option value="3">Two</option>
-                                        <option value="3">Three</option>
-                                        <option value="3">Four</option>
-                                        <option value="3">Five</option>
-                                    </select>
+                                    <label>Email</label>
+                                    <input type="email" name="email" placeholder="Nhập địa chỉ email..." class="form-control">
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
-                                    <label>Section *</label>
-                                    <select class="select2">
-                                        <option value="">Please Select Section *</option>
-                                        <option value="1">Pink</option>
-                                        <option value="2">Blue</option>
-                                        <option value="3">Bird</option>
-                                        <option value="3">Rose</option>
-                                        <option value="3">Red</option>
-                                    </select>
+                                    <label>Người liên hệ khẩn cấp</label>
+                                    <input type="text" name="emergency_contact_name" placeholder="Nhập tên người liên hệ..." class="form-control">
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
-                                    <label>Admission ID</label>
-                                    <input type="text" placeholder="" class="form-control">
-                                </div>
-                                <div class="col-xl-3 col-lg-6 col-12 form-group">
-                                    <label>Phone</label>
-                                    <input type="text" placeholder="" class="form-control">
-                                </div>
-                                <div class="col-lg-6 col-12 form-group">
-                                    <label>Short BIO</label>
-                                    <textarea class="textarea form-control" name="message" id="form-message" cols="10"
-                                        rows="9"></textarea>
+                                    <label>SĐT khẩn cấp</label>
+                                    <input type="text" name="emergency_contact_phone" placeholder="Nhập SĐT người liên hệ..." class="form-control">
                                 </div>
                                 <div class="col-lg-6 col-12 form-group mg-t-30">
-                                    <label class="text-dark-medium">Upload Student Photo (150px X 150px)</label>
-                                    <input type="file" class="form-control-file">
+                                    <label class="text-dark-medium">Tải lên ảnh (150px X 150px)</label>
+                                    <input type="file" name="photo" class="form-control-file" accept="image/*" onchange="previewImage(this)">
+                                    <div class="mt-3">
+                                        <img id="photo-preview" src="#" alt="Ảnh xem trước" style="max-width: 150px; max-height: 150px; display: none; border: 1px solid #ccc; padding: 2px;">
+                                    </div>
                                 </div>
                                 <div class="col-12 form-group mg-t-8">
-                                    <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
-                                    <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Reset</button>
+                                    <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Lưu</button>
+                                    <button type="reset" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Đặt lại</button>
+                                </div>
+                                <div class="col-12 form-group">
+                                    <div id="form-message" class="alert" style="display:none;"></div>
                                 </div>
                             </div>
                         </form>
@@ -613,8 +609,152 @@
     <!-- Custom Js -->
     <script src="js/main.js"></script>
 
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#photo-preview').attr('src', e.target.result).show();
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $(document).ready(function () {
+            // Helper to convert dd/mm/yyyy to yyyy-mm-dd
+            function formatDate(dateStr) {
+                if (!dateStr) return null;
+                const parts = dateStr.split('/');
+                if (parts.length === 3) {
+                    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+                }
+                return dateStr;
+            }
+
+            $('#add-sister-form').on('submit', function (e) {
+                e.preventDefault();
+                console.log("Form submitted");
+                const $form = $(this);
+                const $btn = $form.find('button[type="submit"]');
+                const $msg = $('#form-message');
+
+                $btn.prop('disabled', true).text('Đang lưu...');
+                $msg.hide().removeClass('alert-success alert-danger');
+
+                // Collect data
+                const formData = {};
+                $form.serializeArray().forEach(item => {
+                    if (item.value.trim() !== '') {
+                        if (['date_of_birth', 'baptism_date', 'confirmation_date', 'first_communion_date'].includes(item.name)) {
+                            formData[item.name] = formatDate(item.value);
+                        } else {
+                            formData[item.name] = item.value;
+                        }
+                    }
+                });
+
+                // Basic validation
+                if (!formData.birth_name || !formData.religious_name || !formData.date_of_birth || !formData.place_of_birth) {
+                    $msg.addClass('alert-danger').text('Vui lòng điền đầy đủ các trường bắt buộc (*).').show();
+                    $btn.prop('disabled', false).text('Lưu');
+                    return;
+                }
+
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // First create the sister record
+                $.ajax({
+                    url: 'http://localhost:5000/api/sisters',
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+                        console.log("Create response:", response);
+                        if (!response || !response.sister || !response.sister.id) {
+                            console.error("Invalid response format", response);
+                            $msg.addClass('alert-danger').text('Lỗi: Không nhận được ID Nữ tu từ server.').show();
+                            $btn.prop('disabled', false).text('Lưu');
+                            return;
+                        }
+
+                        const sisterId = response.sister.id;
+                        console.log("Sister ID received:", sisterId);
+                        // Save to localStorage for debugging/fallback
+                        localStorage.setItem('last_created_sister_id', sisterId);
+                        
+                        const photoInput = $form.find('input[name="photo"]')[0];
+
+                        // If photo is selected, upload it
+                        if (photoInput.files && photoInput.files[0]) {
+                            const photoData = new FormData();
+                            photoData.append('photo', photoInput.files[0]);
+
+                            $.ajax({
+                                url: `http://localhost:5000/api/sisters/${sisterId}/photo`,
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`
+                                },
+                                data: photoData,
+                                processData: false,
+                                contentType: false,
+                                success: function () {
+                                    $msg.addClass('alert-success').text('Thêm Nữ tu thành công!').show();
+                                    $form[0].reset();
+                                    
+                                    const redirectUrl = 'sister-details.html?id=' + sisterId;
+                                    console.log("Redirecting to:", redirectUrl);
+                                    // Redirect immediately
+                                    window.location.href = redirectUrl;
+                                },
+                                error: function () {
+                                    $msg.addClass('alert-warning').text('Thêm Nữ tu thành công nhưng tải ảnh thất bại.').show();
+                                    
+                                    const redirectUrl = 'sister-details.html?id=' + sisterId;
+                                    console.log("Redirecting (photo failed) to:", redirectUrl);
+                                    window.location.href = redirectUrl;
+                                },
+                                complete: function () {
+                                    $btn.prop('disabled', false).text('Lưu');
+                                }
+                            });
+                        } else {
+                            $msg.addClass('alert-success').text('Thêm Nữ tu thành công!').show();
+                            $form[0].reset();
+                            $btn.prop('disabled', false).text('Lưu');
+                            
+                            const redirectUrl = 'sister-details.html?id=' + sisterId;
+                            console.log("Redirecting (no photo) to:", redirectUrl);
+                            window.location.href = redirectUrl;
+                        }
+                    },
+                    error: function (xhr) {
+                        let msg = 'Có lỗi xảy ra.';
+                        if (xhr.responseJSON) {
+                            if (xhr.responseJSON.message) {
+                                msg = xhr.responseJSON.message;
+                            } else if (xhr.responseJSON.errors) {
+                                msg = xhr.responseJSON.errors.map(e => e.message).join('<br>');
+                            }
+                        }
+                        $msg.addClass('alert-danger').html(msg).show();
+                        $btn.prop('disabled', false).text('Lưu');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 
 <!-- Mirrored from www.radiustheme.com/demo/html/psdboss/OSP/OSP/admit-form.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 15 Aug 2025 06:48:02 GMT -->
 </html>
+
+
