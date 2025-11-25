@@ -84,10 +84,20 @@
                         </div>
                         <form class="new-added-form" id="add-sister-form">
                             <div class="row">
+                                <!-- Thông tin cơ bản -->
+                                <div class="col-12 form-group">
+                                    <h5 class="text-primary"><i class="fas fa-user"></i> Thông tin cơ bản</h5>
+                                    <hr>
+                                </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Tên khai sinh *</label>
                                     <input type="text" name="birth_name" placeholder="Nhập tên khai sinh..."
                                         class="form-control" required>
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Tên thánh</label>
+                                    <input type="text" name="saint_name" placeholder="Nhập tên thánh..."
+                                        class="form-control">
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Tên dòng *</label>
@@ -102,6 +112,11 @@
                                     </select>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Tên thường gọi (Prefer name)</label>
+                                    <input type="text" name="prefer_name" placeholder="Nhập tên thường gọi..."
+                                        class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Ngày sinh *</label>
                                     <input type="text" name="date_of_birth" placeholder="Chọn ngày sinh (dd/mm/yyyy)..."
                                         class="form-control air-datepicker" data-position='bottom right' required>
@@ -113,9 +128,37 @@
                                         class="form-control" required>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Nguyên quán</label>
+                                    <input type="text" name="hometown" placeholder="Nhập nguyên quán..."
+                                        class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Địa chỉ thường trú</label>
+                                    <input type="text" name="permanent_address" placeholder="Nhập địa chỉ thường trú..."
+                                        class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Quốc tịch</label>
                                     <input type="text" name="nationality" placeholder="Nhập quốc tịch..."
                                         class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>CCCD/Passport</label>
+                                    <input type="text" name="id_number" placeholder="Nhập số CCCD hoặc Passport..."
+                                        class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Trạng thái</label>
+                                    <select name="status" class="form-control select2">
+                                        <option value="active">Đang tu dòng</option>
+                                        <option value="left">Tu xuất</option>
+                                    </select>
+                                </div>
+
+                                <!-- Thông tin gia đình -->
+                                <div class="col-12 form-group mg-t-30">
+                                    <h5 class="text-primary"><i class="fas fa-users"></i> Thông tin gia đình</h5>
+                                    <hr>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Tên cha</label>
@@ -131,6 +174,12 @@
                                     <label>Tôn giáo gia đình</label>
                                     <input type="text" name="family_religion" placeholder="Nhập tôn giáo gia đình..."
                                         class="form-control">
+                                </div>
+
+                                <!-- Thông tin tôn giáo -->
+                                <div class="col-12 form-group mg-t-30">
+                                    <h5 class="text-primary"><i class="fas fa-church"></i> Thông tin tôn giáo</h5>
+                                    <hr>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Ngày rửa tội</label>
@@ -155,6 +204,12 @@
                                         class="form-control air-datepicker" data-position='bottom right'>
                                     <i class="far fa-calendar-alt"></i>
                                 </div>
+
+                                <!-- Thông tin liên hệ -->
+                                <div class="col-12 form-group mg-t-30">
+                                    <h5 class="text-primary"><i class="fas fa-phone-alt"></i> Thông tin liên hệ</h5>
+                                    <hr>
+                                </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Số điện thoại</label>
                                     <input type="text" name="phone" placeholder="Nhập số điện thoại..."
@@ -175,7 +230,18 @@
                                     <input type="text" name="emergency_contact_phone"
                                         placeholder="Nhập SĐT người liên hệ..." class="form-control">
                                 </div>
-                                <div class="col-lg-6 col-12 form-group mg-t-30">
+
+                                <!-- Ghi chú và tài liệu -->
+                                <div class="col-12 form-group mg-t-30">
+                                    <h5 class="text-primary"><i class="fas fa-file-alt"></i> Ghi chú và tài liệu</h5>
+                                    <hr>
+                                </div>
+                                <div class="col-lg-6 col-12 form-group">
+                                    <label>Ghi chú khác</label>
+                                    <textarea name="notes" placeholder="Nhập ghi chú khác..." class="form-control"
+                                        rows="3"></textarea>
+                                </div>
+                                <div class="col-lg-6 col-12 form-group">
                                     <label class="text-dark-medium">Tải lên ảnh (150px X 150px)</label>
                                     <input type="file" name="photo" class="form-control-file" accept="image/*"
                                         onchange="previewImage(this)">
@@ -184,6 +250,16 @@
                                             style="max-width: 150px; max-height: 150px; display: none; border: 1px solid #ccc; padding: 2px;">
                                     </div>
                                 </div>
+                                <div class="col-lg-6 col-12 form-group">
+                                    <label class="text-dark-medium">Tải lên giấy tờ (nhiều file)</label>
+                                    <input type="file" name="documents" id="documents-input" class="form-control-file"
+                                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" multiple
+                                        onchange="previewDocuments(this)">
+                                    <small class="text-muted">Chấp nhận: PDF, DOC, DOCX, JPG, PNG (có thể chọn nhiều
+                                        file)</small>
+                                    <div id="documents-preview" class="mt-2"></div>
+                                </div>
+
                                 <div class="col-12 form-group mg-t-8">
                                     <button type="submit"
                                         class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Lưu</button>
@@ -198,10 +274,7 @@
                     </div>
                 </div>
                 <!-- Admit Form Area End Here -->
-                <footer class="footer-wrap-layout1">
-                    <div class="copyright">© Copyrights <a href="http://zalo.me/0336216546">Khoadev</a> 2025. All rights
-                        reserved. Designed by <a href="#">Khoadev</a></div>
-                </footer>
+
             </div>
         </div>
         <!-- Page Area End Here -->
@@ -234,6 +307,29 @@
             }
         }
 
+        function previewDocuments(input) {
+            const previewContainer = $('#documents-preview');
+            previewContainer.empty();
+
+            if (input.files && input.files.length > 0) {
+                for (let i = 0; i < input.files.length; i++) {
+                    const file = input.files[i];
+                    const fileSize = (file.size / 1024).toFixed(2);
+                    const icon = file.type.includes('pdf') ? 'fa-file-pdf text-danger' :
+                        file.type.includes('word') || file.type.includes('doc') ? 'fa-file-word text-primary' :
+                            file.type.includes('image') ? 'fa-file-image text-success' : 'fa-file text-secondary';
+
+                    previewContainer.append(`
+                        <div class="d-flex align-items-center mb-1">
+                            <i class="fas ${icon} mr-2"></i>
+                            <span class="text-truncate" style="max-width: 200px;">${file.name}</span>
+                            <small class="text-muted ml-2">(${fileSize} KB)</small>
+                        </div>
+                    `);
+                }
+            }
+        }
+
         $(document).ready(function () {
             // Helper to convert dd/mm/yyyy to yyyy-mm-dd
             function formatDate(dateStr) {
@@ -257,9 +353,11 @@
 
                 // Collect data
                 const formData = {};
+                const dateFields = ['date_of_birth', 'baptism_date', 'confirmation_date', 'first_communion_date'];
+
                 $form.serializeArray().forEach(item => {
-                    if (item.value.trim() !== '') {
-                        if (['date_of_birth', 'baptism_date', 'confirmation_date', 'first_communion_date'].includes(item.name)) {
+                    if (item.value.trim() !== '' && item.name !== 'documents') {
+                        if (dateFields.includes(item.name)) {
                             formData[item.name] = formatDate(item.value);
                         } else {
                             formData[item.name] = item.value;
@@ -300,53 +398,67 @@
 
                         const sisterId = response.sister.id;
                         console.log("Sister ID received:", sisterId);
-                        // Save to localStorage for debugging/fallback
                         localStorage.setItem('last_created_sister_id', sisterId);
 
                         const photoInput = $form.find('input[name="photo"]')[0];
+                        const documentsInput = $form.find('input[name="documents"]')[0];
+                        let uploadPromises = [];
 
-                        // If photo is selected, upload it
+                        // Upload photo if selected
                         if (photoInput.files && photoInput.files[0]) {
                             const photoData = new FormData();
                             photoData.append('photo', photoInput.files[0]);
 
-                            $.ajax({
-                                url: `http://localhost:5000/api/sisters/${sisterId}/photo`,
-                                method: 'POST',
-                                headers: {
-                                    'Authorization': `Bearer ${token}`
-                                },
-                                data: photoData,
-                                processData: false,
-                                contentType: false,
-                                success: function () {
+                            uploadPromises.push(
+                                $.ajax({
+                                    url: `http://localhost:5000/api/sisters/${sisterId}/photo`,
+                                    method: 'POST',
+                                    headers: { 'Authorization': `Bearer ${token}` },
+                                    data: photoData,
+                                    processData: false,
+                                    contentType: false
+                                })
+                            );
+                        }
+
+                        // Upload documents if selected
+                        if (documentsInput.files && documentsInput.files.length > 0) {
+                            const documentsData = new FormData();
+                            for (let i = 0; i < documentsInput.files.length; i++) {
+                                documentsData.append('documents', documentsInput.files[i]);
+                            }
+
+                            uploadPromises.push(
+                                $.ajax({
+                                    url: `http://localhost:5000/api/sisters/${sisterId}/documents`,
+                                    method: 'POST',
+                                    headers: { 'Authorization': `Bearer ${token}` },
+                                    data: documentsData,
+                                    processData: false,
+                                    contentType: false
+                                })
+                            );
+                        }
+
+                        if (uploadPromises.length > 0) {
+                            Promise.all(uploadPromises)
+                                .then(() => {
                                     $msg.addClass('alert-success').text('Thêm Nữ tu thành công!').show();
                                     $form[0].reset();
-
-                                    const redirectUrl = 'sister-details.html?id=' + sisterId;
-                                    console.log("Redirecting to:", redirectUrl);
-                                    // Redirect immediately
-                                    window.location.href = redirectUrl;
-                                },
-                                error: function () {
-                                    $msg.addClass('alert-warning').text('Thêm Nữ tu thành công nhưng tải ảnh thất bại.').show();
-
-                                    const redirectUrl = 'sister-details.html?id=' + sisterId;
-                                    console.log("Redirecting (photo failed) to:", redirectUrl);
-                                    window.location.href = redirectUrl;
-                                },
-                                complete: function () {
+                                    window.location.href = 'sister-details.html?id=' + sisterId;
+                                })
+                                .catch(() => {
+                                    $msg.addClass('alert-warning').text('Thêm Nữ tu thành công nhưng có lỗi khi tải file.').show();
+                                    window.location.href = 'sister-details.html?id=' + sisterId;
+                                })
+                                .finally(() => {
                                     $btn.prop('disabled', false).text('Lưu');
-                                }
-                            });
+                                });
                         } else {
                             $msg.addClass('alert-success').text('Thêm Nữ tu thành công!').show();
                             $form[0].reset();
                             $btn.prop('disabled', false).text('Lưu');
-
-                            const redirectUrl = 'sister-details.html?id=' + sisterId;
-                            console.log("Redirecting (no photo) to:", redirectUrl);
-                            window.location.href = redirectUrl;
+                            window.location.href = 'sister-details.html?id=' + sisterId;
                         }
                     },
                     error: function (xhr) {

@@ -90,9 +90,13 @@ const uploadDocument = handleUploadErrors(documentUploader.single("document"));
 const uploadMultiple = handleUploadErrors(
   certificateUploader.array("files", 5)
 );
+const uploadDocuments = handleUploadErrors(
+  certificateUploader.array("documents", 10)
+);
 
 module.exports = {
   uploadPhoto,
   uploadDocument,
   uploadMultiple,
+  uploadDocuments,
 };

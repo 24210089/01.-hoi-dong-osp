@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>OSP | Sửa thông tin Nữ tu</title>
+    <title>OSP | Sửa thông tin thành viên</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicon -->
@@ -92,6 +92,11 @@
                         <form class="new-added-form" id="edit-sister-form">
                             <input type="hidden" name="id" id="sister-id">
                             <div class="row">
+                                <!-- Thông tin cơ bản -->
+                                <div class="col-12 form-group">
+                                    <h5 class="text-primary"><i class="fas fa-user"></i> Thông tin cơ bản</h5>
+                                    <hr>
+                                </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Mã số</label>
                                     <input type="text" name="code" id="code" class="form-control" readonly
@@ -103,9 +108,19 @@
                                         placeholder="Nhập tên khai sinh..." class="form-control" required>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Tên thánh</label>
+                                    <input type="text" name="saint_name" id="saint_name" placeholder="Nhập tên thánh..."
+                                        class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Tên dòng *</label>
                                     <input type="text" name="religious_name" id="religious_name"
                                         placeholder="Nhập tên dòng..." class="form-control" required>
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Tên thường gọi (Prefer name)</label>
+                                    <input type="text" name="prefer_name" id="prefer_name"
+                                        placeholder="Nhập tên thường gọi..." class="form-control">
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Ngày sinh *</label>
@@ -120,9 +135,37 @@
                                         placeholder="Nhập nơi sinh..." class="form-control" required>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Nguyên quán</label>
+                                    <input type="text" name="hometown" id="hometown" placeholder="Nhập nguyên quán..."
+                                        class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Địa chỉ thường trú</label>
+                                    <input type="text" name="permanent_address" id="permanent_address"
+                                        placeholder="Nhập địa chỉ thường trú..." class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Quốc tịch</label>
                                     <input type="text" name="nationality" id="nationality"
                                         placeholder="Nhập quốc tịch..." class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>CCCD/Passport</label>
+                                    <input type="text" name="id_number" id="id_number"
+                                        placeholder="Nhập số CCCD hoặc Passport..." class="form-control">
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-12 form-group">
+                                    <label>Trạng thái</label>
+                                    <select name="status" id="status" class="form-control select2">
+                                        <option value="active">Đang tu dòng</option>
+                                        <option value="left">Tu xuất</option>
+                                    </select>
+                                </div>
+
+                                <!-- Thông tin gia đình -->
+                                <div class="col-12 form-group mg-t-30">
+                                    <h5 class="text-primary"><i class="fas fa-users"></i> Thông tin gia đình</h5>
+                                    <hr>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Tên cha</label>
@@ -138,6 +181,12 @@
                                     <label>Tôn giáo gia đình</label>
                                     <input type="text" name="family_religion" id="family_religion"
                                         placeholder="Nhập tôn giáo gia đình..." class="form-control">
+                                </div>
+
+                                <!-- Thông tin tôn giáo -->
+                                <div class="col-12 form-group mg-t-30">
+                                    <h5 class="text-primary"><i class="fas fa-church"></i> Thông tin tôn giáo</h5>
+                                    <hr>
                                 </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Ngày rửa tội</label>
@@ -165,6 +214,12 @@
                                         data-position='bottom right'>
                                     <i class="far fa-calendar-alt"></i>
                                 </div>
+
+                                <!-- Thông tin liên hệ -->
+                                <div class="col-12 form-group mg-t-30">
+                                    <h5 class="text-primary"><i class="fas fa-phone-alt"></i> Thông tin liên hệ</h5>
+                                    <hr>
+                                </div>
                                 <div class="col-xl-3 col-lg-6 col-12 form-group">
                                     <label>Số điện thoại</label>
                                     <input type="text" name="phone" id="phone" placeholder="Nhập số điện thoại..."
@@ -185,7 +240,18 @@
                                     <input type="text" name="emergency_contact_phone" id="emergency_contact_phone"
                                         placeholder="Nhập SĐT người liên hệ..." class="form-control">
                                 </div>
-                                <div class="col-lg-6 col-12 form-group mg-t-30">
+
+                                <!-- Ghi chú và tài liệu -->
+                                <div class="col-12 form-group mg-t-30">
+                                    <h5 class="text-primary"><i class="fas fa-file-alt"></i> Ghi chú và tài liệu</h5>
+                                    <hr>
+                                </div>
+                                <div class="col-lg-6 col-12 form-group">
+                                    <label>Ghi chú khác</label>
+                                    <textarea name="notes" id="notes" placeholder="Nhập ghi chú khác..."
+                                        class="form-control" rows="3"></textarea>
+                                </div>
+                                <div class="col-lg-6 col-12 form-group">
                                     <label class="text-dark-medium">Ảnh hiện tại</label>
                                     <div>
                                         <img id="current-photo" src="img/figure/default-sister.png" alt="Ảnh nữ tu"
@@ -199,11 +265,23 @@
                                             style="max-width: 150px; max-height: 150px; display: none; border: 1px solid #ccc; padding: 2px;">
                                     </div>
                                 </div>
+                                <div class="col-lg-6 col-12 form-group">
+                                    <label class="text-dark-medium">Giấy tờ đã tải lên</label>
+                                    <div id="existing-documents" class="mb-2"></div>
+                                    <label class="text-dark-medium mt-3">Tải thêm giấy tờ (nhiều file)</label>
+                                    <input type="file" name="documents" id="documents-input" class="form-control-file"
+                                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" multiple
+                                        onchange="previewDocuments(this)">
+                                    <small class="text-muted">Chấp nhận: PDF, DOC, DOCX, JPG, PNG (có thể chọn nhiều
+                                        file)</small>
+                                    <div id="documents-preview" class="mt-2"></div>
+                                </div>
+
                                 <div class="col-12 form-group mg-t-8">
-                                    <button type="submit"
-                                        class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Cập nhật</button>
-                                    <a href="all-sister.html"
-                                        class="btn-fill-lg bg-blue-dark btn-hover-yellow">Quay lại</a>
+                                    <button type="submit" class="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Cập
+                                        nhật</button>
+                                    <a href="all-sister.html" class="btn-fill-lg bg-blue-dark btn-hover-yellow">Quay
+                                        lại</a>
                                 </div>
                                 <div class="col-12 form-group">
                                     <div id="form-message" class="alert" style="display:none;"></div>
@@ -213,10 +291,7 @@
                     </div>
                 </div>
                 <!-- Edit Form Area End Here -->
-                <footer class="footer-wrap-layout1">
-                    <div class="copyright">© Copyrights <a href="http://zalo.me/0336216546">Khoadev</a> 2025. All rights
-                        reserved. Designed by <a href="#">Khoadev</a></div>
-                </footer>
+
             </div>
         </div>
         <!-- Page Area End Here -->
@@ -248,6 +323,29 @@
                     $('#photo-preview').attr('src', e.target.result).show();
                 }
                 reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function previewDocuments(input) {
+            const previewContainer = $('#documents-preview');
+            previewContainer.empty();
+
+            if (input.files && input.files.length > 0) {
+                for (let i = 0; i < input.files.length; i++) {
+                    const file = input.files[i];
+                    const fileSize = (file.size / 1024).toFixed(2);
+                    const icon = file.type.includes('pdf') ? 'fa-file-pdf text-danger' :
+                        file.type.includes('word') || file.type.includes('doc') ? 'fa-file-word text-primary' :
+                            file.type.includes('image') ? 'fa-file-image text-success' : 'fa-file text-secondary';
+
+                    previewContainer.append(`
+                        <div class="d-flex align-items-center mb-1">
+                            <i class="fas ${icon} mr-2"></i>
+                            <span class="text-truncate" style="max-width: 200px;">${file.name}</span>
+                            <small class="text-muted ml-2">(${fileSize} KB)</small>
+                        </div>
+                    `);
+                }
             }
         }
 
@@ -289,6 +387,64 @@
                 return dateStr;
             }
 
+            // Render existing documents
+            function renderExistingDocuments(documentsUrl) {
+                const container = $('#existing-documents');
+                container.empty();
+
+                if (!documentsUrl) {
+                    container.html('<span class="text-muted">Chưa có giấy tờ nào</span>');
+                    return;
+                }
+
+                let documents = [];
+                try {
+                    documents = JSON.parse(documentsUrl);
+                } catch (e) {
+                    container.html('<span class="text-muted">Chưa có giấy tờ nào</span>');
+                    return;
+                }
+
+                if (documents.length === 0) {
+                    container.html('<span class="text-muted">Chưa có giấy tờ nào</span>');
+                    return;
+                }
+
+                documents.forEach((doc, index) => {
+                    const icon = doc.name.endsWith('.pdf') ? 'fa-file-pdf text-danger' :
+                        doc.name.endsWith('.doc') || doc.name.endsWith('.docx') ? 'fa-file-word text-primary' :
+                            doc.name.match(/\.(jpg|jpeg|png)$/i) ? 'fa-file-image text-success' : 'fa-file text-secondary';
+
+                    container.append(`
+                        <div class="d-flex align-items-center mb-1" id="doc-${index}">
+                            <i class="fas ${icon} mr-2"></i>
+                            <a href="http://localhost:5000${doc.url}" target="_blank" class="text-truncate" style="max-width: 200px;">${doc.name}</a>
+                            <button type="button" class="btn btn-sm btn-link text-danger ml-2 delete-doc" data-index="${index}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `);
+                });
+            }
+
+            // Delete document
+            $(document).on('click', '.delete-doc', function () {
+                const docIndex = $(this).data('index');
+                if (!confirm('Bạn có chắc muốn xóa tài liệu này?')) return;
+
+                $.ajax({
+                    url: `http://localhost:5000/api/sisters/${sisterId}/documents/${docIndex}`,
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    success: function (response) {
+                        renderExistingDocuments(JSON.stringify(response.documents));
+                    },
+                    error: function (xhr) {
+                        alert('Không thể xóa tài liệu.');
+                    }
+                });
+            });
+
             // Load sister data
             function loadSisterData() {
                 $.ajax({
@@ -302,10 +458,16 @@
                         $('#sister-id').val(sister.id);
                         $('#code').val(sister.code || '');
                         $('#birth_name').val(sister.birth_name || '');
+                        $('#saint_name').val(sister.saint_name || '');
                         $('#religious_name').val(sister.religious_name || '');
+                        $('#prefer_name').val(sister.prefer_name || '');
                         $('#date_of_birth').val(formatDateToDisplay(sister.date_of_birth));
                         $('#place_of_birth').val(sister.place_of_birth || '');
+                        $('#hometown').val(sister.hometown || '');
+                        $('#permanent_address').val(sister.permanent_address || '');
                         $('#nationality').val(sister.nationality || '');
+                        $('#id_number').val(sister.id_number || '');
+                        $('#status').val(sister.status || 'active');
                         $('#father_name').val(sister.father_name || '');
                         $('#mother_name').val(sister.mother_name || '');
                         $('#family_religion').val(sister.family_religion || '');
@@ -317,11 +479,15 @@
                         $('#email').val(sister.email || '');
                         $('#emergency_contact_name').val(sister.emergency_contact_name || '');
                         $('#emergency_contact_phone').val(sister.emergency_contact_phone || '');
+                        $('#notes').val(sister.notes || '');
 
                         // Set current photo
                         if (sister.photo_url) {
                             $('#current-photo').attr('src', 'http://localhost:5000' + sister.photo_url);
                         }
+
+                        // Render existing documents
+                        renderExistingDocuments(sister.documents_url);
                     },
                     error: function (xhr) {
                         console.error('Error loading sister:', xhr);
@@ -353,12 +519,14 @@
 
                 // Collect data
                 const formData = {};
+                const dateFields = ['date_of_birth', 'baptism_date', 'confirmation_date', 'first_communion_date'];
+
                 $form.serializeArray().forEach(item => {
-                    // Skip id and code fields
-                    if (item.name === 'id' || item.name === 'code') return;
+                    // Skip id, code and documents fields
+                    if (item.name === 'id' || item.name === 'code' || item.name === 'documents') return;
 
                     if (item.value.trim() !== '') {
-                        if (['date_of_birth', 'baptism_date', 'confirmation_date', 'first_communion_date'].includes(item.name)) {
+                        if (dateFields.includes(item.name)) {
                             formData[item.name] = formatDateToAPI(item.value);
                         } else {
                             formData[item.name] = item.value;
@@ -384,32 +552,57 @@
                     data: JSON.stringify(formData),
                     success: function (response) {
                         const photoInput = $form.find('input[name="photo"]')[0];
+                        const documentsInput = $form.find('input[name="documents"]')[0];
+                        let uploadPromises = [];
 
                         // If new photo is selected, upload it
                         if (photoInput.files && photoInput.files[0]) {
                             const photoData = new FormData();
                             photoData.append('photo', photoInput.files[0]);
 
-                            $.ajax({
-                                url: `http://localhost:5000/api/sisters/${sisterId}/photo`,
-                                method: 'POST',
-                                headers: {
-                                    'Authorization': `Bearer ${token}`
-                                },
-                                data: photoData,
-                                processData: false,
-                                contentType: false,
-                                success: function () {
+                            uploadPromises.push(
+                                $.ajax({
+                                    url: `http://localhost:5000/api/sisters/${sisterId}/photo`,
+                                    method: 'POST',
+                                    headers: { 'Authorization': `Bearer ${token}` },
+                                    data: photoData,
+                                    processData: false,
+                                    contentType: false
+                                })
+                            );
+                        }
+
+                        // Upload new documents if selected
+                        if (documentsInput.files && documentsInput.files.length > 0) {
+                            const documentsData = new FormData();
+                            for (let i = 0; i < documentsInput.files.length; i++) {
+                                documentsData.append('documents', documentsInput.files[i]);
+                            }
+
+                            uploadPromises.push(
+                                $.ajax({
+                                    url: `http://localhost:5000/api/sisters/${sisterId}/documents`,
+                                    method: 'POST',
+                                    headers: { 'Authorization': `Bearer ${token}` },
+                                    data: documentsData,
+                                    processData: false,
+                                    contentType: false
+                                })
+                            );
+                        }
+
+                        if (uploadPromises.length > 0) {
+                            Promise.all(uploadPromises)
+                                .then(() => {
                                     $msg.addClass('alert-success').text('Cập nhật thành công!').show();
                                     setTimeout(function () {
                                         window.location.href = `sister-details.html?id=${sisterId}`;
                                     }, 1500);
-                                },
-                                error: function () {
-                                    $msg.addClass('alert-warning').text('Cập nhật thành công nhưng tải ảnh thất bại.').show();
+                                })
+                                .catch(() => {
+                                    $msg.addClass('alert-warning').text('Cập nhật thành công nhưng có lỗi khi tải file.').show();
                                     $btn.prop('disabled', false).text('Cập nhật');
-                                }
-                            });
+                                });
                         } else {
                             $msg.addClass('alert-success').text('Cập nhật thành công!').show();
                             setTimeout(function () {

@@ -84,7 +84,13 @@ const logAudit = async (req, action, recordId, oldValue, newValue) => {
   }
 };
 
-const buildFilters = ({ status, search, minAge, maxAge, excludeLeft = false }) => {
+const buildFilters = ({
+  status,
+  search,
+  minAge,
+  maxAge,
+  excludeLeft = false,
+}) => {
   const clauses = [];
   const params = [];
 
@@ -130,7 +136,7 @@ const getAllSisters = async (req, res) => {
     const search = req.query.search ? req.query.search.trim() : "";
     // By default, exclude 'left' sisters (show active only)
     const showAll = req.query.status === "all";
-    const status = showAll ? "" : (req.query.status || "");
+    const status = showAll ? "" : req.query.status || "";
 
     const { clauses, params } = buildFilters({
       status,
@@ -321,6 +327,125 @@ const updateSisterPhoto = async (req, res) => {
   }
 };
 
+const uploadSisterDocuments = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, permittedEditorRoles)) {
+      return;
+    }
+
+    const { id } = req.params;
+    const sister = await SisterModel.findById(id);
+    if (!sister) {
+      return res.status(404).json({ message: "Sister not found" });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "At least one document file is required" });
+    }
+
+    // Parse existing documents
+    let existingDocs = [];
+    if (sister.documents_url) {
+      try {
+        existingDocs = JSON.parse(sister.documents_url);
+      } catch (e) {
+        existingDocs = [];
+      }
+    }
+
+    // Add new documents
+    const newDocs = req.files.map((file) => {
+      const relativePath = path
+        .relative(UPLOADS_ROOT, file.path)
+        .replace(/\\/g, "/");
+      return {
+        name: file.originalname,
+        url: `/uploads/${relativePath}`,
+        uploadedAt: new Date().toISOString(),
+      };
+    });
+
+    const allDocs = [...existingDocs, ...newDocs];
+    const documentsUrl = JSON.stringify(allDocs);
+
+    const updated = await SisterModel.update(id, {
+      documents_url: documentsUrl,
+    });
+    await logAudit(req, "UPDATE", id, sister, updated);
+
+    return res.status(200).json({
+      documents: allDocs,
+      message: `${newDocs.length} document(s) uploaded successfully`,
+    });
+  } catch (error) {
+    console.error("uploadSisterDocuments error:", error.message);
+    return res.status(500).json({ message: "Failed to upload documents" });
+  }
+};
+
+const deleteSisterDocument = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, permittedEditorRoles)) {
+      return;
+    }
+
+    const { id, docIndex } = req.params;
+    const sister = await SisterModel.findById(id);
+    if (!sister) {
+      return res.status(404).json({ message: "Sister not found" });
+    }
+
+    let documents = [];
+    if (sister.documents_url) {
+      try {
+        documents = JSON.parse(sister.documents_url);
+      } catch (e) {
+        return res.status(400).json({ message: "Invalid documents data" });
+      }
+    }
+
+    const index = parseInt(docIndex, 10);
+    if (isNaN(index) || index < 0 || index >= documents.length) {
+      return res.status(400).json({ message: "Invalid document index" });
+    }
+
+    // Remove file from disk
+    const docToRemove = documents[index];
+    if (docToRemove && docToRemove.url) {
+      try {
+        const relativePath = docToRemove.url.startsWith("/uploads")
+          ? docToRemove.url.replace("/uploads", "")
+          : docToRemove.url;
+        const absolutePath = path.join(UPLOADS_ROOT, relativePath);
+        if (fs.existsSync(absolutePath)) {
+          fs.unlinkSync(absolutePath);
+        }
+      } catch (err) {
+        console.error("Failed to remove document file:", err.message);
+      }
+    }
+
+    // Remove from array
+    documents.splice(index, 1);
+    const documentsUrl = JSON.stringify(documents);
+
+    const updated = await SisterModel.update(id, {
+      documents_url: documentsUrl,
+    });
+    await logAudit(req, "UPDATE", id, sister, updated);
+
+    return res.status(200).json({
+      documents,
+      message: "Document deleted successfully",
+    });
+  } catch (error) {
+    console.error("deleteSisterDocument error:", error.message);
+    return res.status(500).json({ message: "Failed to delete document" });
+  }
+};
+
 const searchSisters = async (req, res) => {
   try {
     if (!ensurePermission(req, res, permittedViewerRoles)) {
@@ -364,12 +489,12 @@ const searchSisters = async (req, res) => {
 
     // Default to 'active' if status is not provided
     if (req.query.status !== undefined) {
-        if (req.query.status) {
-            filters.push("s.status = ?");
-            params.push(req.query.status);
-        }
+      if (req.query.status) {
+        filters.push("s.status = ?");
+        params.push(req.query.status);
+      }
     } else {
-        filters.push("s.status = 'active'");
+      filters.push("s.status = 'active'");
     }
 
     const minAge = req.query.minAge
@@ -432,6 +557,8 @@ module.exports = {
   createSister,
   updateSister,
   updateSisterPhoto,
+  uploadSisterDocuments,
+  deleteSisterDocument,
   deleteSister,
   searchSisters,
 };

@@ -58,7 +58,7 @@
                     <div class="card-body">
                         <div class="heading-layout1">
                             <div class="item-title">
-                                <h3>About Me</h3>
+                                <h3>Thông tin</h3>
                             </div>
                             <div class="dropdown">
                                 <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
@@ -76,7 +76,7 @@
                         </div>
                         <div class="single-info-details">
                             <div class="item-img">
-                                <img id="detail-photo" src="img/figure/sister1.jpg" alt="Nữ tu"
+                                <img id="detail-photo" src="img/figure/sister1.jpg" alt="Thành viên"
                                     style="max-width: 200px; max-height: 200px;">
                             </div>
                             <div class="item-content">
@@ -84,9 +84,12 @@
                                     <h3 class="text-dark-medium font-medium" id="detail-religious-name"></h3>
                                     <div class="header-elements">
                                         <ul>
-                                            <li><a href="#" id="header-edit-sister" title="Sửa"><i class="far fa-edit"></i></a></li>
-                                            <li><a href="#" onclick="window.print()" title="In"><i class="fas fa-print"></i></a></li>
-                                            <li><a href="all-sister.html" title="Danh sách"><i class="fas fa-list"></i></a></li>
+                                            <li><a href="#" id="header-edit-sister" title="Sửa"><i
+                                                        class="far fa-edit"></i></a></li>
+                                            <li><a href="#" onclick="window.print()" title="In"><i
+                                                        class="fas fa-print"></i></a></li>
+                                            <li><a href="all-sister.html" title="Danh sách"><i
+                                                        class="fas fa-list"></i></a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -95,12 +98,24 @@
                                     <table class="table text-nowrap">
                                         <tbody>
                                             <tr>
+                                                <td>Mã số:</td>
+                                                <td class="font-medium text-dark-medium" id="table-code"></td>
+                                            </tr>
+                                            <tr>
                                                 <td>Tên dòng:</td>
                                                 <td class="font-medium text-dark-medium" id="table-religious-name"></td>
                                             </tr>
                                             <tr>
+                                                <td>Tên thánh:</td>
+                                                <td class="font-medium text-dark-medium" id="table-saint-name"></td>
+                                            </tr>
+                                            <tr>
                                                 <td>Tên khai sinh:</td>
                                                 <td class="font-medium text-dark-medium" id="table-birth-name"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tên thường gọi:</td>
+                                                <td class="font-medium text-dark-medium" id="table-prefer-name"></td>
                                             </tr>
                                             <tr>
                                                 <td>Ngày sinh:</td>
@@ -111,8 +126,25 @@
                                                 <td class="font-medium text-dark-medium" id="table-pob"></td>
                                             </tr>
                                             <tr>
+                                                <td>Nguyên quán:</td>
+                                                <td class="font-medium text-dark-medium" id="table-hometown"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Địa chỉ thường trú:</td>
+                                                <td class="font-medium text-dark-medium" id="table-permanent-address">
+                                                </td>
+                                            </tr>
+                                            <tr>
                                                 <td>Quốc tịch:</td>
                                                 <td class="font-medium text-dark-medium" id="table-nationality"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>CCCD/Passport:</td>
+                                                <td class="font-medium text-dark-medium" id="table-id-number"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Trạng thái:</td>
+                                                <td class="font-medium text-dark-medium" id="table-status"></td>
                                             </tr>
                                             <tr>
                                                 <td>Tên cha:</td>
@@ -156,6 +188,14 @@
                                                 <td class="font-medium text-dark-medium" id="table-emergency-contact">
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <td>Ghi chú:</td>
+                                                <td class="font-medium text-dark-medium" id="table-notes"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Giấy tờ đính kèm:</td>
+                                                <td class="font-medium text-dark-medium" id="table-documents"></td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -164,10 +204,7 @@
                     </div>
                 </div>
                 <!-- Nữ tu Details Area End Here -->
-                <footer class="footer-wrap-layout1">
-                    <div class="copyright">© Copyrights <a href="#">OSP</a> 2019. All rights reserved. Designed by <a
-                            href="#">PsdBosS</a></div>
-                </footer>
+
             </div>
         </div>
         <!-- Page Area End Here -->
@@ -233,11 +270,25 @@
                 success: function (data) {
                     // Populate fields
                     $('#detail-religious-name').text(data.religious_name || 'N/A');
+                    $('#table-code').text(data.code || '');
                     $('#table-religious-name').text(data.religious_name || '');
+                    $('#table-saint-name').text(data.saint_name || '');
                     $('#table-birth-name').text(data.birth_name || '');
+                    $('#table-prefer-name').text(data.prefer_name || '');
                     $('#table-dob').text(formatDate(data.date_of_birth));
                     $('#table-pob').text(data.place_of_birth || '');
+                    $('#table-hometown').text(data.hometown || '');
+                    $('#table-permanent-address').text(data.permanent_address || '');
                     $('#table-nationality').text(data.nationality || '');
+                    $('#table-id-number').text(data.id_number || '');
+
+                    // Status display
+                    let statusText = '';
+                    if (data.status === 'active') statusText = 'Đang tu dòng';
+                    else if (data.status === 'left') statusText = 'Tu xuất';
+                    else statusText = data.status || '';
+                    $('#table-status').text(statusText);
+
                     $('#table-father').text(data.father_name || '');
                     $('#table-mother').text(data.mother_name || '');
                     $('#table-religion').text(data.family_religion || '');
@@ -247,6 +298,7 @@
                     $('#table-baptism-place').text(data.baptism_place || '');
                     $('#table-confirmation').text(formatDate(data.confirmation_date));
                     $('#table-first-communion').text(formatDate(data.first_communion_date));
+                    $('#table-notes').text(data.notes || '');
 
                     let emergency = '';
                     if (data.emergency_contact_name) emergency += data.emergency_contact_name;
@@ -256,6 +308,30 @@
                     if (data.photo_url) {
                         $('#detail-photo').attr('src', `http://localhost:5000${data.photo_url}`);
                     }
+
+                    // Documents
+                    let documents = [];
+                    if (data.documents_url) {
+                        try {
+                            documents = JSON.parse(data.documents_url);
+                        } catch (e) {
+                            documents = [];
+                        }
+                    }
+
+                    if (documents.length > 0) {
+                        let docsHtml = '<ul class="list-unstyled mb-0">';
+                        documents.forEach(doc => {
+                            const icon = doc.name.endsWith('.pdf') ? 'fa-file-pdf text-danger' :
+                                doc.name.endsWith('.doc') || doc.name.endsWith('.docx') ? 'fa-file-word text-primary' :
+                                    doc.name.match(/\.(jpg|jpeg|png)$/i) ? 'fa-file-image text-success' : 'fa-file text-secondary';
+                            docsHtml += `<li><i class="fas ${icon} mr-1"></i><a href="http://localhost:5000${doc.url}" target="_blank">${doc.name}</a></li>`;
+                        });
+                        docsHtml += '</ul>';
+                        $('#table-documents').html(docsHtml);
+                    } else {
+                        $('#table-documents').text('Không có');
+                    }
                 },
                 error: function (xhr) {
                     console.error(xhr);
@@ -264,13 +340,13 @@
             });
 
             // Handle Edit button click
-            $('#btn-edit-sister, #header-edit-sister').on('click', function(e) {
+            $('#btn-edit-sister, #header-edit-sister').on('click', function (e) {
                 e.preventDefault();
                 window.location.href = `edit-sister.html?id=${sisterId}`;
             });
 
             // Handle Delete button click
-            $('#btn-delete-sister').on('click', function(e) {
+            $('#btn-delete-sister').on('click', function (e) {
                 e.preventDefault();
                 if (confirm('Bạn có chắc chắn muốn xóa nữ tu này?')) {
                     $.ajax({
@@ -279,11 +355,11 @@
                         headers: {
                             'Authorization': `Bearer ${token}`
                         },
-                        success: function() {
+                        success: function () {
                             alert('Xóa thành công!');
                             window.location.href = 'all-sister.html';
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             alert('Xóa thất bại: ' + (xhr.responseJSON ? xhr.responseJSON.message : xhr.statusText));
                         }
                     });

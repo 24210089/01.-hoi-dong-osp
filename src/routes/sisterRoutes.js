@@ -6,7 +6,7 @@ const {
   validateSisterUpdate,
   handleValidationErrors,
 } = require("../middlewares/validation");
-const { uploadPhoto } = require("../middlewares/upload");
+const { uploadPhoto, uploadDocuments } = require("../middlewares/upload");
 const { logAction } = require("../middlewares/auditLog");
 const { cacheMiddleware } = require("../middlewares/cache");
 
@@ -77,6 +77,21 @@ router.post(
   uploadPhoto,
   sisterController.updateSisterPhoto,
   logSisterAction("UPLOAD_PHOTO")
+);
+
+router.post(
+  "/:id/documents",
+  authorize(...editorRoles),
+  uploadDocuments,
+  sisterController.uploadSisterDocuments,
+  logSisterAction("UPLOAD_DOCUMENTS")
+);
+
+router.delete(
+  "/:id/documents/:docIndex",
+  authorize(...editorRoles),
+  sisterController.deleteSisterDocument,
+  logSisterAction("DELETE_DOCUMENT")
 );
 
 module.exports = router;
