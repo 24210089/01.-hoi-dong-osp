@@ -58,7 +58,7 @@
                     <div class="card-body">
                         <div class="heading-layout1">
                             <div class="item-title">
-                                <h3>Thông tin</h3>
+                                <h3>THÔNG TIN</h3>
                             </div>
                             <div class="dropdown">
                                 <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
@@ -76,12 +76,12 @@
                         </div>
                         <div class="single-info-details">
                             <div class="item-img">
-                                <img id="detail-photo" src="img/figure/sister1.jpg" alt="Thành viên"
-                                    style="max-width: 200px; max-height: 200px;">
+                                <img id="detail-photo" src="" alt="Thành viên"
+                                    style="max-width: 200px; max-height: 200px; border-radius: 5px; border: 1px solid #ddd; background-color: #f5f5f5;">
                             </div>
                             <div class="item-content">
                                 <div class="header-inline item-header">
-                                    <h3 class="text-dark-medium font-medium" id="detail-religious-name"></h3>
+                                    <h3 class="text-dark-medium font-medium" id="detail-birth-name"></h3>
                                     <div class="header-elements">
                                         <ul>
                                             <li><a href="#" id="header-edit-sister" title="Sửa"><i
@@ -269,7 +269,7 @@
                 },
                 success: function (data) {
                     // Populate fields
-                    $('#detail-religious-name').text(data.religious_name || 'N/A');
+                    $('#detail-birth-name').text(data.birth_name || 'N/A');
                     $('#table-code').text(data.code || '');
                     $('#table-religious-name').text(data.religious_name || '');
                     $('#table-saint-name').text(data.saint_name || '');
@@ -305,8 +305,12 @@
                     if (data.emergency_contact_phone) emergency += ` (${data.emergency_contact_phone})`;
                     $('#table-emergency-contact').text(emergency);
 
+                    // Load ảnh từ database (photo_url)
                     if (data.photo_url) {
                         $('#detail-photo').attr('src', `http://localhost:5000${data.photo_url}`);
+                    } else {
+                        // Ảnh mặc định nếu không có trong database
+                        $('#detail-photo').attr('src', 'img/figure/sister.png');
                     }
 
                     // Documents

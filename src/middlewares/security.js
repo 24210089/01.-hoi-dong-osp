@@ -56,16 +56,17 @@ const buildHelmetConfig = () => {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "https:"],
-        connectSrc,
+        imgSrc: ["'self'", "data:", "https:", "http://localhost:5000"],
+        connectSrc: ["'self'", "http://localhost:5000", ...connectSrc],
         objectSrc: ["'none'"],
         frameAncestors: ["'none'"],
         upgradeInsecureRequests: [],
       },
     },
     crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
   };
 };
 
