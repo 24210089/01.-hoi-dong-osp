@@ -1,0 +1,6 @@
+// src/context/index.js
+
+export { AuthProvider, useAuth } from './AuthContext';
+export { ThemeProvider, useTheme } from './ThemeContext';
+export { NotificationProvider, useNotification } from './NotificationContext';
+export { SidebarProvider, useSidebar } from './SidebarContext';

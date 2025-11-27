@@ -1,37 +1,50 @@
-import React, { useState } from "react";
-import Header from "@components/common/Header/Header";
-import Sidebar from "@components/common/Sidebar/Sidebar";
+// src/App.jsx
 
-const App = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isCompact, setIsCompact] = useState(false);
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+// Contexts
+import {
+  AuthProvider,
+  ThemeProvider,
+  NotificationProvider,
+  SidebarProvider,
+} from '@context';
 
-  const toggleCompact = () => {
-    setIsCompact(!isCompact);
-  };
+// Routes
+import AppRoutes from './routes';
 
+// Styles
+import './App.css';
+
+function App() {
   return (
-    <div className="app-container">
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        isCompact={isCompact}
-        onToggleCompact={toggleCompact}
-      />
-      <div className={`main-wrapper ${isCompact ? "sidebar-compact" : ""}`}>
-        <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
-
-        <main className="main-content p-4">
-          <h1>Hệ Thống Quản Lý Hội Dòng</h1>
-          <p>Chào mừng bạn đến với hệ thống</p>
-        </main>
-      </div>
-    </div>
+    <BrowserRouter>
+      <ThemeProvider>
+        <AuthProvider>
+          <NotificationProvider>
+            <SidebarProvider>
+              <AppRoutes />
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+              />
+            </SidebarProvider>
+          </NotificationProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   );
-};
+}
 
 export default App;
