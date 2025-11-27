@@ -1,6 +1,12 @@
 // src/context/AuthContext.jsx
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 
 const AuthContext = createContext(null);
 
@@ -13,15 +19,15 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const userData = localStorage.getItem('user');
+        const token = localStorage.getItem("token");
+        const userData = localStorage.getItem("user");
 
         if (token && userData) {
           setUser(JSON.parse(userData));
           setIsAuthenticated(true);
         }
       } catch (error) {
-        console.error('Auth initialization error:', error);
+        console.error("Auth initialization error:", error);
       } finally {
         setLoading(false);
       }
@@ -37,20 +43,20 @@ export const AuthProvider = ({ children }) => {
       // Mock login - replace with actual API call
       const mockUser = {
         id: 1,
-        full_name: 'Admin',
-        username: 'admin',
+        full_name: "Admin",
+        username: "admin",
         email: email,
-        role: 'admin',
+        role: "admin",
       };
-      
-      localStorage.setItem('token', 'mock-token');
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      
+
+      localStorage.setItem("token", "mock-token");
+      localStorage.setItem("user", JSON.stringify(mockUser));
+
       setUser(mockUser);
       setIsAuthenticated(true);
       return { success: true, data: mockUser };
     } catch (error) {
-      throw new Error('Đăng nhập thất bại');
+      throw new Error("Đăng nhập thất bại");
     } finally {
       setLoading(false);
     }
@@ -58,28 +64,34 @@ export const AuthProvider = ({ children }) => {
 
   // Logout
   const logout = useCallback(async () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
     setIsAuthenticated(false);
   }, []);
 
   // Update user
-  const updateUser = useCallback((userData) => {
-    setUser((prev) => ({ ...prev, ...userData }));
-    localStorage.setItem('user', JSON.stringify({ ...user, ...userData }));
-  }, [user]);
+  const updateUser = useCallback(
+    (userData) => {
+      setUser((prev) => ({ ...prev, ...userData }));
+      localStorage.setItem("user", JSON.stringify({ ...user, ...userData }));
+    },
+    [user]
+  );
 
   // Check permission
-  const hasPermission = useCallback((roles) => {
-    if (!roles || roles.length === 0) return true;
-    if (!user) return false;
-    return roles.includes(user.role);
-  }, [user]);
+  const hasPermission = useCallback(
+    (roles) => {
+      if (!roles || roles.length === 0) return true;
+      if (!user) return false;
+      return roles.includes(user.role);
+    },
+    [user]
+  );
 
   // Check if user is admin
   const isAdmin = useCallback(() => {
-    return user?.role === 'admin';
+    return user?.role === "admin";
   }, [user]);
 
   const value = {
@@ -100,7 +112,7 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 };

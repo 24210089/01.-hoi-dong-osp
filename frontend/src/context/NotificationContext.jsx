@@ -1,7 +1,7 @@
 // src/context/NotificationContext.jsx
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { toast } from 'react-toastify';
+import React, { createContext, useContext, useState, useCallback } from "react";
+import { toast } from "react-toastify";
 
 const NotificationContext = createContext(null);
 
@@ -21,7 +21,7 @@ export const NotificationProvider = ({ children }) => {
     setUnreadCount((prev) => prev + 1);
 
     if (notification.showToast !== false) {
-      const toastType = notification.type || 'info';
+      const toastType = notification.type || "info";
       toast[toastType](notification.message || notification.title);
     }
 
@@ -45,21 +45,33 @@ export const NotificationProvider = ({ children }) => {
     setUnreadCount(0);
   }, []);
 
-  const success = useCallback((message) => {
-    return addNotification({ type: 'success', title: 'Thành công', message });
-  }, [addNotification]);
+  const success = useCallback(
+    (message) => {
+      return addNotification({ type: "success", title: "Thành công", message });
+    },
+    [addNotification]
+  );
 
-  const error = useCallback((message) => {
-    return addNotification({ type: 'error', title: 'Lỗi', message });
-  }, [addNotification]);
+  const error = useCallback(
+    (message) => {
+      return addNotification({ type: "error", title: "Lỗi", message });
+    },
+    [addNotification]
+  );
 
-  const warning = useCallback((message) => {
-    return addNotification({ type: 'warning', title: 'Cảnh báo', message });
-  }, [addNotification]);
+  const warning = useCallback(
+    (message) => {
+      return addNotification({ type: "warning", title: "Cảnh báo", message });
+    },
+    [addNotification]
+  );
 
-  const info = useCallback((message) => {
-    return addNotification({ type: 'info', title: 'Thông báo', message });
-  }, [addNotification]);
+  const info = useCallback(
+    (message) => {
+      return addNotification({ type: "info", title: "Thông báo", message });
+    },
+    [addNotification]
+  );
 
   const value = {
     notifications,
@@ -84,7 +96,7 @@ export const NotificationProvider = ({ children }) => {
 export const useNotification = () => {
   const context = useContext(NotificationContext);
   if (!context) {
-    throw new Error('useNotification must be used within NotificationProvider');
+    throw new Error("useNotification must be used within NotificationProvider");
   }
   return context;
 };

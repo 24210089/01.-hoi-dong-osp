@@ -1,18 +1,18 @@
 // src/routes/index.jsx
 
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 // Layouts
-import MainLayout from '@layouts/MainLayout';
+import MainLayout from "@layouts/MainLayout";
 
 // Pages
-import Dashboard from '@pages/Dashboard';
-import Login from '@pages/auth/Login';
+import Dashboard from "@pages/Dashboard";
+import Login from "@pages/auth/Login";
 
 // Route Components
-import PrivateRoute from './PrivateRoute';
-import PublicRoute from './PublicRoute';
+import PrivateRoute from "./PrivateRoute";
+import PublicRoute from "./PublicRoute";
 
 const AppRoutes = () => {
   return (

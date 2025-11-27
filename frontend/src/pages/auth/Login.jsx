@@ -1,9 +1,9 @@
 // src/pages/auth/Login.jsx
 
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Form, Button, Card, Container, Alert, Spinner } from 'react-bootstrap';
-import { useAuth } from '@context';
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Form, Button, Card, Container, Alert, Spinner } from "react-bootstrap";
+import { useAuth } from "@context";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,32 +11,32 @@ const Login = () => {
   const { login } = useAuth();
 
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const from = location.state?.from?.pathname || '/dashboard';
+  const from = location.state?.from?.pathname || "/dashboard";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       await login(formData.email, formData.password);
       navigate(from, { replace: true });
     } catch (err) {
-      setError(err.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
+      setError(err.message || "Đăng nhập thất bại. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,11 @@ const Login = () => {
                 </div>
 
                 {error && (
-                  <Alert variant="danger" dismissible onClose={() => setError('')}>
+                  <Alert
+                    variant="danger"
+                    dismissible
+                    onClose={() => setError("")}
+                  >
                     {error}
                   </Alert>
                 )}
@@ -97,7 +101,7 @@ const Login = () => {
                         Đang đăng nhập...
                       </>
                     ) : (
-                      'Đăng nhập'
+                      "Đăng nhập"
                     )}
                   </Button>
                 </Form>

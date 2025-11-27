@@ -1,0 +1,351 @@
+/* src/styles/theme.css */
+
+/* ============================================
+   CSS VARIABLES - LIGHT THEME (DEFAULT)
+   ============================================ */
+
+:root {
+  /* Background Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --bg-hover: #f1f3f5;
+
+  /* Text Colors */
+  --text-primary: #2d3748;
+  --text-secondary: #6c757d;
+  --text-tertiary: #adb5bd;
+  --text-inverse: #ffffff;
+
+  /* Border Colors */
+  --border-color: #e9ecef;
+  --border-color-dark: #dee2e6;
+
+  /* Shadow */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+  /* Primary Color (Default - Purple) */
+  --color-primary: #667eea;
+  --color-primary-dark: #764ba2;
+  --color-primary-light: #e7f3ff;
+  --color-primary-rgb: 102, 126, 234;
+}
+
+/* ============================================
+   DARK THEME
+   ============================================ */
+
+.theme-dark {
+  /* Background Colors */
+  --bg-primary: #1a202c;
+  --bg-secondary: #2d3748;
+  --bg-tertiary: #4a5568;
+  --bg-hover: #374151;
+
+  /* Text Colors */
+  --text-primary: #f7fafc;
+  --text-secondary: #cbd5e0;
+  --text-tertiary: #a0aec0;
+  --text-inverse: #1a202c;
+
+  /* Border Colors */
+  --border-color: #4a5568;
+  --border-color-dark: #2d3748;
+
+  /* Shadow */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================
+   COLOR SCHEMES
+   ============================================ */
+
+/* Default (Purple) - Already defined in :root */
+
+/* Blue */
+.color-scheme-blue {
+  --color-primary: #3b82f6;
+  --color-primary-dark: #2563eb;
+  --color-primary-light: #dbeafe;
+  --color-primary-rgb: 59, 130, 246;
+}
+
+/* Green */
+.color-scheme-green {
+  --color-primary: #10b981;
+  --color-primary-dark: #059669;
+  --color-primary-light: #d1fae5;
+  --color-primary-rgb: 16, 185, 129;
+}
+
+/* Purple */
+.color-scheme-purple {
+  --color-primary: #8b5cf6;
+  --color-primary-dark: #7c3aed;
+  --color-primary-light: #ede9fe;
+  --color-primary-rgb: 139, 92, 246;
+}
+
+/* Orange */
+.color-scheme-orange {
+  --color-primary: #f59e0b;
+  --color-primary-dark: #d97706;
+  --color-primary-light: #fef3c7;
+  --color-primary-rgb: 245, 158, 11;
+}
+
+/* ============================================
+   FONT SIZES
+   ============================================ */
+
+/* Small */
+.font-size-small {
+  font-size: 14px;
+}
+
+.font-size-small h1 {
+  font-size: 1.75rem;
+}
+.font-size-small h2 {
+  font-size: 1.5rem;
+}
+.font-size-small h3 {
+  font-size: 1.25rem;
+}
+.font-size-small h4 {
+  font-size: 1.1rem;
+}
+.font-size-small h5 {
+  font-size: 1rem;
+}
+.font-size-small h6 {
+  font-size: 0.9rem;
+}
+
+/* Medium (Default) */
+.font-size-medium {
+  font-size: 16px;
+}
+
+.font-size-medium h1 {
+  font-size: 2rem;
+}
+.font-size-medium h2 {
+  font-size: 1.75rem;
+}
+.font-size-medium h3 {
+  font-size: 1.5rem;
+}
+.font-size-medium h4 {
+  font-size: 1.25rem;
+}
+.font-size-medium h5 {
+  font-size: 1.1rem;
+}
+.font-size-medium h6 {
+  font-size: 1rem;
+}
+
+/* Large */
+.font-size-large {
+  font-size: 18px;
+}
+
+.font-size-large h1 {
+  font-size: 2.25rem;
+}
+.font-size-large h2 {
+  font-size: 2rem;
+}
+.font-size-large h3 {
+  font-size: 1.75rem;
+}
+.font-size-large h4 {
+  font-size: 1.5rem;
+}
+.font-size-large h5 {
+  font-size: 1.25rem;
+}
+.font-size-large h6 {
+  font-size: 1.1rem;
+}
+
+/* ============================================
+   APPLY THEME VARIABLES TO COMPONENTS
+   ============================================ */
+
+body {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Cards */
+.card,
+.modal-content,
+.datatable-wrapper,
+.stat-card,
+.info-card {
+  background-color: var(--bg-primary);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-md);
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 100%
+  );
+  border-color: var(--color-primary);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-dark) 0%,
+    var(--color-primary) 100%
+  );
+}
+
+/* Links */
+a {
+  color: var(--color-primary);
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+}
+
+/* Forms */
+.form-control {
+  background-color: var(--bg-primary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.form-control:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.2rem rgba(var(--color-primary-rgb), 0.15);
+}
+
+/* Sidebar */
+.sidebar {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 100%
+  );
+}
+
+/* Header */
+.app-header {
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Footer */
+.app-footer {
+  background: linear-gradient(
+    135deg,
+    var(--bg-secondary) 0%,
+    var(--bg-tertiary) 100%
+  );
+  color: var(--text-secondary);
+}
+
+/* Tables */
+.datatable-header {
+  background: linear-gradient(
+    135deg,
+    var(--bg-secondary) 0%,
+    var(--bg-tertiary) 100%
+  );
+  border-bottom: 2px solid var(--border-color-dark);
+}
+
+.datatable-body tr {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.datatable-body tr:hover {
+  background-color: var(--bg-hover);
+}
+
+/* Alerts */
+.alert {
+  background-color: var(--bg-primary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Modals */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.theme-dark .modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Scrollbar (Webkit browsers) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color-dark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* ============================================
+   TRANSITIONS
+   ============================================ */
+
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .font-size-small {
+    font-size: 13px;
+  }
+  .font-size-medium {
+    font-size: 15px;
+  }
+  .font-size-large {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 576px) {
+  .font-size-small {
+    font-size: 12px;
+  }
+  .font-size-medium {
+    font-size: 14px;
+  }
+  .font-size-large {
+    font-size: 16px;
+  }
+}

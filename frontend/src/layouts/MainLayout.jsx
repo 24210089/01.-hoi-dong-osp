@@ -1,13 +1,14 @@
 // src/layouts/MainLayout.jsx
 
-import React from 'react';
-import { Outlet } from 'react-router-dom';
-import Header from '@components/common/Header/Header';
-import Sidebar from '@components/common/Sidebar/Sidebar';
-import { useSidebar } from '@context';
+import React from "react";
+import { Outlet } from "react-router-dom";
+import Header from "@components/common/Header/Header";
+import Sidebar from "@components/common/Sidebar/Sidebar";
+import { useSidebar } from "@context";
 
 const MainLayout = () => {
-  const { isOpen, isCompact, toggleSidebar, closeSidebar, toggleCompact } = useSidebar();
+  const { isOpen, isCompact, toggleSidebar, closeSidebar, toggleCompact } =
+    useSidebar();
 
   return (
     <div className="app-container">
@@ -17,7 +18,7 @@ const MainLayout = () => {
         isCompact={isCompact}
         onToggleCompact={toggleCompact}
       />
-      <div className={`main-wrapper ${isCompact ? 'sidebar-compact' : ''}`}>
+      <div className={`main-wrapper ${isCompact ? "sidebar-compact" : ""}`}>
         <Header toggleSidebar={toggleSidebar} isSidebarOpen={isOpen} />
         <main className="main-content p-4">
           <Outlet />
