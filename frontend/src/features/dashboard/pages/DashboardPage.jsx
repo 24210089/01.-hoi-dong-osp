@@ -3,11 +3,17 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { useAuth } from "@context";
-import { reportService } from "@services";
 import StatsOverview from "../components/StatsOverview";
 import RecentActivities from "../components/RecentActivities/RecentActivities";
 import QuickActions from "../components/QuickActions/QuickActions";
-import LoadingSpinner from "@components/common/Loading/LoadingSpinner";
+
+// Mock data for demo
+const mockStats = {
+  totalSisters: 156,
+  activeSisters: 142,
+  totalCommunities: 12,
+  averageAge: 45,
+};
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -21,10 +27,15 @@ const DashboardPage = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const response = await reportService.getOverview();
-      if (response.success) {
-        setStats(response.data);
-      }
+      // TODO: Replace with actual API call
+      // const response = await reportService.getOverview();
+      // if (response.success) {
+      //   setStats(response.data);
+      // }
+
+      // Mock data for demo
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setStats(mockStats);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -38,7 +49,9 @@ const DashboardPage = () => {
         className="d-flex justify-content-center align-items-center"
         style={{ minHeight: "60vh" }}
       >
-        <LoadingSpinner size="large" />
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
       </div>
     );
   }

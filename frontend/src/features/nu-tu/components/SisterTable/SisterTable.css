@@ -1,0 +1,22 @@
+/* src/features/nu-tu/components/SisterTable/SisterTable.css */
+
+.sister-table-card {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.sister-table-card .table {
+  margin-bottom: 0;
+}
+
+.sister-table-card .table th {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  font-weight: 600;
+  color: #2d3748;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.sister-table-card .table td {
+  vertical-align: middle;
+}

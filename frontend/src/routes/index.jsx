@@ -7,7 +7,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "@layouts/MainLayout";
 
 // Pages
-import Dashboard from "@pages/Dashboard";
+import { DashboardPage } from "@features/dashboard";
 import Login from "@pages/auth/Login";
 
 // Route Components
@@ -26,7 +26,7 @@ const AppRoutes = () => {
       <Route element={<PrivateRoute />}>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
         </Route>
       </Route>
 

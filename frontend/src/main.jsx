@@ -6,6 +6,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./index.css";
 
+// Feature styles
+import "./features/nu-tu/styles/sister.css";
+
 // App
 import App from "./App";
 
