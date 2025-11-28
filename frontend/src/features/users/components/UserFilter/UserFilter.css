@@ -1,0 +1,11 @@
+/* src/features/users/components/UserFilter/UserFilter.css */
+
+.offcanvas {
+  width: 400px !important;
+}
+
+@media (max-width: 576px) {
+  .offcanvas {
+    width: 100% !important;
+  }
+}

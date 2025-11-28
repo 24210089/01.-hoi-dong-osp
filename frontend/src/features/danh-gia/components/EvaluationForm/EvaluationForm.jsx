@@ -5,7 +5,7 @@ import { Modal, Form, Button, Row, Col } from "react-bootstrap";
 
 const EvaluationForm = ({ show, onHide, evaluation, onSubmit }) => {
   const isEditMode = !!evaluation;
-  
+
   const [values, setValues] = React.useState(
     evaluation || {
       type: "",
@@ -55,7 +55,9 @@ const EvaluationForm = ({ show, onHide, evaluation, onSubmit }) => {
 
             <Col md={4}>
               <Form.Group>
-                <Form.Label>Loại đánh giá <span className="text-danger">*</span></Form.Label>
+                <Form.Label>
+                  Loại đánh giá <span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Select
                   name="type"
                   value={values.type}
@@ -74,7 +76,9 @@ const EvaluationForm = ({ show, onHide, evaluation, onSubmit }) => {
 
             <Col md={4}>
               <Form.Group>
-                <Form.Label>Kỳ đánh giá <span className="text-danger">*</span></Form.Label>
+                <Form.Label>
+                  Kỳ đánh giá <span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   name="period"
@@ -88,7 +92,9 @@ const EvaluationForm = ({ show, onHide, evaluation, onSubmit }) => {
 
             <Col md={4}>
               <Form.Group>
-                <Form.Label>Ngày đánh giá <span className="text-danger">*</span></Form.Label>
+                <Form.Label>
+                  Ngày đánh giá <span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Control
                   type="date"
                   name="evaluation_date"

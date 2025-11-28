@@ -245,12 +245,19 @@ export const menuConfig = [
         path: "/users/create",
       },
       {
-        id: "users-profile",
-        label: "Hồ sơ cá nhân",
-        icon: "fas fa-id-card",
-        path: "/users/profile",
+        id: "users-permissions",
+        label: "Phân quyền",
+        icon: "fas fa-key",
+        path: "/users/permissions",
       },
     ],
+  },
+  {
+    id: "profile",
+    label: "Hồ sơ cá nhân",
+    icon: "fas fa-id-card",
+    path: "/profile",
+    roles: [],
   },
   {
     id: "settings",

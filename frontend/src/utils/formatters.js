@@ -3,7 +3,7 @@
 /**
  * Format date to Vietnamese format
  * @param {string|Date} date
- * @param {string} format - 'short' | 'long' | 'full'
+ * @param {string} format - 'short' | 'long' | 'full' | 'DD/MM/YYYY' | 'YYYY-MM-DD' etc.
  * @returns {string}
  */
 export const formatDate = (date, format = "short") => {
@@ -17,15 +17,13 @@ export const formatDate = (date, format = "short") => {
   const year = d.getFullYear();
   const hours = String(d.getHours()).padStart(2, "0");
   const minutes = String(d.getMinutes()).padStart(2, "0");
+  const seconds = String(d.getSeconds()).padStart(2, "0");
 
-  switch (format) {
-    case "short":
-      return `${day}/${month}/${year}`;
-
-    case "long":
-      return `${day}/${month}/${year} ${hours}:${minutes}`;
-
-    case "full":
+  // Named formats
+  const namedFormats = {
+    short: `${day}/${month}/${year}`,
+    long: `${day}/${month}/${year} ${hours}:${minutes}`,
+    full: (() => {
       const weekdays = [
         "Chủ Nhật",
         "Thứ Hai",
@@ -35,18 +33,32 @@ export const formatDate = (date, format = "short") => {
         "Thứ Sáu",
         "Thứ Bảy",
       ];
-      const weekday = weekdays[d.getDay()];
-      return `${weekday}, ${day}/${month}/${year} ${hours}:${minutes}`;
+      return `${weekdays[d.getDay()]}, ${day}/${month}/${year} ${hours}:${minutes}`;
+    })(),
+    time: `${hours}:${minutes}`,
+    "month-year": `${month}/${year}`,
+  };
 
-    case "time":
-      return `${hours}:${minutes}`;
+  // Pattern-based formats
+  const patternFormats = {
+    "DD/MM/YYYY": `${day}/${month}/${year}`,
+    "MM/DD/YYYY": `${month}/${day}/${year}`,
+    "YYYY-MM-DD": `${year}-${month}-${day}`,
+    "DD/MM/YYYY HH:mm": `${day}/${month}/${year} ${hours}:${minutes}`,
+    "DD/MM/YYYY HH:mm:ss": `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`,
+    "HH:mm DD/MM/YYYY": `${hours}:${minutes} ${day}/${month}/${year}`,
+  };
 
-    case "month-year":
-      return `${month}/${year}`;
+  return namedFormats[format] || patternFormats[format] || namedFormats.short;
+};
 
-    default:
-      return `${day}/${month}/${year}`;
-  }
+/**
+ * Format datetime
+ * @param {string|Date} datetime
+ * @returns {string}
+ */
+export const formatDateTime = (datetime) => {
+  return formatDate(datetime, "DD/MM/YYYY HH:mm");
 };
 
 /**
@@ -125,6 +137,11 @@ export const formatPhone = (phone) => {
 };
 
 /**
+ * Alias for formatPhone
+ */
+export const formatPhoneNumber = formatPhone;
+
+/**
  * Format file size
  * @param {number} bytes
  * @returns {string}
@@ -149,6 +166,33 @@ export const truncateText = (text, maxLength = 100) => {
   if (!text) return "";
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength) + "...";
+};
+
+/**
+ * Capitalize first letter
+ * @param {string} text
+ * @returns {string}
+ */
+export const capitalize = (text) => {
+  if (!text) return "";
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};
+
+/**
+ * Format time only
+ * @param {string|Date} time
+ * @returns {string}
+ */
+export const formatTime = (time) => {
+  if (!time) return "";
+
+  const d = new Date(time);
+  if (isNaN(d.getTime())) return "";
+
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+
+  return `${hours}:${minutes}`;
 };
 
 /**

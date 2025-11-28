@@ -1,0 +1,47 @@
+/* src/features/settings/components/SettingCard/SettingCard.css */
+
+.setting-card {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.setting-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.setting-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.setting-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.setting-description {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.setting-content {
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.setting-actions {
+  display: flex;
+  gap: 0.5rem;
+}

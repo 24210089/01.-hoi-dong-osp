@@ -66,6 +66,24 @@ import {
   EvaluationReportPage,
 } from "@features/bao-cao";
 
+// Users
+import {
+  UserListPage,
+  UserDetailPage,
+  UserFormPage,
+  PermissionsPage,
+  ProfilePage,
+} from "@features/users";
+
+// Settings
+import {
+  SettingsIndexPage,
+  GeneralSettingsPage,
+  SystemSettingsPage,
+  PreferencesPage,
+  BackupSettingsPage,
+} from "@features/settings";
+
 // Not Found
 import NotFoundPage from "@pages/NotFound/NotFoundPage";
 
@@ -180,6 +198,23 @@ const AppRoutes = () => {
           <Route path="/bao-cao/hanh-trinh" element={<JourneyReportPage />} />
           <Route path="/bao-cao/suc-khoe" element={<HealthReportPage />} />
           <Route path="/bao-cao/danh-gia" element={<EvaluationReportPage />} />
+
+          {/* Users */}
+          <Route path="/users" element={<UserListPage />} />
+          <Route path="/users/create" element={<UserFormPage />} />
+          <Route path="/users/:id" element={<UserDetailPage />} />
+          <Route path="/users/:id/edit" element={<UserFormPage />} />
+          <Route path="/users/permissions" element={<PermissionsPage />} />
+
+          {/* Profile */}
+          <Route path="/profile" element={<ProfilePage />} />
+
+          {/* Settings */}
+          <Route path="/settings" element={<SettingsIndexPage />} />
+          <Route path="/settings/general" element={<GeneralSettingsPage />} />
+          <Route path="/settings/system" element={<SystemSettingsPage />} />
+          <Route path="/settings/preferences" element={<PreferencesPage />} />
+          <Route path="/settings/backup" element={<BackupSettingsPage />} />
 
           {/* Redirect */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

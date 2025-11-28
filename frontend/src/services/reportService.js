@@ -53,7 +53,9 @@ const reportService = {
    */
   getStatistics: async (filters = {}) => {
     try {
-      const response = await api.get("/reports/statistics", { params: filters });
+      const response = await api.get("/reports/statistics", {
+        params: filters,
+      });
       return {
         success: true,
         data: response.data,
@@ -85,7 +87,8 @@ const reportService = {
     } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.message || "Lỗi khi tải báo cáo theo độ tuổi",
+        error:
+          error.response?.data?.message || "Lỗi khi tải báo cáo theo độ tuổi",
       };
     }
   },
@@ -105,7 +108,8 @@ const reportService = {
     } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.message || "Lỗi khi tải báo cáo theo giai đoạn",
+        error:
+          error.response?.data?.message || "Lỗi khi tải báo cáo theo giai đoạn",
       };
     }
   },
@@ -117,7 +121,9 @@ const reportService = {
    */
   getByCommunity: async (params = {}) => {
     try {
-      const response = await api.get(API_ENDPOINTS.REPORT.BY_COMMUNITY, { params });
+      const response = await api.get(API_ENDPOINTS.REPORT.BY_COMMUNITY, {
+        params,
+      });
       return {
         success: true,
         data: response.data,
@@ -125,7 +131,8 @@ const reportService = {
     } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.message || "Lỗi khi tải báo cáo theo cộng đoàn",
+        error:
+          error.response?.data?.message || "Lỗi khi tải báo cáo theo cộng đoàn",
       };
     }
   },
@@ -137,7 +144,9 @@ const reportService = {
    */
   getByMission: async (params = {}) => {
     try {
-      const response = await api.get(API_ENDPOINTS.REPORT.BY_MISSION, { params });
+      const response = await api.get(API_ENDPOINTS.REPORT.BY_MISSION, {
+        params,
+      });
       return {
         success: true,
         data: response.data,
@@ -145,7 +154,8 @@ const reportService = {
     } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.message || "Lỗi khi tải báo cáo theo sứ vụ",
+        error:
+          error.response?.data?.message || "Lỗi khi tải báo cáo theo sứ vụ",
       };
     }
   },
@@ -157,7 +167,9 @@ const reportService = {
    */
   getByEducation: async (params = {}) => {
     try {
-      const response = await api.get(API_ENDPOINTS.REPORT.BY_EDUCATION, { params });
+      const response = await api.get(API_ENDPOINTS.REPORT.BY_EDUCATION, {
+        params,
+      });
       return {
         success: true,
         data: response.data,
@@ -165,7 +177,8 @@ const reportService = {
     } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.message || "Lỗi khi tải báo cáo theo học vấn",
+        error:
+          error.response?.data?.message || "Lỗi khi tải báo cáo theo học vấn",
       };
     }
   },
@@ -209,7 +222,8 @@ const reportService = {
     } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.message || "Lỗi khi tải báo cáo hành trình",
+        error:
+          error.response?.data?.message || "Lỗi khi tải báo cáo hành trình",
       };
     }
   },
@@ -241,7 +255,9 @@ const reportService = {
    */
   getEvaluationReport: async (filters = {}) => {
     try {
-      const response = await api.get("/reports/evaluations", { params: filters });
+      const response = await api.get("/reports/evaluations", {
+        params: filters,
+      });
       return {
         success: true,
         data: response.data,
@@ -261,7 +277,10 @@ const reportService = {
    */
   getCustomReport: async (params) => {
     try {
-      const response = await api.post(API_ENDPOINTS.REPORT.CUSTOM || "/reports/custom", params);
+      const response = await api.post(
+        API_ENDPOINTS.REPORT.CUSTOM || "/reports/custom",
+        params
+      );
       return {
         success: true,
         data: response.data,
@@ -302,10 +321,13 @@ const reportService = {
    */
   exportExcel: async (reportType, params = {}) => {
     try {
-      const response = await api.get(API_ENDPOINTS.REPORT.EXPORT_EXCEL || "/reports/export/excel", {
-        params: { type: reportType, ...params },
-        responseType: "blob",
-      });
+      const response = await api.get(
+        API_ENDPOINTS.REPORT.EXPORT_EXCEL || "/reports/export/excel",
+        {
+          params: { type: reportType, ...params },
+          responseType: "blob",
+        }
+      );
 
       const filename = `report-${reportType}-${Date.now()}.xlsx`;
       reportService._downloadFile(response.data || response, filename);
@@ -327,10 +349,13 @@ const reportService = {
    */
   exportPDF: async (reportType, params = {}) => {
     try {
-      const response = await api.get(API_ENDPOINTS.REPORT.EXPORT_PDF || "/reports/export/pdf", {
-        params: { type: reportType, ...params },
-        responseType: "blob",
-      });
+      const response = await api.get(
+        API_ENDPOINTS.REPORT.EXPORT_PDF || "/reports/export/pdf",
+        {
+          params: { type: reportType, ...params },
+          responseType: "blob",
+        }
+      );
 
       const filename = `report-${reportType}-${Date.now()}.pdf`;
       reportService._downloadFile(response.data || response, filename);
@@ -417,7 +442,8 @@ const reportService = {
     } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.message || "Lỗi khi xuất báo cáo hành trình",
+        error:
+          error.response?.data?.message || "Lỗi khi xuất báo cáo hành trình",
       };
     }
   },

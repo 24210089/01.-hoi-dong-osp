@@ -99,7 +99,9 @@ const ReportListPage = () => {
   };
 
   const filteredReports = reports.filter((report) => {
-    const matchSearch = report.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchSearch = report.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     const matchType = !filterType || report.type === filterType;
     return matchSearch && matchType;
   });
@@ -130,7 +132,10 @@ const ReportListPage = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "60vh" }}
+      >
         <LoadingSpinner size="large" />
       </div>
     );
@@ -254,15 +259,22 @@ const ReportListPage = () => {
                             <i className="fas fa-ellipsis-v"></i>
                           </Dropdown.Toggle>
                           <Dropdown.Menu align="end">
-                            <Dropdown.Item as={Link} to={`/bao-cao/${report.id}`}>
+                            <Dropdown.Item
+                              as={Link}
+                              to={`/bao-cao/${report.id}`}
+                            >
                               <i className="fas fa-eye me-2"></i>
                               Xem chi tiết
                             </Dropdown.Item>
-                            <Dropdown.Item onClick={() => handleExport(report.id, "excel")}>
+                            <Dropdown.Item
+                              onClick={() => handleExport(report.id, "excel")}
+                            >
                               <i className="fas fa-file-excel me-2 text-success"></i>
                               Xuất Excel
                             </Dropdown.Item>
-                            <Dropdown.Item onClick={() => handleExport(report.id, "pdf")}>
+                            <Dropdown.Item
+                              onClick={() => handleExport(report.id, "pdf")}
+                            >
                               <i className="fas fa-file-pdf me-2 text-danger"></i>
                               Xuất PDF
                             </Dropdown.Item>

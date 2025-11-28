@@ -1,0 +1,62 @@
+/* src/features/settings/components/SettingItem/SettingItem.css */
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-item-info {
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.setting-item-label {
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.25rem;
+}
+
+.setting-item-description {
+  font-size: 0.875rem;
+  color: #718096;
+  line-height: 1.5;
+}
+
+.setting-item-control {
+  min-width: 200px;
+  max-width: 300px;
+}
+
+.setting-switch {
+  transform: scale(1.2);
+}
+
+.setting-input,
+.setting-select,
+.setting-textarea {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .setting-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .setting-item-info {
+    padding-right: 0;
+    margin-bottom: 1rem;
+  }
+
+  .setting-item-control {
+    width: 100%;
+    max-width: 100%;
+  }
+}

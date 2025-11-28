@@ -214,11 +214,7 @@ const ReportGeneratePage = () => {
 
                 {/* Actions */}
                 <div className="d-flex gap-2 mt-4">
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    disabled={loading}
-                  >
+                  <Button type="submit" variant="primary" disabled={loading}>
                     {loading ? (
                       <>
                         <span className="spinner-border spinner-border-sm me-2"></span>
@@ -253,16 +249,20 @@ const ReportGeneratePage = () => {
               </h5>
               <ul className="mb-0">
                 <li className="mb-2">
-                  <strong>Loại báo cáo:</strong> Chọn loại báo cáo phù hợp với nhu cầu
+                  <strong>Loại báo cáo:</strong> Chọn loại báo cáo phù hợp với
+                  nhu cầu
                 </li>
                 <li className="mb-2">
-                  <strong>Khoảng thời gian:</strong> Giới hạn dữ liệu theo thời gian
+                  <strong>Khoảng thời gian:</strong> Giới hạn dữ liệu theo thời
+                  gian
                 </li>
                 <li className="mb-2">
-                  <strong>Định dạng:</strong> Excel phù hợp để phân tích, PDF để in ấn
+                  <strong>Định dạng:</strong> Excel phù hợp để phân tích, PDF để
+                  in ấn
                 </li>
                 <li>
-                  <strong>Tùy chọn:</strong> Thêm biểu đồ và tóm tắt để báo cáo trực quan hơn
+                  <strong>Tùy chọn:</strong> Thêm biểu đồ và tóm tắt để báo cáo
+                  trực quan hơn
                 </li>
               </ul>
             </Card.Body>
@@ -270,7 +270,8 @@ const ReportGeneratePage = () => {
 
           <Alert variant="info" className="mt-3">
             <i className="fas fa-lightbulb me-2"></i>
-            <strong>Mẹo:</strong> Bạn có thể truy cập nhanh các báo cáo thường dùng từ menu sidebar.
+            <strong>Mẹo:</strong> Bạn có thể truy cập nhanh các báo cáo thường
+            dùng từ menu sidebar.
           </Alert>
         </Col>
       </Row>

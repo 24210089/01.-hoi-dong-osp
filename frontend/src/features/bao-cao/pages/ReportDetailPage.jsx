@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Container, Card, Row, Col, Button, Badge, Table } from "react-bootstrap";
+import {
+  Container,
+  Card,
+  Row,
+  Col,
+  Button,
+  Badge,
+  Table,
+} from "react-bootstrap";
 import { reportService } from "@services";
 import LoadingSpinner from "@components/common/Loading/LoadingSpinner";
 import Breadcrumb from "@components/common/Breadcrumb";
@@ -51,7 +59,10 @@ const ReportDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "60vh" }}
+      >
         <LoadingSpinner size="large" />
       </div>
     );
@@ -137,19 +148,25 @@ const ReportDetailPage = () => {
               <Row className="g-3">
                 <Col md={4}>
                   <div className="text-center p-3 bg-light rounded">
-                    <div className="display-6 text-primary">{report?.summary?.total}</div>
+                    <div className="display-6 text-primary">
+                      {report?.summary?.total}
+                    </div>
                     <div className="text-muted">Tổng số</div>
                   </div>
                 </Col>
                 <Col md={4}>
                   <div className="text-center p-3 bg-light rounded">
-                    <div className="display-6 text-success">{report?.summary?.active}</div>
+                    <div className="display-6 text-success">
+                      {report?.summary?.active}
+                    </div>
                     <div className="text-muted">Đang hoạt động</div>
                   </div>
                 </Col>
                 <Col md={4}>
                   <div className="text-center p-3 bg-light rounded">
-                    <div className="display-6 text-warning">{report?.summary?.inactive}</div>
+                    <div className="display-6 text-warning">
+                      {report?.summary?.inactive}
+                    </div>
                     <div className="text-muted">Không hoạt động</div>
                   </div>
                 </Col>
