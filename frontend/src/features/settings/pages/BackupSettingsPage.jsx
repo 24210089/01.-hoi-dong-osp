@@ -58,7 +58,9 @@ const BackupSettingsPage = () => {
         setBackups(backupsResult.data || []);
       }
       if (storageResult.success) {
-        setStorageInfo(storageResult.data || { used: 0, total: 0, percentage: 0 });
+        setStorageInfo(
+          storageResult.data || { used: 0, total: 0, percentage: 0 }
+        );
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -144,7 +146,9 @@ const BackupSettingsPage = () => {
   };
 
   const handleDelete = async (backup) => {
-    if (!window.confirm(`Bạn có chắc muốn xóa bản sao lưu "${backup.filename}"?`)) {
+    if (
+      !window.confirm(`Bạn có chắc muốn xóa bản sao lưu "${backup.filename}"?`)
+    ) {
       return;
     }
 
@@ -172,7 +176,11 @@ const BackupSettingsPage = () => {
       pending: "Đang xử lý",
       failed: "Thất bại",
     };
-    return <Badge bg={variants[status] || "secondary"}>{labels[status] || status}</Badge>;
+    return (
+      <Badge bg={variants[status] || "secondary"}>
+        {labels[status] || status}
+      </Badge>
+    );
   };
 
   if (loading) {
@@ -231,7 +239,8 @@ const BackupSettingsPage = () => {
                 className="mb-2"
               />
               <p className="mb-0">
-                {formatFileSize(storageInfo.used)} / {formatFileSize(storageInfo.total)}
+                {formatFileSize(storageInfo.used)} /{" "}
+                {formatFileSize(storageInfo.total)}
               </p>
             </Card.Body>
           </Card>
@@ -368,8 +377,9 @@ const BackupSettingsPage = () => {
         </Modal.Header>
         <Modal.Body>
           <Alert variant="warning">
-            <strong>Cảnh báo!</strong> Khôi phục dữ liệu sẽ thay thế toàn bộ dữ liệu
-            hiện tại bằng dữ liệu từ bản sao lưu. Thao tác này không thể hoàn tác.
+            <strong>Cảnh báo!</strong> Khôi phục dữ liệu sẽ thay thế toàn bộ dữ
+            liệu hiện tại bằng dữ liệu từ bản sao lưu. Thao tác này không thể
+            hoàn tác.
           </Alert>
           {selectedBackup && (
             <p>
@@ -380,7 +390,10 @@ const BackupSettingsPage = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowRestoreModal(false)}>
+          <Button
+            variant="secondary"
+            onClick={() => setShowRestoreModal(false)}
+          >
             Hủy
           </Button>
           <Button variant="danger" onClick={handleRestore}>

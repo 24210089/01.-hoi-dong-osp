@@ -96,9 +96,7 @@ const GeneralSettingsPage = () => {
             <FaCog className="me-2" />
             Cài Đặt Chung
           </h2>
-          <p className="text-muted">
-            Cấu hình thông tin cơ bản của hệ thống
-          </p>
+          <p className="text-muted">Cấu hình thông tin cơ bản của hệ thống</p>
         </Col>
       </Row>
 
@@ -161,8 +159,12 @@ const GeneralSettingsPage = () => {
                         value={settings.timezone}
                         onChange={handleChange}
                       >
-                        <option value="Asia/Ho_Chi_Minh">Việt Nam (GMT+7)</option>
-                        <option value="America/New_York">New York (GMT-5)</option>
+                        <option value="Asia/Ho_Chi_Minh">
+                          Việt Nam (GMT+7)
+                        </option>
+                        <option value="America/New_York">
+                          New York (GMT-5)
+                        </option>
                         <option value="Europe/London">London (GMT+0)</option>
                       </Form.Select>
                     </Form.Group>

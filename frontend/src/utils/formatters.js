@@ -33,7 +33,9 @@ export const formatDate = (date, format = "short") => {
         "Thứ Sáu",
         "Thứ Bảy",
       ];
-      return `${weekdays[d.getDay()]}, ${day}/${month}/${year} ${hours}:${minutes}`;
+      return `${
+        weekdays[d.getDay()]
+      }, ${day}/${month}/${year} ${hours}:${minutes}`;
     })(),
     time: `${hours}:${minutes}`,
     "month-year": `${month}/${year}`,

@@ -37,7 +37,8 @@ const settingService = {
     } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.message || "Lỗi khi cập nhật cài đặt chung",
+        error:
+          error.response?.data?.message || "Lỗi khi cập nhật cài đặt chung",
       };
     }
   },
@@ -76,7 +77,8 @@ const settingService = {
     } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.message || "Lỗi khi cập nhật cài đặt hệ thống",
+        error:
+          error.response?.data?.message || "Lỗi khi cập nhật cài đặt hệ thống",
       };
     }
   },

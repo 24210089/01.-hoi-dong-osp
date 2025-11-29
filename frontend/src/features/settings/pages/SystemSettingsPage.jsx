@@ -30,7 +30,7 @@ const SystemSettingsPage = () => {
   const [testing, setTesting] = useState(false);
   const [clearing, setClearing] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
-  
+
   const [settings, setSettings] = useState({
     // Email settings
     smtpHost: "",
@@ -40,7 +40,7 @@ const SystemSettingsPage = () => {
     smtpSecure: "tls",
     emailFromName: "Hệ Thống Quản Lý Hội Dòng",
     emailFromAddress: "",
-    
+
     // Security settings
     sessionTimeout: 60,
     minPasswordLength: 8,
@@ -48,7 +48,7 @@ const SystemSettingsPage = () => {
     maxLoginAttempts: 5,
     lockoutDuration: 30,
     enableTwoFactor: false,
-    
+
     // Cache settings
     enableCache: true,
     cacheExpiry: 3600,
@@ -104,7 +104,10 @@ const SystemSettingsPage = () => {
     try {
       const result = await settingService.testEmail();
       if (result.success) {
-        setMessage({ type: "success", text: "Email test đã được gửi thành công!" });
+        setMessage({
+          type: "success",
+          text: "Email test đã được gửi thành công!",
+        });
       } else {
         setMessage({ type: "danger", text: result.error });
       }

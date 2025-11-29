@@ -34,14 +34,14 @@ const PreferencesPage = () => {
     sidebarCollapsed: false,
     itemsPerPage: 10,
     showWelcomeMessage: true,
-    
+
     // Notification preferences
     emailNotifications: true,
     systemNotifications: true,
     birthdayReminder: true,
     anniversaryReminder: true,
     evaluationReminder: true,
-    
+
     // Dashboard preferences
     showStatistics: true,
     showRecentActivities: true,
@@ -103,7 +103,10 @@ const PreferencesPage = () => {
     try {
       const result = await settingService.resetPreferences();
       if (result.success) {
-        setMessage({ type: "success", text: "Đã khôi phục tùy chọn mặc định!" });
+        setMessage({
+          type: "success",
+          text: "Đã khôi phục tùy chọn mặc định!",
+        });
         fetchPreferences();
       } else {
         setMessage({ type: "danger", text: result.error });

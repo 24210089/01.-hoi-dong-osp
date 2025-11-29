@@ -1,0 +1,81 @@
+/* src/components/forms/Switch/Switch.css */
+
+.custom-switch-wrapper {
+  margin-bottom: 1rem;
+}
+
+.switch-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.switch-label {
+  cursor: pointer;
+  user-select: none;
+  color: #2d3748;
+  font-weight: 500;
+}
+
+/* Small Switch */
+.custom-switch-sm .form-check-input {
+  width: 2rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
+/* Medium Switch (default) */
+.custom-switch-md .form-check-input {
+  width: 2.5rem;
+  height: 1.25rem;
+  cursor: pointer;
+}
+
+/* Large Switch */
+.custom-switch-lg .form-check-input {
+  width: 3rem;
+  height: 1.5rem;
+  cursor: pointer;
+}
+
+.custom-switch .form-check-input {
+  background-color: #cbd5e0;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.custom-switch .form-check-input:hover:not(:disabled) {
+  background-color: #a0aec0;
+}
+
+.custom-switch .form-check-input:checked {
+  background-color: #667eea;
+}
+
+.custom-switch .form-check-input:checked:hover:not(:disabled) {
+  background-color: #5568d3;
+}
+
+.custom-switch .form-check-input:focus {
+  border: none;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.custom-switch .form-check-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.custom-switch .form-check-input:disabled + .form-check-label {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.custom-switch.is-invalid .form-check-input {
+  border: 2px solid #dc3545;
+}
+
+/* Animation */
+.custom-switch .form-check-input::before {
+  transition: transform 0.3s ease;
+}

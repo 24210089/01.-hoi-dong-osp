@@ -11,7 +11,9 @@ const userService = {
    */
   getList: async (params = {}) => {
     try {
-      const response = await api.get(API_ENDPOINTS.USER.LIST || "/users", { params });
+      const response = await api.get(API_ENDPOINTS.USER.LIST || "/users", {
+        params,
+      });
       return {
         success: true,
         data: response.data,
@@ -19,7 +21,8 @@ const userService = {
     } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.message || "Lỗi khi tải danh sách người dùng",
+        error:
+          error.response?.data?.message || "Lỗi khi tải danh sách người dùng",
       };
     }
   },
@@ -31,7 +34,9 @@ const userService = {
    */
   getById: async (id) => {
     try {
-      const endpoint = API_ENDPOINTS.USER.DETAIL ? API_ENDPOINTS.USER.DETAIL(id) : `/users/${id}`;
+      const endpoint = API_ENDPOINTS.USER.DETAIL
+        ? API_ENDPOINTS.USER.DETAIL(id)
+        : `/users/${id}`;
       const response = await api.get(endpoint);
       return {
         success: true,
@@ -52,7 +57,10 @@ const userService = {
    */
   create: async (data) => {
     try {
-      const response = await api.post(API_ENDPOINTS.USER.CREATE || "/users", data);
+      const response = await api.post(
+        API_ENDPOINTS.USER.CREATE || "/users",
+        data
+      );
       return {
         success: true,
         data: response.data,
@@ -73,7 +81,9 @@ const userService = {
    */
   update: async (id, data) => {
     try {
-      const endpoint = API_ENDPOINTS.USER.UPDATE ? API_ENDPOINTS.USER.UPDATE(id) : `/users/${id}`;
+      const endpoint = API_ENDPOINTS.USER.UPDATE
+        ? API_ENDPOINTS.USER.UPDATE(id)
+        : `/users/${id}`;
       const response = await api.put(endpoint, data);
       return {
         success: true,
@@ -94,7 +104,9 @@ const userService = {
    */
   delete: async (id) => {
     try {
-      const endpoint = API_ENDPOINTS.USER.DELETE ? API_ENDPOINTS.USER.DELETE(id) : `/users/${id}`;
+      const endpoint = API_ENDPOINTS.USER.DELETE
+        ? API_ENDPOINTS.USER.DELETE(id)
+        : `/users/${id}`;
       await api.delete(endpoint);
       return {
         success: true,
@@ -175,13 +187,16 @@ const userService = {
    */
   updateProfile: async (data) => {
     try {
-      const response = await api.put(API_ENDPOINTS.USER.UPDATE_PROFILE || "/profile", data);
-      
+      const response = await api.put(
+        API_ENDPOINTS.USER.UPDATE_PROFILE || "/profile",
+        data
+      );
+
       // Update user in localStorage
       if (response.data) {
         localStorage.setItem("user", JSON.stringify(response.data));
       }
-      
+
       return {
         success: true,
         data: response.data,
@@ -201,7 +216,10 @@ const userService = {
    */
   changePassword: async (data) => {
     try {
-      const response = await api.post(API_ENDPOINTS.USER.CHANGE_PASSWORD || "/profile/change-password", data);
+      const response = await api.post(
+        API_ENDPOINTS.USER.CHANGE_PASSWORD || "/profile/change-password",
+        data
+      );
       return {
         success: true,
         data: response.data,

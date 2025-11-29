@@ -1,38 +1,88 @@
 // src/context/NotificationContext.jsx
 
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { toast } from "react-toastify";
+import NotificationToast from "@components/common/NotificationToast";
 
 const NotificationContext = createContext(null);
+
+let notificationId = 0;
 
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  const addNotification = useCallback((notification) => {
-    const newNotification = {
-      id: Date.now(),
-      timestamp: new Date().toISOString(),
-      read: false,
-      ...notification,
-    };
+  const addNotification = useCallback(
+    ({
+      type = "info",
+      title,
+      message,
+      duration = 5000,
+      autohide = true,
+      closable = true,
+      showToast = true,
+    }) => {
+      const id = ++notificationId;
+      const timestamp = new Date().toISOString();
+      const timeString = new Date().toLocaleTimeString("vi-VN", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
 
-    setNotifications((prev) => [newNotification, ...prev]);
-    setUnreadCount((prev) => prev + 1);
+      const notification = {
+        id,
+        type,
+        title,
+        message,
+        duration,
+        autohide,
+        closable,
+        timestamp,
+        timeString,
+        show: showToast,
+        read: false,
+      };
 
-    if (notification.showToast !== false) {
-      const toastType = notification.type || "info";
-      toast[toastType](notification.message || notification.title);
-    }
+      setNotifications((prev) => [notification, ...prev]);
+      setUnreadCount((prev) => prev + 1);
 
-    return newNotification;
+      // Auto remove from toast after duration if autohide is true
+      if (autohide && showToast) {
+        setTimeout(() => {
+          hideToast(id);
+        }, duration);
+      }
+
+      return id;
+    },
+    []
+  );
+
+  const hideToast = useCallback((id) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, show: false } : n))
+    );
+  }, []);
+
+  const removeNotification = useCallback((id) => {
+    setNotifications((prev) => {
+      const notification = prev.find((n) => n.id === id);
+      if (notification && !notification.read) {
+        setUnreadCount((count) => Math.max(0, count - 1));
+      }
+      return prev.filter((n) => n.id !== id);
+    });
   }, []);
 
   const markAsRead = useCallback((id) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      prev.map((n) => {
+        if (n.id === id && !n.read) {
+          setUnreadCount((count) => Math.max(0, count - 1));
+          return { ...n, read: true };
+        }
+        return n;
+      })
     );
-    setUnreadCount((prev) => Math.max(0, prev - 1));
   }, []);
 
   const markAllAsRead = useCallback(() => {
@@ -45,30 +95,37 @@ export const NotificationProvider = ({ children }) => {
     setUnreadCount(0);
   }, []);
 
+  // Convenience methods
   const success = useCallback(
-    (message) => {
-      return addNotification({ type: "success", title: "Thành công", message });
+    (title, message, options = {}) => {
+      return addNotification({ type: "success", title, message, ...options });
     },
     [addNotification]
   );
 
   const error = useCallback(
-    (message) => {
-      return addNotification({ type: "error", title: "Lỗi", message });
+    (title, message, options = {}) => {
+      return addNotification({
+        type: "error",
+        title,
+        message,
+        autohide: false,
+        ...options,
+      });
     },
     [addNotification]
   );
 
   const warning = useCallback(
-    (message) => {
-      return addNotification({ type: "warning", title: "Cảnh báo", message });
+    (title, message, options = {}) => {
+      return addNotification({ type: "warning", title, message, ...options });
     },
     [addNotification]
   );
 
   const info = useCallback(
-    (message) => {
-      return addNotification({ type: "info", title: "Thông báo", message });
+    (title, message, options = {}) => {
+      return addNotification({ type: "info", title, message, ...options });
     },
     [addNotification]
   );
@@ -77,6 +134,8 @@ export const NotificationProvider = ({ children }) => {
     notifications,
     unreadCount,
     addNotification,
+    removeNotification,
+    hideToast,
     markAsRead,
     markAllAsRead,
     clearAll,
@@ -86,9 +145,16 @@ export const NotificationProvider = ({ children }) => {
     info,
   };
 
+  // Get only visible toast notifications
+  const visibleToasts = notifications.filter((n) => n.show);
+
   return (
     <NotificationContext.Provider value={value}>
       {children}
+      <NotificationToast
+        notifications={visibleToasts}
+        onClose={hideToast}
+      />
     </NotificationContext.Provider>
   );
 };

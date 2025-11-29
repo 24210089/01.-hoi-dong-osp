@@ -49,7 +49,7 @@ import {
 } from "@features/danh-gia";
 
 // Hoc Van (Education)
-import { EducationListPage } from "@features/hoc-van";
+import { EducationListPage, EducationListAllPage, EducationFormPage } from "@features/hoc-van";
 
 // Su Vu (Mission)
 import { MissionListPage, MissionDetailPage } from "@features/su-vu";
@@ -84,7 +84,8 @@ import {
   BackupSettingsPage,
 } from "@features/settings";
 
-// Not Found
+// Error Pages
+import { ForbiddenPage, ServerErrorPage } from "@pages/errors";
 import NotFoundPage from "@pages/NotFound/NotFoundPage";
 
 const AppRoutes = () => {
@@ -179,9 +180,16 @@ const AppRoutes = () => {
           />
 
           {/* Hoc Van (Education) */}
+          <Route path="/hoc-van" element={<EducationListAllPage />} />
+          <Route path="/hoc-van/create" element={<EducationFormPage />} />
+          <Route path="/hoc-van/:id/edit" element={<EducationFormPage />} />
           <Route
             path="/nu-tu/:sisterId/hoc-van"
             element={<EducationListPage />}
+          />
+          <Route
+            path="/nu-tu/:sisterId/hoc-van/create"
+            element={<EducationFormPage />}
           />
 
           {/* Su Vu (Mission) */}
@@ -221,7 +229,10 @@ const AppRoutes = () => {
         </Route>
       </Route>
 
-      {/* 404 */}
+      {/* Error Pages */}
+      <Route path="/403" element={<ForbiddenPage />} />
+      <Route path="/500" element={<ServerErrorPage />} />
+      <Route path="/404" element={<NotFoundPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

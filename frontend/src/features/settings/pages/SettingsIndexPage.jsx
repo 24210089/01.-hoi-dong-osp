@@ -52,9 +52,7 @@ const SettingsIndexPage = () => {
             <FaCog className="me-2" />
             Cài Đặt Hệ Thống
           </h2>
-          <p className="text-muted">
-            Quản lý cài đặt và cấu hình hệ thống
-          </p>
+          <p className="text-muted">Quản lý cài đặt và cấu hình hệ thống</p>
         </Col>
       </Row>
 

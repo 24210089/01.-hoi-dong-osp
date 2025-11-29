@@ -23,9 +23,9 @@ const EducationListPage = () => {
   const fetchEducations = async () => {
     try {
       setLoading(true);
-      const response = await educationService.getBySisterId(sisterId);
+      const response = await educationService.getBySister(sisterId);
       if (response.success) {
-        setEducations(response.data);
+        setEducations(response.data || []);
       }
     } catch (error) {
       console.error("Error fetching educations:", error);
