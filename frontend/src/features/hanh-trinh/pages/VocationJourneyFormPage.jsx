@@ -11,16 +11,16 @@ import {
   Alert,
 } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
-import { journeyService, sisterService } from "@services";
+import { journeyService, sisterService, lookupService, communityService } from "@services";
 import { useForm } from "@hooks";
 import Input from "@components/forms/Input";
 import Select from "@components/forms/Select";
+import SearchableSelect from "@components/forms/SearchableSelect";
 import DatePicker from "@components/forms/DatePicker";
 import TextArea from "@components/forms/TextArea";
 import FileUpload from "@components/forms/FileUpload";
 import LoadingSpinner from "@components/common/Loading/LoadingSpinner";
 import Breadcrumb from "@components/common/Breadcrumb";
-import { JOURNEY_STAGES, JOURNEY_STAGE_LABELS } from "@utils/constants";
 
 const VocationJourneyFormPage = () => {
   const { id } = useParams();
@@ -31,6 +31,12 @@ const VocationJourneyFormPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [sisters, setSisters] = useState([]);
+  const [communities, setCommunities] = useState([]);
+  const [stages, setStages] = useState([]);
+  const [showAddStageModal, setShowAddStageModal] = useState(false);
+  const [newStageName, setNewStageName] = useState("");
+  const [newStageCode, setNewStageCode] = useState("");
+  const [addingStage, setAddingStage] = useState(false);
 
   const {
     values,
@@ -46,6 +52,7 @@ const VocationJourneyFormPage = () => {
     stage: "",
     start_date: "",
     end_date: "",
+    community_id: "",
     location: "",
     superior: "",
     formation_director: "",
@@ -55,31 +62,58 @@ const VocationJourneyFormPage = () => {
 
   useEffect(() => {
     fetchSisters();
+    fetchCommunities();
+    fetchStages();
     if (isEditMode) {
       fetchJourneyData();
     }
   }, [id]);
 
+  const fetchStages = async () => {
+    try {
+      const response = await lookupService.getJourneyStages();
+      if (response && response.data) {
+        setStages(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching stages:", error);
+    }
+  };
+
+  const fetchCommunities = async () => {
+    try {
+      const response = await communityService.getList({ limit: 1000 });
+      if (response && response.success && response.data) {
+        const communitiesData = Array.isArray(response.data) ? response.data : [];
+        setCommunities(communitiesData);
+      } else if (response && Array.isArray(response.data)) {
+        setCommunities(response.data);
+      } else if (Array.isArray(response)) {
+        setCommunities(response);
+      } else {
+        setCommunities([]);
+      }
+    } catch (error) {
+      console.error("Error fetching communities:", error);
+      setCommunities([]);
+    }
+  };
+
   const fetchSisters = async () => {
     try {
-      const response = await sisterService.getList({ page_size: 1000 });
-      // Handle different response formats
-      if (response.success && response.data) {
-        // If response.data is an array
-        if (Array.isArray(response.data)) {
-          setSisters(response.data);
-        }
-        // If response.data has items property
-        else if (response.data.items) {
-          setSisters(response.data.items);
-        }
-        // Default to empty array
-        else {
-          setSisters([]);
-        }
-      } else if (Array.isArray(response.data)) {
+      const response = await sisterService.getList({ limit: 1000 });
+      console.log("Sisters response:", response);
+      // API returns { success: true, data: [...], meta: {...} } after axios interceptor
+      if (response && response.success && response.data) {
+        const sistersData = Array.isArray(response.data) ? response.data : [];
+        setSisters(sistersData);
+        console.log("Sisters loaded:", sistersData.length);
+      } else if (response && Array.isArray(response.data)) {
         setSisters(response.data);
+      } else if (Array.isArray(response)) {
+        setSisters(response);
       } else {
+        console.log("No sisters data found in response");
         setSisters([]);
       }
     } catch (error) {
@@ -109,7 +143,6 @@ const VocationJourneyFormPage = () => {
     if (!values.sister_id) newErrors.sister_id = "Vui lòng chọn nữ tu";
     if (!values.stage) newErrors.stage = "Giai đoạn là bắt buộc";
     if (!values.start_date) newErrors.start_date = "Ngày bắt đầu là bắt buộc";
-    if (!values.location) newErrors.location = "Địa điểm là bắt buộc";
 
     // Validate end_date > start_date
     if (values.end_date && values.start_date) {
@@ -178,6 +211,58 @@ const VocationJourneyFormPage = () => {
     setFieldValue("documents", newDocuments);
   };
 
+  const handleAddStage = async () => {
+    if (!newStageName.trim() || !newStageCode.trim()) {
+      setError("Vui lòng nhập mã và tên giai đoạn");
+      return;
+    }
+
+    try {
+      setAddingStage(true);
+      const response = await lookupService.createJourneyStage({
+        code: newStageCode.trim().toLowerCase().replace(/\s+/g, '_'),
+        name: newStageName.trim(),
+        display_order: stages.length + 1,
+        color: "#6c757d",
+      });
+
+      if (response && response.data) {
+        await fetchStages();
+        setNewStageName("");
+        setNewStageCode("");
+        setShowAddStageModal(false);
+      }
+    } catch (error) {
+      console.error("Error adding stage:", error);
+      setError("Không thể thêm giai đoạn mới");
+    } finally {
+      setAddingStage(false);
+    }
+  };
+
+  const handleDeleteStage = async (stageId) => {
+    const stage = stages.find(s => s.id === stageId);
+    if (!stage) return;
+
+    if (!window.confirm(`Bạn có chắc chắn muốn xóa giai đoạn "${stage.name}"?`)) {
+      return;
+    }
+
+    try {
+      const response = await lookupService.deleteJourneyStage(stageId);
+      if (response && response.success) {
+        await fetchStages();
+        // Reset stage selection if deleted stage was selected
+        if (values.stage === stage.code) {
+          setFieldValue("stage", "");
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting stage:", error);
+      // Error message is shown by API interceptor
+    }
+  };
+
   if (loading) {
     return (
       <div
@@ -232,9 +317,9 @@ const VocationJourneyFormPage = () => {
               </Card.Header>
               <Card.Body>
                 <Row className="g-3">
-                  {/* Sister Selection */}
-                  <Col md={12}>
-                    <Select
+                  {/* Sister Selection & Stage - Same row */}
+                  <Col md={6}>
+                    <SearchableSelect
                       label="Nữ Tu"
                       name="sister_id"
                       value={values.sister_id}
@@ -244,42 +329,65 @@ const VocationJourneyFormPage = () => {
                       touched={touched.sister_id}
                       disabled={isEditMode}
                       required
-                    >
-                      <option value="">Chọn nữ tu</option>
-                      {(sisters || []).map((sister) => (
-                        <option key={sister.id} value={sister.id}>
-                          {sister.religious_name || sister.saint_name
-                            ? `${
-                                sister.religious_name || sister.saint_name
-                              } - ${sister.birth_name}`
-                            : sister.birth_name}{" "}
-                          ({sister.code})
-                        </option>
-                      ))}
-                    </Select>
+                      placeholder="Nhập tên để tìm..."
+                      maxDisplayItems={5}
+                      options={(sisters || []).map((sister) => ({
+                        value: sister.id,
+                        label: `${sister.saint_name ? `${sister.saint_name} - ` : ''}${sister.birth_name} (${sister.code})`
+                      }))}
+                    />
                   </Col>
 
-                  {/* Stage */}
-                  <Col md={12}>
-                    <Select
-                      label="Giai đoạn"
-                      name="stage"
-                      value={values.stage}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={errors.stage}
-                      touched={touched.stage}
-                      required
-                    >
-                      <option value="">Chọn giai đoạn</option>
-                      {Object.entries(JOURNEY_STAGE_LABELS).map(
-                        ([value, label]) => (
-                          <option key={value} value={value}>
-                            {label}
-                          </option>
-                        )
+                  {/* Stage - Same row with Sister */}
+                  <Col md={6}>
+                    <Form.Label className="fw-medium">
+                      Giai đoạn <span className="text-danger">*</span>
+                    </Form.Label>
+                    <div className="d-flex align-items-center gap-2">
+                      <div className="flex-grow-1">
+                        <Select
+                          name="stage"
+                          value={values.stage}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={errors.stage}
+                          touched={touched.stage}
+                          placeholder="Chọn giai đoạn"
+                          options={stages.map((stage) => ({
+                            value: stage.code,
+                            label: stage.name
+                          }))}
+                        />
+                      </div>
+                      <Button
+                        variant="outline-success"
+                        size="sm"
+                        onClick={() => setShowAddStageModal(true)}
+                        title="Thêm giai đoạn mới"
+                        style={{ height: '38px', minWidth: '38px' }}
+                      >
+                        <i className="fas fa-plus"></i>
+                      </Button>
+                      {values.stage && (
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => {
+                            const selectedStage = stages.find(s => s.code === values.stage);
+                            if (selectedStage) {
+                              handleDeleteStage(selectedStage.id);
+                            }
+                          }}
+                          title="Xóa giai đoạn đã chọn"
+                          style={{ height: '38px', minWidth: '38px' }}
+                        >
+                          <i className="fas fa-minus"></i>
+                        </Button>
                       )}
-                    </Select>
+                    </div>
+                    {touched.stage && errors.stage && (
+                      <div className="text-danger small mt-1">{errors.stage}</div>
+                    )}
                   </Col>
 
                   {/* Dates */}
@@ -309,8 +417,25 @@ const VocationJourneyFormPage = () => {
                     />
                   </Col>
 
+                  {/* Community */}
+                  <Col md={6}>
+                    <SearchableSelect
+                      label="Cộng đoàn"
+                      name="community_id"
+                      value={values.community_id}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="Nhập tên để tìm cộng đoàn..."
+                      maxDisplayItems={5}
+                      options={(communities || []).map((community) => ({
+                        value: community.id,
+                        label: community.name
+                      }))}
+                    />
+                  </Col>
+
                   {/* Location */}
-                  <Col md={12}>
+                  <Col md={6}>
                     <Input
                       label="Địa điểm"
                       name="location"
@@ -320,31 +445,50 @@ const VocationJourneyFormPage = () => {
                       error={errors.location}
                       touched={touched.location}
                       placeholder="Nhà dòng, giáo xứ, địa chỉ..."
-                      required
                     />
                   </Col>
 
                   {/* Superior */}
                   <Col md={6}>
-                    <Input
+                    <SearchableSelect
                       label="Bề trên"
                       name="superior"
                       value={values.superior}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      placeholder="Tên bề trên phụ trách"
+                      placeholder="Nhập tên để tìm bề trên..."
+                      maxDisplayItems={5}
+                      options={(sisters || []).map((sister) => {
+                        const displayName = sister.saint_name
+                          ? `${sister.saint_name} ${sister.birth_name}`
+                          : sister.birth_name;
+                        return {
+                          value: displayName,
+                          label: `${displayName} (${sister.code})`
+                        };
+                      })}
                     />
                   </Col>
 
-                  {/* Formation Director */}
+                  {/* Formation Director - renamed to Chị giáo */}
                   <Col md={6}>
-                    <Input
-                      label="Giám đốc đào tạo"
+                    <SearchableSelect
+                      label="Chị giáo"
                       name="formation_director"
                       value={values.formation_director}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      placeholder="Tên giám đốc đào tạo"
+                      placeholder="Nhập tên để tìm chị giáo..."
+                      maxDisplayItems={5}
+                      options={(sisters || []).map((sister) => {
+                        const displayName = sister.saint_name
+                          ? `${sister.saint_name} ${sister.birth_name}`
+                          : sister.birth_name;
+                        return {
+                          value: displayName,
+                          label: `${displayName} (${sister.code})`
+                        };
+                      })}
                     />
                   </Col>
 
@@ -444,6 +588,76 @@ const VocationJourneyFormPage = () => {
           </Col>
         </Row>
       </Form>
+
+      {/* Add Stage Modal */}
+      {showAddStageModal && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  <i className="fas fa-plus-circle me-2"></i>
+                  Thêm giai đoạn mới
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowAddStageModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <Form.Group className="mb-3">
+                  <Form.Label>Mã giai đoạn <span className="text-danger">*</span></Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ví dụ: pre_aspirant"
+                    value={newStageCode}
+                    onChange={(e) => setNewStageCode(e.target.value)}
+                  />
+                  <Form.Text className="text-muted">
+                    Mã sẽ được tự động chuyển sang chữ thường và thay khoảng trắng bằng dấu gạch dưới
+                  </Form.Text>
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Tên giai đoạn <span className="text-danger">*</span></Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ví dụ: Tiền ứng sinh"
+                    value={newStageName}
+                    onChange={(e) => setNewStageName(e.target.value)}
+                  />
+                </Form.Group>
+              </div>
+              <div className="modal-footer">
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowAddStageModal(false)}
+                  disabled={addingStage}
+                >
+                  Hủy
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={handleAddStage}
+                  disabled={addingStage || !newStageName.trim() || !newStageCode.trim()}
+                >
+                  {addingStage ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2"></span>
+                      Đang thêm...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-plus me-2"></i>
+                      Thêm giai đoạn
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Container>
   );
 };

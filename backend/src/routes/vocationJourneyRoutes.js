@@ -18,16 +18,23 @@ const editorRoles = [
 
 router.use(authenticateToken);
 
-router.get("/sister/:sisterId", vocationJourneyController.getJourneyBySister);
+// Get all journeys with pagination
+router.get("/", vocationJourneyController.getAllJourneys);
 
+// Statistics - must be before /:id
 router.get("/statistics", vocationJourneyController.getStatisticsByStage);
 
+// Get journeys by sister - must be before /:id
+router.get("/sister/:sisterId", vocationJourneyController.getJourneyBySister);
+
+// Get journey by ID - must be after specific routes
+router.get("/:id", vocationJourneyController.getJourneyById);
+
+// Create new journey with sister_id in body
 router.post(
   "/",
   authorize(...editorRoles),
-  validateVocationJourneyCreate,
-  handleValidationErrors,
-  vocationJourneyController.addJourneyStage
+  vocationJourneyController.createJourney
 );
 
 router.put(

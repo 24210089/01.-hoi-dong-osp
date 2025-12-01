@@ -1,6 +1,7 @@
 // src/controllers/lookupController.js
 const JourneyStageModel = require("../models/JourneyStageModel");
 const SisterStatusModel = require("../models/SisterStatusModel");
+const VocationJourneyModel = require("../models/VocationJourneyModel");
 
 // ============ Journey Stages ============
 
@@ -92,11 +93,24 @@ const deleteJourneyStage = async (req, res) => {
       return res.status(404).json({ message: "Journey stage not found" });
     }
 
-    // Soft delete by setting is_active to false
-    await JourneyStageModel.update(id, { is_active: false });
+    // Check if stage is being used in vocation_journey table
+    const usageCount = await VocationJourneyModel.executeQuery(
+      "SELECT COUNT(*) as count FROM vocation_journey WHERE stage = ?",
+      [existing.code]
+    );
+
+    if (usageCount[0].count > 0) {
+      return res.status(400).json({ 
+        message: `Không thể xóa giai đoạn này vì đang được sử dụng bởi ${usageCount[0].count} hành trình ơn gọi`,
+        usageCount: usageCount[0].count
+      });
+    }
+
+    // Hard delete if not used
+    await JourneyStageModel.delete(id);
     return res.status(200).json({
       success: true,
-      message: "Journey stage deactivated",
+      message: "Đã xóa giai đoạn thành công",
     });
   } catch (error) {
     console.error("deleteJourneyStage error:", error.message);

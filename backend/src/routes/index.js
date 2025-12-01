@@ -17,7 +17,7 @@ const lookupRoutes = require("./lookupRoutes");
 module.exports = (app) => {
   app.use("/api/auth", authRoutes);
   app.use("/api/sisters", sisterRoutes);
-  app.use("/api/vocation-journey", vocationJourneyRoutes);
+  app.use("/api/vocation-journeys", vocationJourneyRoutes);
   app.use("/api/communities", communityRoutes);
   app.use("/api/assignments", communityAssignmentRoutes);
   app.use("/api/missions", missionRoutes);

@@ -19,17 +19,20 @@ const journeyService = {
   getList: async (params = {}) => {
     try {
       const response = await api.get(JOURNEY_ENDPOINTS.LIST, { params });
+      // API returns { data: [...], meta: {...} }
       return {
         success: true,
-        data: response.data,
+        data: response.data || response,
+        meta: response.meta,
       };
     } catch (error) {
       console.error("Error fetching journeys:", error);
       return {
         success: false,
         error:
-          error.response?.data?.message || "Khong the tai danh sach hanh trinh",
-        data: { items: [], total: 0 },
+          error.response?.data?.message || "Không thể tải danh sách hành trình",
+        data: [],
+        meta: { total: 0, page: 1, limit: 20, totalPages: 0 },
       };
     }
   },

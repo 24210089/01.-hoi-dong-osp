@@ -53,11 +53,19 @@ const VocationJourneyListPage = () => {
       const response = await journeyService.getList(params);
 
       if (response.success) {
-        setJourneys(response.data.items);
-        table.setTotalItems(response.data.total);
+        // API returns { data: [...], meta: {...} }
+        const items = Array.isArray(response.data) ? response.data : [];
+        setJourneys(items);
+        const total = response.meta?.total || items.length;
+        table.setTotalItems(total);
+      } else {
+        setJourneys([]);
+        table.setTotalItems(0);
       }
     } catch (error) {
       console.error("Error fetching journeys:", error);
+      setJourneys([]);
+      table.setTotalItems(0);
     } finally {
       setLoading(false);
     }

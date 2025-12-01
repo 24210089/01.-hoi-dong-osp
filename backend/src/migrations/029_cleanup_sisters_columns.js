@@ -8,11 +8,11 @@ const up = async () => {
 
   const columnsToRemove = [
     "religious_name",
-    "prefer_name", 
+    "prefer_name",
     "preferred_name",
     "hometown",
     "id_number",
-    "documents_url"
+    "documents_url",
   ];
 
   for (const column of columnsToRemove) {
@@ -50,7 +50,7 @@ const down = async () => {
     { name: "preferred_name", type: "VARCHAR(255) NULL" },
     { name: "hometown", type: "VARCHAR(200) NULL" },
     { name: "id_number", type: "VARCHAR(50) NULL" },
-    { name: "documents_url", type: "LONGTEXT NULL" }
+    { name: "documents_url", type: "LONGTEXT NULL" },
   ];
 
   for (const col of columnsToAdd) {

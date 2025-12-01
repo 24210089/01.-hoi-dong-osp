@@ -37,30 +37,33 @@ export const FILE_UPLOAD = {
  * Journey Stages (Giai đoạn hành trình ơn gọi)
  */
 export const JOURNEY_STAGES = {
+  INQUIRY: "inquiry", // Tìm hiểu
   ASPIRANT: "aspirant", // Ứng sinh
-  POSTULANT: "postulant", // Tập sinh
-  NOVICE: "novice", // Tập sinh khấn
+  POSTULANT: "postulant", // Thỉnh sinh
+  NOVICE: "novice", // Tập viện
   TEMPORARY_VOWS: "temporary_vows", // Khấn tạm
   PERPETUAL_VOWS: "perpetual_vows", // Khấn trọn
-  FINAL_VOWS: "final_vows", // Khấn dứt
+  LEFT: "left", // Đã rời dòng
 };
 
 export const JOURNEY_STAGE_LABELS = {
+  [JOURNEY_STAGES.INQUIRY]: "Tìm hiểu",
   [JOURNEY_STAGES.ASPIRANT]: "Ứng sinh",
-  [JOURNEY_STAGES.POSTULANT]: "Tập sinh",
-  [JOURNEY_STAGES.NOVICE]: "Tập sinh khấn",
+  [JOURNEY_STAGES.POSTULANT]: "Thỉnh sinh",
+  [JOURNEY_STAGES.NOVICE]: "Tập viện",
   [JOURNEY_STAGES.TEMPORARY_VOWS]: "Khấn tạm",
   [JOURNEY_STAGES.PERPETUAL_VOWS]: "Khấn trọn",
-  [JOURNEY_STAGES.FINAL_VOWS]: "Khấn dứt",
+  [JOURNEY_STAGES.LEFT]: "Đã rời dòng",
 };
 
 export const JOURNEY_STAGE_COLORS = {
+  [JOURNEY_STAGES.INQUIRY]: "#6c757d",
   [JOURNEY_STAGES.ASPIRANT]: "#17a2b8",
   [JOURNEY_STAGES.POSTULANT]: "#ffc107",
   [JOURNEY_STAGES.NOVICE]: "#fd7e14",
   [JOURNEY_STAGES.TEMPORARY_VOWS]: "#6f42c1",
   [JOURNEY_STAGES.PERPETUAL_VOWS]: "#28a745",
-  [JOURNEY_STAGES.FINAL_VOWS]: "#007bff",
+  [JOURNEY_STAGES.LEFT]: "#dc3545",
 };
 
 /**

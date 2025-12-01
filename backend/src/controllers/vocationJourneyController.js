@@ -54,6 +54,186 @@ const parseDateOnly = (value) => {
 
 const formatDateOnly = (date) => date.toISOString().split("T")[0];
 
+// Get all journeys with pagination
+const getAllJourneys = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, viewerRoles)) return;
+
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 20;
+    const offset = (page - 1) * limit;
+
+    // Build query with filters
+    let whereClause = "1=1";
+    const params = [];
+
+    if (req.query.sister_id) {
+      whereClause += " AND vj.sister_id = ?";
+      params.push(parseInt(req.query.sister_id, 10));
+    }
+
+    if (req.query.stage) {
+      whereClause += " AND vj.stage = ?";
+      params.push(req.query.stage);
+    }
+
+    // Get total count
+    const countSql = `SELECT COUNT(*) as total FROM vocation_journey vj WHERE ${whereClause}`;
+    const countResult = await VocationJourneyModel.executeQuery(countSql, params);
+    const total = countResult[0].total;
+
+    // Get data with sister info
+    const sql = `
+      SELECT vj.*, 
+             s.birth_name, 
+             s.saint_name, 
+             s.code as sister_code
+      FROM vocation_journey vj
+      LEFT JOIN sisters s ON vj.sister_id = s.id
+      WHERE ${whereClause}
+      ORDER BY vj.start_date DESC
+      LIMIT ? OFFSET ?
+    `;
+    params.push(limit, offset);
+    const data = await VocationJourneyModel.executeQuery(sql, params);
+
+    return res.status(200).json({
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error("getAllJourneys error:", error.message);
+    return res.status(500).json({ message: "Failed to fetch journeys" });
+  }
+};
+
+// Get journey by ID
+const getJourneyById = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, viewerRoles)) return;
+
+    const id = parseInt(req.params.id, 10);
+    if (!id) {
+      return res.status(400).json({ message: "Invalid journey id" });
+    }
+
+    const sql = `
+      SELECT vj.*, 
+             s.birth_name, 
+             s.saint_name, 
+             s.code as sister_code
+      FROM vocation_journey vj
+      LEFT JOIN sisters s ON vj.sister_id = s.id
+      WHERE vj.id = ?
+    `;
+    const rows = await VocationJourneyModel.executeQuery(sql, [id]);
+    
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ message: "Journey not found" });
+    }
+
+    return res.status(200).json({ data: rows[0] });
+  } catch (error) {
+    console.error("getJourneyById error:", error.message);
+    return res.status(500).json({ message: "Failed to fetch journey" });
+  }
+};
+
+// Create new journey with sister_id in body
+const createJourney = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, editorRoles)) return;
+
+    const {
+      sister_id: sisterId,
+      stage,
+      start_date: startDate,
+      end_date: endDate,
+      location,
+      superior,
+      formation_director: formationDirector,
+      notes,
+      community_id: communityId,
+      supervisor_id: supervisorId,
+    } = req.body;
+
+    // Validate required fields
+    if (!sisterId) {
+      return res.status(400).json({ message: "sister_id is required" });
+    }
+    if (!stage) {
+      return res.status(400).json({ message: "stage is required" });
+    }
+    if (!startDate) {
+      return res.status(400).json({ message: "start_date is required" });
+    }
+
+    // Verify sister exists
+    const sister = await SisterModel.findById(sisterId);
+    if (!sister) {
+      return res.status(404).json({ message: "Sister not found" });
+    }
+
+    const startDateObj = parseDateOnly(startDate);
+    if (!startDateObj) {
+      return res.status(400).json({ message: "start_date must be a valid date" });
+    }
+
+    let endDateFormatted = null;
+    if (endDate) {
+      const endDateObj = parseDateOnly(endDate);
+      if (!endDateObj) {
+        return res.status(400).json({ message: "end_date must be a valid date" });
+      }
+      if (endDateObj < startDateObj) {
+        return res.status(400).json({ message: "end_date must be after start_date" });
+      }
+      endDateFormatted = formatDateOnly(endDateObj);
+    }
+
+    const payload = {
+      sister_id: sisterId,
+      stage,
+      start_date: formatDateOnly(startDateObj),
+      end_date: endDateFormatted,
+      location: location || null,
+      superior: superior || null,
+      formation_director: formationDirector || null,
+      community_id: communityId || null,
+      supervisor_id: supervisorId || null,
+      notes: notes || null,
+    };
+
+    const createdJourney = await VocationJourneyModel.create(payload);
+    await logAudit(req, "CREATE", createdJourney.id, null, createdJourney);
+
+    // Return with additional info
+    const sql = `
+      SELECT vj.*, 
+             s.birth_name, 
+             s.saint_name, 
+             s.code as sister_code
+      FROM vocation_journey vj
+      LEFT JOIN sisters s ON vj.sister_id = s.id
+      WHERE vj.id = ?
+    `;
+    const rows = await VocationJourneyModel.executeQuery(sql, [createdJourney.id]);
+
+    return res.status(201).json({ 
+      success: true,
+      data: rows[0] || createdJourney 
+    });
+  } catch (error) {
+    console.error("createJourney error:", error.message);
+    return res.status(500).json({ message: "Failed to create journey" });
+  }
+};
+
 const getJourneyBySister = async (req, res) => {
   try {
     if (!ensurePermission(req, res, viewerRoles)) return;
@@ -300,6 +480,9 @@ const getStatisticsByStage = async (req, res) => {
 };
 
 module.exports = {
+  getAllJourneys,
+  getJourneyById,
+  createJourney,
   getJourneyBySister,
   addJourneyStage,
   updateJourneyStage,

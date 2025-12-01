@@ -209,7 +209,8 @@ const CommunityDetailPage = () => {
                   </Nav.Item>
                   <Nav.Item>
                     <Nav.Link eventKey="members">
-                      <i className="fas fa-users me-2"></i>Thành viên ({members.length})
+                      <i className="fas fa-users me-2"></i>Thành viên (
+                      {members.length})
                     </Nav.Link>
                   </Nav.Item>
                 </Nav>
@@ -310,7 +311,9 @@ const CommunityDetailPage = () => {
                                 <Button
                                   variant="outline-primary"
                                   size="sm"
-                                  onClick={() => handleViewMember(member.sister_id)}
+                                  onClick={() =>
+                                    handleViewMember(member.sister_id)
+                                  }
                                 >
                                   <i className="fas fa-eye"></i>
                                 </Button>
@@ -323,7 +326,8 @@ const CommunityDetailPage = () => {
                       <div className="text-center py-5">
                         <p className="text-muted">Chưa có thành viên nào</p>
                         <Button variant="primary" onClick={handleAssignMembers}>
-                          <i className="fas fa-user-plus me-2"></i>Thêm thành viên đầu tiên
+                          <i className="fas fa-user-plus me-2"></i>Thêm thành
+                          viên đầu tiên
                         </Button>
                       </div>
                     )}
