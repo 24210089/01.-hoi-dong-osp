@@ -153,7 +153,10 @@ const DataTable = ({
               ))}
 
               {actions.length > 0 && (
-                <th className="datatable-actions-header text-center" style={{ width: '120px' }}>
+                <th
+                  className="datatable-actions-header text-center"
+                  style={{ width: "120px" }}
+                >
                   Thao tác
                 </th>
               )}
@@ -173,10 +176,13 @@ const DataTable = ({
                 onMouseEnter={() => setHoveredRow(rowIndex)}
                 onMouseLeave={() => setHoveredRow(null)}
                 onClick={() => onRowClick && onRowClick(row, rowIndex)}
-                style={onRowClick ? { cursor: 'pointer' } : {}}
+                style={onRowClick ? { cursor: "pointer" } : {}}
               >
                 {selectable && (
-                  <td className="datatable-checkbox-cell" onClick={(e) => e.stopPropagation()}>
+                  <td
+                    className="datatable-checkbox-cell"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Form.Check
                       type="checkbox"
                       checked={isRowSelected(row, rowIndex)}
@@ -199,7 +205,10 @@ const DataTable = ({
                 ))}
 
                 {actions.length > 0 && (
-                  <td className="datatable-actions-cell text-center" onClick={(e) => e.stopPropagation()}>
+                  <td
+                    className="datatable-actions-cell text-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Dropdown>
                       <Dropdown.Toggle
                         variant="light"
@@ -213,9 +222,11 @@ const DataTable = ({
                           <Dropdown.Item
                             key={actionIndex}
                             onClick={() => action.onClick(row, rowIndex)}
-                            className={`text-${action.variant || 'dark'}`}
+                            className={`text-${action.variant || "dark"}`}
                           >
-                            {action.icon && <i className={`${action.icon} me-2`}></i>}
+                            {action.icon && (
+                              <i className={`${action.icon} me-2`}></i>
+                            )}
                             {action.label}
                           </Dropdown.Item>
                         ))}

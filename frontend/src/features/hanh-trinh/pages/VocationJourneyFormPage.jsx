@@ -153,8 +153,12 @@ const VocationJourneyFormPage = () => {
         // Format dates for DatePicker if needed
         const journeyData = {
           ...response.data,
-          start_date: response.data.start_date ? response.data.start_date.split('T')[0] : '',
-          end_date: response.data.end_date ? response.data.end_date.split('T')[0] : '',
+          start_date: response.data.start_date
+            ? response.data.start_date.split("T")[0]
+            : "",
+          end_date: response.data.end_date
+            ? response.data.end_date.split("T")[0]
+            : "",
         };
         console.log("Setting values:", journeyData);
         updateValues(journeyData);
@@ -212,7 +216,7 @@ const VocationJourneyFormPage = () => {
         "supervisor_id",
         "notes",
       ];
-      
+
       const payload = {};
       allowedFields.forEach((field) => {
         if (values[field] !== undefined) {
@@ -710,7 +714,10 @@ const VocationJourneyFormPage = () => {
                           backgroundColor: color.value,
                           borderRadius: "6px",
                           cursor: "pointer",
-                          border: newStageColor === color.value ? "3px solid #000" : "2px solid #dee2e6",
+                          border:
+                            newStageColor === color.value
+                              ? "3px solid #000"
+                              : "2px solid #dee2e6",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -725,7 +732,9 @@ const VocationJourneyFormPage = () => {
                   </div>
                   <div className="mt-2">
                     <small className="text-muted">Xem trước: </small>
-                    <Badge style={{ backgroundColor: newStageColor, color: "#fff" }}>
+                    <Badge
+                      style={{ backgroundColor: newStageColor, color: "#fff" }}
+                    >
                       {newStageName || "Tên giai đoạn"}
                     </Badge>
                   </div>

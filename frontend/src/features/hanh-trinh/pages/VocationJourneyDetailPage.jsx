@@ -137,7 +137,9 @@ const VocationJourneyDetailPage = () => {
                 <Col xs={12}>
                   <div className="stage-badge-large">
                     <Badge
-                      style={{ backgroundColor: journey.stage_color || '#6c757d' }}
+                      style={{
+                        backgroundColor: journey.stage_color || "#6c757d",
+                      }}
                       className="p-3 fs-6"
                     >
                       <i className="fas fa-route me-2"></i>
@@ -317,7 +319,11 @@ const VocationJourneyDetailPage = () => {
                   <i className="fas fa-birthday-cake text-primary"></i>
                   <div>
                     <small className="text-muted">Ngày sinh</small>
-                    <div>{journey.sister_birth_date ? formatDate(journey.sister_birth_date) : "-"}</div>
+                    <div>
+                      {journey.sister_birth_date
+                        ? formatDate(journey.sister_birth_date)
+                        : "-"}
+                    </div>
                   </div>
                 </div>
 

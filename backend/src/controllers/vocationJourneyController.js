@@ -80,14 +80,17 @@ const getAllJourneys = async (req, res) => {
     // Search by sister name, location, etc.
     if (req.query.search) {
       const searchTerm = `%${req.query.search}%`;
-      whereClause += " AND (s.birth_name LIKE ? OR s.saint_name LIKE ? OR s.code LIKE ? OR vj.location LIKE ?)";
+      whereClause +=
+        " AND (s.birth_name LIKE ? OR s.saint_name LIKE ? OR s.code LIKE ? OR vj.location LIKE ?)";
       params.push(searchTerm, searchTerm, searchTerm, searchTerm);
     }
 
     // Check if journey_stages table exists first (for count query)
     let hasJourneyStagesTable = false;
     try {
-      await VocationJourneyModel.executeQuery("SELECT 1 FROM journey_stages LIMIT 1");
+      await VocationJourneyModel.executeQuery(
+        "SELECT 1 FROM journey_stages LIMIT 1"
+      );
       hasJourneyStagesTable = true;
     } catch (e) {
       // Table doesn't exist
@@ -100,10 +103,9 @@ const getAllJourneys = async (req, res) => {
       LEFT JOIN sisters s ON vj.sister_id = s.id
       WHERE ${whereClause}
     `;
-    const countResult = await VocationJourneyModel.executeQuery(
-      countSql,
-      [...params]
-    );
+    const countResult = await VocationJourneyModel.executeQuery(countSql, [
+      ...params,
+    ]);
     const total = countResult[0].total;
 
     // Get data with sister info and stage info
@@ -169,7 +171,9 @@ const getJourneyById = async (req, res) => {
     // Check if journey_stages table exists
     let hasJourneyStagesTable = false;
     try {
-      await VocationJourneyModel.executeQuery("SELECT 1 FROM journey_stages LIMIT 1");
+      await VocationJourneyModel.executeQuery(
+        "SELECT 1 FROM journey_stages LIMIT 1"
+      );
       hasJourneyStagesTable = true;
     } catch (e) {
       // Table doesn't exist
@@ -216,7 +220,7 @@ const getJourneyById = async (req, res) => {
         WHERE vj.id = ?
       `;
     }
-    
+
     const rows = await VocationJourneyModel.executeQuery(sql, [id]);
 
     if (!rows || rows.length === 0) {

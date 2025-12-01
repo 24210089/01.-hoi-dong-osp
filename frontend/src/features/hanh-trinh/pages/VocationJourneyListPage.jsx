@@ -85,8 +85,6 @@ const VocationJourneyListPage = () => {
     }
   };
 
-
-
   const handleRowClick = (journey) => {
     navigate(`/hanh-trinh/${journey.id}`);
   };
@@ -99,9 +97,7 @@ const VocationJourneyListPage = () => {
       render: (row) => (
         <div>
           {row.saint_name && (
-            <div className="text-primary fw-semibold">
-              {row.saint_name}
-            </div>
+            <div className="text-primary fw-semibold">{row.saint_name}</div>
           )}
           <div>{row.birth_name}</div>
           <small className="text-muted">{row.sister_code}</small>
@@ -113,10 +109,10 @@ const VocationJourneyListPage = () => {
       label: "Giai đoạn",
       sortable: true,
       render: (row) => (
-        <Badge 
-          style={{ 
-            backgroundColor: row.stage_color || '#6c757d',
-            color: '#fff'
+        <Badge
+          style={{
+            backgroundColor: row.stage_color || "#6c757d",
+            color: "#fff",
           }}
         >
           {row.stage_name || row.stage}
@@ -157,8 +153,6 @@ const VocationJourneyListPage = () => {
       },
     },
   ];
-
-
 
   return (
     <Container fluid className="py-4">
@@ -237,9 +231,7 @@ const VocationJourneyListPage = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div>
                   <small className="text-muted">Giai đoạn</small>
-                  <h4 className="mb-0">
-                    {stages.length}
-                  </h4>
+                  <h4 className="mb-0">{stages.length}</h4>
                 </div>
                 <div className="stat-icon bg-warning">
                   <i className="fas fa-layer-group"></i>
