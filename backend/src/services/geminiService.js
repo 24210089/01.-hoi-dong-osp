@@ -107,7 +107,7 @@ Lưu ý:
       };
     } catch (error) {
       console.error("Gemini API Error:", error.message);
-      
+
       // Always fallback to context-based response on any error
       return this.fallbackResponse(userMessage, context);
     }
@@ -126,10 +126,11 @@ Lưu ý:
         model: "database-fallback",
       };
     }
-    
+
     return {
       success: true,
-      message: `Xin chào! Tôi là trợ lý của hệ thống quản lý Hội Dòng Thánh Phaolô Thiện Bản.\n\n` +
+      message:
+        `Xin chào! Tôi là trợ lý của hệ thống quản lý Hội Dòng Thánh Phaolô Thiện Bản.\n\n` +
         `Bạn có thể hỏi tôi về:\n` +
         `• 📋 Thông tin nữ tu\n` +
         `• 🛤️ Hành trình ơn gọi\n` +

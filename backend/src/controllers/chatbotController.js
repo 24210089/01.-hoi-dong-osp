@@ -186,7 +186,11 @@ class ChatbotController {
     try {
       const { message_id, is_helpful, feedback } = req.body;
 
-      await ChatConversationModel.updateFeedback(message_id, is_helpful, feedback);
+      await ChatConversationModel.updateFeedback(
+        message_id,
+        is_helpful,
+        feedback
+      );
 
       return res.json({
         success: true,

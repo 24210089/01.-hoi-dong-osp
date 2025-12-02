@@ -6,7 +6,7 @@ const chatbotService = {
       // Debug: Check token before sending
       const token = localStorage.getItem("token");
       console.log("📤 Sending chatbot message, token exists:", !!token);
-      
+
       const response = await api.post("/chatbot/chat", data);
       console.log("📥 Chatbot response:", response);
       return {
@@ -19,7 +19,10 @@ const chatbotService = {
       console.error("❌ Chatbot error:", error);
       return {
         success: false,
-        error: error.response?.data?.message || error.message || "Lỗi khi gửi tin nhắn",
+        error:
+          error.response?.data?.message ||
+          error.message ||
+          "Lỗi khi gửi tin nhắn",
       };
     }
   },

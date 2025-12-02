@@ -1,21 +1,61 @@
 // src/features/hanh-trinh/pages/TimelinePage.jsx
 
-import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Badge,
-  Form,
-} from "react-bootstrap";
+import React, { useState, useEffect, useRef } from "react";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import { journeyService, sisterService } from "@services";
-import { formatDate, calculateDuration } from "@utils";
+import { formatDate } from "@utils";
 import LoadingSpinner from "@components/common/Loading/LoadingSpinner";
-import Breadcrumb from "@components/common/Breadcrumb";
 import "./TimelinePage.css";
+
+// Stage configurations
+const stageConfig = {
+  inquiry: {
+    label: "Tìm hiểu",
+    icon: "fas fa-search",
+    className: "stage-inquiry",
+  },
+  postulant: {
+    label: "Thỉnh sinh",
+    icon: "fas fa-door-open",
+    className: "stage-postulant",
+  },
+  aspirant: {
+    label: "Tiền Tập Viện",
+    icon: "fas fa-book-open",
+    className: "stage-aspirant",
+  },
+  novice: {
+    label: "Tập Viện",
+    icon: "fas fa-graduation-cap",
+    className: "stage-novice",
+  },
+  temporary_vows: {
+    label: "Khấn Tạm",
+    icon: "fas fa-praying-hands",
+    className: "stage-temporary_vows",
+  },
+  perpetual_vows: {
+    label: "Khấn Vĩnh Viễn",
+    icon: "fas fa-infinity",
+    className: "stage-perpetual_vows",
+  },
+  left: {
+    label: "Đã rời",
+    icon: "fas fa-sign-out-alt",
+    className: "stage-left",
+  },
+};
+
+const getStageConfig = (stage) => {
+  return (
+    stageConfig[stage] || {
+      label: stage || "Chưa xác định",
+      icon: "fas fa-circle",
+      className: "stage-default",
+    }
+  );
+};
 
 const TimelinePage = () => {
   const { sisterId } = useParams();
@@ -25,6 +65,13 @@ const TimelinePage = () => {
   const [journeys, setJourneys] = useState([]);
   const [sisters, setSisters] = useState([]);
   const [selectedSisterId, setSelectedSisterId] = useState(sisterId || "");
+  
+  // Search states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [filteredSisters, setFilteredSisters] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchRef = useRef(null);
 
   useEffect(() => {
     if (sisterId) {
@@ -35,7 +82,30 @@ const TimelinePage = () => {
     }
   }, [sisterId]);
 
-  // Fetch danh sách nữ tu khi không có sisterId
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Filter sisters when search term changes
+  useEffect(() => {
+    if (isSearching && searchTerm.trim()) {
+      const filtered = sisters.filter((s) => {
+        const fullName = `${s.saint_name || ""} ${s.birth_name} ${s.code}`.toLowerCase();
+        return fullName.includes(searchTerm.toLowerCase());
+      });
+      setFilteredSisters(filtered);
+    } else {
+      setFilteredSisters(sisters);
+    }
+  }, [searchTerm, sisters, isSearching]);
+
   const fetchSistersList = async () => {
     try {
       setLoading(true);
@@ -50,12 +120,10 @@ const TimelinePage = () => {
     }
   };
 
-  // Fetch thông tin nữ tu và hành trình
   const fetchSisterData = async (id) => {
     try {
       setLoading(true);
 
-      // Fetch sister info
       const sisterRes = await sisterService.getDetail(id);
       if (sisterRes && sisterRes.success) {
         setSister(sisterRes.data);
@@ -63,13 +131,11 @@ const TimelinePage = () => {
         setSister(sisterRes);
       }
 
-      // Fetch journey timeline for this sister
       const journeyRes = await journeyService.getList({
         sister_id: id,
         limit: 100,
       });
       if (journeyRes && journeyRes.success) {
-        // Sort by start_date ascending for timeline
         const sortedJourneys = (journeyRes.data || []).sort(
           (a, b) => new Date(a.start_date) - new Date(b.start_date)
         );
@@ -82,7 +148,6 @@ const TimelinePage = () => {
     }
   };
 
-  // Xử lý khi chọn nữ tu từ dropdown
   const handleSisterChange = (e) => {
     const id = e.target.value;
     setSelectedSisterId(id);
@@ -92,6 +157,73 @@ const TimelinePage = () => {
       setSister(null);
       setJourneys([]);
     }
+  };
+
+  const handleSelectSister = (s) => {
+    setSelectedSisterId(s.id);
+    setSearchTerm(`${s.saint_name ? s.saint_name + " - " : ""}${s.birth_name} (${s.code})`);
+    setShowDropdown(false);
+    setIsSearching(false);
+    fetchSisterData(s.id);
+  };
+
+  const handleSearchFocus = () => {
+    if (sisters.length > 0) {
+      setFilteredSisters(sisters);
+      setShowDropdown(true);
+      setIsSearching(true);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setIsSearching(true);
+    setShowDropdown(true);
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const calculateAge = (birthDate) => {
+    if (!birthDate) return null;
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    return age;
+  };
+
+  const calculateYearsInCongregation = () => {
+    if (!journeys.length) return 0;
+    const firstJourney = journeys[0];
+    if (!firstJourney.start_date) return 0;
+    const start = new Date(firstJourney.start_date);
+    const today = new Date();
+    return Math.floor((today - start) / (365.25 * 24 * 60 * 60 * 1000));
+  };
+
+  const countVows = () => {
+    return journeys.filter(
+      (j) => j.stage === "temporary_vows" || j.stage === "perpetual_vows"
+    ).length;
+  };
+
+  const getPhotoUrl = (sisterData) => {
+    if (sisterData?.photo_url) {
+      if (sisterData.photo_url.startsWith("/")) {
+        return `http://localhost:5000${sisterData.photo_url}`;
+      }
+      return sisterData.photo_url;
+    }
+    return null;
+  };
+
+  const getCurrentStage = () => {
+    if (!journeys.length) return null;
+    const currentJourney = journeys.find((j) => !j.end_date);
+    return currentJourney || journeys[journeys.length - 1];
   };
 
   if (loading) {
@@ -108,99 +240,295 @@ const TimelinePage = () => {
   // Nếu không có sisterId, hiển thị giao diện chọn nữ tu
   if (!sisterId && !selectedSisterId) {
     return (
-      <Container fluid className="py-4">
-        <Breadcrumb
-          items={[
-            { label: "Trang chủ", link: "/dashboard" },
-            { label: "Hành trình Ơn Gọi", link: "/hanh-trinh" },
-            { label: "Timeline" },
-          ]}
-        />
-
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <h2 className="mb-1">Timeline Hành trình Ơn gọi</h2>
-            <p className="text-muted mb-0">
-              Chọn nữ tu để xem timeline hành trình
-            </p>
-          </div>
-          <Button variant="secondary" onClick={() => navigate("/hanh-trinh")}>
-            Quay lại
-          </Button>
+      <div className="timeline-page">
+        {/* Header */}
+        <div className="page-header">
+          <Container>
+            <div className="text-center">
+              <h1 className="display-4 mb-2">
+                <i className="fas fa-route me-3"></i>
+                Hành Trình Ơn Gọi
+              </h1>
+              <p className="lead mb-0">Hội Dòng Thánh Phaolô Thiện Bản</p>
+            </div>
+          </Container>
         </div>
 
-        <Card>
-          <Card.Body>
-            <Form.Group>
-              <Form.Label className="fw-semibold">Chọn Nữ tu</Form.Label>
-              <Form.Select
+        <Container>
+          <div className="select-sister-card">
+            <h4 className="text-center mb-4">
+              <i className="fas fa-user-circle me-2"></i>
+              Chọn Nữ Tu để xem Hành Trình
+            </h4>
+            <Form.Group ref={searchRef} className="position-relative">
+              <Form.Control
+                type="text"
                 size="lg"
-                value={selectedSisterId}
-                onChange={handleSisterChange}
-              >
-                <option value="">-- Chọn nữ tu --</option>
-                {sisters.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.saint_name ? `${s.saint_name} - ` : ""}
-                    {s.birth_name} ({s.code})
-                  </option>
-                ))}
-              </Form.Select>
+                placeholder="Nhập tên để tìm hoặc click để chọn..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                onFocus={handleSearchFocus}
+                className="searchable-select"
+              />
+              <i className="fas fa-chevron-down dropdown-arrow"></i>
+              {showDropdown && (
+                <div className="select-dropdown">
+                  {filteredSisters.length > 0 ? (
+                    filteredSisters.map((s) => (
+                      <div
+                        key={s.id}
+                        className="select-dropdown-item"
+                        onClick={() => handleSelectSister(s)}
+                      >
+                        <i className="fas fa-user me-2"></i>
+                        {s.saint_name ? `${s.saint_name} - ` : ""}
+                        {s.birth_name}
+                        <span className="text-muted ms-2">({s.code})</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="select-dropdown-item text-muted">
+                      <i className="fas fa-search me-2"></i>
+                      Không tìm thấy nữ tu nào
+                    </div>
+                  )}
+                </div>
+              )}
             </Form.Group>
-          </Card.Body>
-        </Card>
-      </Container>
+            <div className="text-center mt-4">
+              <Button
+                variant="secondary"
+                onClick={() => navigate("/hanh-trinh")}
+              >
+                <i className="fas fa-arrow-left me-2"></i>
+                Quay lại
+              </Button>
+            </div>
+          </div>
+        </Container>
+      </div>
     );
   }
 
-  return (
-    <Container fluid className="py-4">
-      <Breadcrumb
-        items={
-          sisterId
-            ? [
-                { label: "Trang chủ", link: "/dashboard" },
-                { label: "Quản lý Nữ tu", link: "/nu-tu" },
-                {
-                  label: sister?.birth_name || sister?.full_name,
-                  link: `/nu-tu/${sisterId}`,
-                },
-                { label: "Hành trình ơn gọi" },
-              ]
-            : [
-                { label: "Trang chủ", link: "/dashboard" },
-                { label: "Hành trình Ơn Gọi", link: "/hanh-trinh" },
-                { label: "Timeline" },
-              ]
-        }
-      />
+  const currentStage = getCurrentStage();
+  const currentStageConfig = currentStage
+    ? getStageConfig(currentStage.stage)
+    : null;
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Hành trình Ơn gọi</h2>
-          <p className="text-muted mb-0">
-            {sister?.saint_name && (
-              <span className="text-primary me-2">{sister.saint_name}</span>
-            )}
-            {sister?.birth_name || sister?.full_name}
-          </p>
-        </div>
-        <div className="d-flex gap-2">
-          {!sisterId && (
-            <Form.Select
-              style={{ width: "300px" }}
-              value={selectedSisterId}
-              onChange={handleSisterChange}
-            >
-              <option value="">-- Chọn nữ tu khác --</option>
-              {sisters.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.saint_name ? `${s.saint_name} - ` : ""}
-                  {s.birth_name} ({s.code})
-                </option>
-              ))}
-            </Form.Select>
-          )}
+  return (
+    <div className="timeline-page">
+      {/* Header */}
+      <div className="page-header">
+        <Container>
+          <div className="text-center">
+            <h1 className="display-4 mb-2">
+              <i className="fas fa-route me-3"></i>
+              Hành Trình Ơn Gọi
+            </h1>
+            <p className="lead mb-0">Hội Dòng Thánh Phaolô Thiện Bản</p>
+          </div>
+        </Container>
+      </div>
+
+      <Container>
+        {/* Sister Info Card */}
+        {sister && (
+          <div className="sister-info">
+            <Row className="align-items-center">
+              <Col md={3} className="text-center">
+                <div className="sister-avatar">
+                  {getPhotoUrl(sister) ? (
+                    <img
+                      src={getPhotoUrl(sister)}
+                      alt={sister.birth_name}
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.parentElement.innerHTML =
+                          '<i class="fas fa-user"></i>';
+                      }}
+                    />
+                  ) : (
+                    <i className="fas fa-user"></i>
+                  )}
+                </div>
+              </Col>
+              <Col md={9}>
+                <h2 className="mb-3">
+                  {sister.saint_name && `Sr. ${sister.saint_name} `}
+                  {sister.birth_name}
+                </h2>
+                <div className="mb-3">
+                  {sister.date_of_birth && (
+                    <span className="info-badge">
+                      <i className="fas fa-calendar"></i>
+                      Ngày sinh: {formatDate(sister.date_of_birth)}
+                    </span>
+                  )}
+                  {calculateAge(sister.date_of_birth) && (
+                    <span className="info-badge">
+                      <i className="fas fa-birthday-cake"></i>
+                      {calculateAge(sister.date_of_birth)} tuổi
+                    </span>
+                  )}
+                  {sister.place_of_birth && (
+                    <span className="info-badge">
+                      <i className="fas fa-map-marker-alt"></i>
+                      {sister.place_of_birth}
+                    </span>
+                  )}
+                </div>
+                <div className="mb-3">
+                  {sister.saint_name && (
+                    <span className="info-badge">
+                      <i className="fas fa-church"></i>
+                      Tên dòng: {sister.saint_name}
+                    </span>
+                  )}
+                  {sister.baptism_date && (
+                    <span className="info-badge">
+                      <i className="fas fa-cross"></i>
+                      Rửa tội: {formatDate(sister.baptism_date)}
+                    </span>
+                  )}
+                </div>
+                <div>
+                  {sister.current_community_name && (
+                    <span className="info-badge">
+                      <i className="fas fa-home"></i>
+                      Cộng đoàn: {sister.current_community_name}
+                    </span>
+                  )}
+                  {currentStageConfig && (
+                    <span className="info-badge">
+                      <i className="fas fa-star"></i>
+                      Giai đoạn: {currentStageConfig.label}
+                    </span>
+                  )}
+                </div>
+              </Col>
+            </Row>
+          </div>
+        )}
+
+        {/* Stats Cards */}
+        <Row className="mb-5">
+          <Col md={3} className="mb-3">
+            <div className="stats-card">
+              <div
+                className="stats-icon"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                }}
+              >
+                <i className="fas fa-calendar-check"></i>
+              </div>
+              <div className="stats-value">{journeys.length}</div>
+              <div className="stats-label">Sự kiện quan trọng</div>
+            </div>
+          </Col>
+          <Col md={3} className="mb-3">
+            <div className="stats-card">
+              <div
+                className="stats-icon"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #56ab2f 0%, #a8e063 100%)",
+                }}
+              >
+                <i className="fas fa-hourglass-half"></i>
+              </div>
+              <div className="stats-value">{calculateYearsInCongregation()}</div>
+              <div className="stats-label">Năm tu hành</div>
+            </div>
+          </Col>
+          <Col md={3} className="mb-3">
+            <div className="stats-card">
+              <div
+                className="stats-icon"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #f39c12 0%, #e67e22 100%)",
+                }}
+              >
+                <i className="fas fa-praying-hands"></i>
+              </div>
+              <div className="stats-value">{countVows()}</div>
+              <div className="stats-label">Lần khấn</div>
+            </div>
+          </Col>
+          <Col md={3} className="mb-3">
+            <div className="stats-card">
+              <div
+                className="stats-icon"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)",
+                }}
+              >
+                <i className="fas fa-heart"></i>
+              </div>
+              <div className="stats-value">100%</div>
+              <div className="stats-label">Tận tâm phục vụ</div>
+            </div>
+          </Col>
+        </Row>
+
+        {/* Timeline */}
+        {journeys.length > 0 ? (
+          <div className="timeline">
+            {journeys.map((journey, index) => {
+              const config = getStageConfig(journey.stage);
+              return (
+                <div
+                  key={journey.id}
+                  className={`timeline-item ${config.className}`}
+                >
+                  <div className={`timeline-icon ${config.className}`}>
+                    <i className={config.icon}></i>
+                  </div>
+                  <div className="timeline-content">
+                    <div className="timeline-date">
+                      <i className="fas fa-calendar"></i>
+                      {formatDate(journey.start_date)}
+                      {journey.end_date && ` - ${formatDate(journey.end_date)}`}
+                    </div>
+                    <h3 className="timeline-title">
+                      {journey.stage_name || config.label}
+                    </h3>
+                    <span className={`timeline-stage ${config.className}`}>
+                      {config.label}
+                    </span>
+                    {journey.notes && (
+                      <p className="timeline-description">{journey.notes}</p>
+                    )}
+                    {journey.location && (
+                      <div className="timeline-location">
+                        <i className="fas fa-map-marker-alt"></i>
+                        {journey.location}
+                      </div>
+                    )}
+                    {journey.supervisor && (
+                      <div className="timeline-supervisor">
+                        <i className="fas fa-user-tie"></i>
+                        Người hướng dẫn: {journey.supervisor}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="empty-timeline">
+            <i className="fas fa-route"></i>
+            <h4>Chưa có thông tin hành trình</h4>
+            <p>Hành trình ơn gọi của nữ tu này chưa được ghi nhận.</p>
+          </div>
+        )}
+
+        {/* Back button and Sister select */}
+        <div className="d-flex justify-content-between align-items-center mt-4 mb-4">
           <Button
             variant="secondary"
             onClick={() =>
@@ -209,136 +537,47 @@ const TimelinePage = () => {
                 : navigate("/hanh-trinh")
             }
           >
+            <i className="fas fa-arrow-left me-2"></i>
             Quay lại
           </Button>
-        </div>
-      </div>
 
-      <Row>
-        <Col lg={8}>
-          <Card>
-            <Card.Header className="bg-white">
-              <h5 className="mb-0">Các giai đoạn</h5>
-            </Card.Header>
-            <Card.Body>
-              {journeys.length > 0 ? (
-                <div className="timeline">
-                  {journeys.map((journey, index) => (
-                    <div key={journey.id} className="timeline-item">
-                      <div className="timeline-marker">
-                        <span
-                          className="badge"
-                          style={{
-                            backgroundColor: journey.stage_color || "#6c757d",
-                            color: "#fff",
-                          }}
-                        >
-                          {index + 1}
-                        </span>
-                      </div>
-                      <div className="timeline-content">
-                        <Card className="mb-3">
-                          <Card.Body>
-                            <div className="d-flex justify-content-between align-items-start">
-                              <div>
-                                <h6 className="mb-1">
-                                  {journey.stage_name || journey.stage}
-                                </h6>
-                                <small className="text-muted">
-                                  {formatDate(journey.start_date)}
-                                  {journey.end_date &&
-                                    ` - ${formatDate(journey.end_date)}`}
-                                </small>
-                              </div>
-                              <span
-                                className="badge"
-                                style={{
-                                  backgroundColor:
-                                    journey.stage_color || "#6c757d",
-                                  color: "#fff",
-                                }}
-                              >
-                                {journey.end_date
-                                  ? "Hoàn thành"
-                                  : "Đang thực hiện"}
-                              </span>
-                            </div>
-                            {journey.notes && (
-                              <p className="text-muted mt-2 mb-0 small">
-                                {journey.notes}
-                              </p>
-                            )}
-                          </Card.Body>
-                        </Card>
-                      </div>
+          {!sisterId && (
+            <div ref={searchRef} className="position-relative" style={{ width: "350px" }}>
+              <Form.Control
+                type="text"
+                placeholder="Chọn nữ tu khác..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                onFocus={handleSearchFocus}
+                className="searchable-select-sm"
+              />
+              <i className="fas fa-chevron-down dropdown-arrow-sm"></i>
+              {showDropdown && filteredSisters.length > 0 && (
+                <div className="select-dropdown select-dropdown-up">
+                  {filteredSisters.slice(0, 8).map((s) => (
+                    <div
+                      key={s.id}
+                      className="select-dropdown-item"
+                      onClick={() => handleSelectSister(s)}
+                    >
+                      <i className="fas fa-user me-2"></i>
+                      {s.saint_name ? `${s.saint_name} - ` : ""}
+                      {s.birth_name}
+                      <span className="text-muted ms-2">({s.code})</span>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-5">
-                  <p className="text-muted">Chưa có thông tin hành trình</p>
-                </div>
               )}
-            </Card.Body>
-          </Card>
-        </Col>
+            </div>
+          )}
+        </div>
+      </Container>
 
-        <Col lg={4}>
-          <Card>
-            <Card.Header className="bg-white">
-              <h5 className="mb-0">Thông tin hiện tại</h5>
-            </Card.Header>
-            <Card.Body>
-              {sister && (
-                <>
-                  <div className="mb-3">
-                    <small className="text-muted d-block">
-                      Giai đoạn hiện tại
-                    </small>
-                    {journeys.length > 0 && journeys[journeys.length - 1] ? (
-                      <span
-                        className="badge mt-1"
-                        style={{
-                          backgroundColor:
-                            journeys[journeys.length - 1].stage_color ||
-                            "#6c757d",
-                          color: "#fff",
-                        }}
-                      >
-                        {journeys[journeys.length - 1].stage_name ||
-                          journeys[journeys.length - 1].stage}
-                      </span>
-                    ) : (
-                      <span className="badge bg-secondary mt-1">
-                        Chưa xác định
-                      </span>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <small className="text-muted d-block">Mã số</small>
-                    <div className="fw-semibold">
-                      {sister.code || sister.sister_code}
-                    </div>
-                  </div>
-                  <div className="mb-3">
-                    <small className="text-muted d-block">Ngày sinh</small>
-                    <div className="fw-semibold">
-                      {formatDate(sister.date_of_birth || sister.birth_date)}
-                    </div>
-                  </div>
-                  <div className="mb-3">
-                    <small className="text-muted d-block">Ngày gia nhập</small>
-                    <div className="fw-semibold">
-                      {formatDate(sister.join_date)}
-                    </div>
-                  </div>
-                </>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+      {/* Print Button */}
+      <button className="print-btn" onClick={handlePrint} title="In trang này">
+        <i className="fas fa-print"></i>
+      </button>
+    </div>
   );
 };
 

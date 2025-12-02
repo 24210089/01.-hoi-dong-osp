@@ -18,7 +18,9 @@ const ChatbotWidget = () => {
       setMessages([
         {
           role: "assistant",
-          content: `Xin chào ${user?.full_name || "bạn"}! 👋\n\nTôi là trợ lý AI của hệ thống. Tôi có thể giúp bạn:\n\n• 📋 Tra cứu thông tin nữ tu\n• 🛤️ Xem hành trình ơn gọi\n• 🏠 Thông tin cộng đoàn\n• 📊 Thống kê và báo cáo\n\nBạn cần tôi giúp gì?`,
+          content: `Xin chào ${
+            user?.full_name || "bạn"
+          }! 👋\n\nTôi là trợ lý AI của hệ thống. Tôi có thể giúp bạn:\n\n• 📋 Tra cứu thông tin nữ tu\n• 🛤️ Xem hành trình ơn gọi\n• 🏠 Thông tin cộng đoàn\n• 📊 Thống kê và báo cáo\n\nBạn cần tôi giúp gì?`,
           timestamp: new Date(),
         },
       ]);
@@ -167,7 +169,9 @@ const ChatbotWidget = () => {
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`message ${message.role} ${message.isError ? "error" : ""}`}
+                className={`message ${message.role} ${
+                  message.isError ? "error" : ""
+                }`}
               >
                 <div className="message-avatar">
                   {message.role === "user" ? (

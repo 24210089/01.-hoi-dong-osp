@@ -164,8 +164,7 @@ Lưu ý:
       if (error.code === "rate_limit_exceeded") {
         return {
           success: false,
-          message:
-            "Hệ thống đang bận, vui lòng thử lại sau vài giây.",
+          message: "Hệ thống đang bận, vui lòng thử lại sau vài giây.",
           error: error.message,
         };
       }

@@ -107,7 +107,7 @@ class ChatbotService {
       );
 
       const lowerMessage = message.toLowerCase();
-      
+
       // Sort sisters by name length (longest first) to match more specific names first
       // e.g., "trần tín 1" should match before "trần tín"
       const sortedSisters = sisters.sort((a, b) => {
@@ -273,21 +273,29 @@ class ChatbotService {
           [entities.sister_id]
         );
 
-        contextText = `📋 Hành trình ơn gọi của ${sister.saint_name || ""} ${sister.birth_name}:\n\n`;
+        contextText = `📋 Hành trình ơn gọi của ${sister.saint_name || ""} ${
+          sister.birth_name
+        }:\n\n`;
         contextText += `👤 Thông tin cơ bản:\n`;
         contextText += `- Tên thánh: ${sister.saint_name || "N/A"}\n`;
         contextText += `- Họ tên: ${sister.birth_name}\n`;
         contextText += `- Mã số: ${sister.code}\n`;
-        contextText += `- Cộng đoàn hiện tại: ${sister.community_name || "N/A"}\n\n`;
+        contextText += `- Cộng đoàn hiện tại: ${
+          sister.community_name || "N/A"
+        }\n\n`;
 
         if (journeys.length > 0) {
           contextText += `📍 Các giai đoạn đã trải qua:\n`;
           journeys.forEach((journey, index) => {
-            const startDate = new Date(journey.start_date).toLocaleDateString("vi-VN");
+            const startDate = new Date(journey.start_date).toLocaleDateString(
+              "vi-VN"
+            );
             const endDate = journey.end_date
               ? new Date(journey.end_date).toLocaleDateString("vi-VN")
               : "Hiện tại";
-            contextText += `${index + 1}. ${journey.stage_name || journey.stage}\n`;
+            contextText += `${index + 1}. ${
+              journey.stage_name || journey.stage
+            }\n`;
             contextText += `   - Thời gian: ${startDate} → ${endDate}\n`;
             if (journey.location) {
               contextText += `   - Địa điểm: ${journey.location}\n`;
@@ -301,7 +309,11 @@ class ChatbotService {
         }
 
         data = { sister, journeys };
-        sources.push({ type: "sister", id: sister.id, name: sister.birth_name });
+        sources.push({
+          type: "sister",
+          id: sister.id,
+          name: sister.birth_name,
+        });
       }
     } else {
       // General journey statistics
@@ -352,12 +364,18 @@ class ChatbotService {
           [sister.id]
         );
 
-        contextText = `👤 Thông tin chi tiết về ${sister.saint_name || ""} ${sister.birth_name}:\n\n`;
+        contextText = `👤 Thông tin chi tiết về ${sister.saint_name || ""} ${
+          sister.birth_name
+        }:\n\n`;
         contextText += `📋 Thông tin cơ bản:\n`;
         contextText += `- Tên thánh: ${sister.saint_name || "N/A"}\n`;
         contextText += `- Họ tên: ${sister.birth_name}\n`;
         contextText += `- Mã số: ${sister.code}\n`;
-        contextText += `- Ngày sinh: ${sister.date_of_birth ? new Date(sister.date_of_birth).toLocaleDateString("vi-VN") : "N/A"}\n`;
+        contextText += `- Ngày sinh: ${
+          sister.date_of_birth
+            ? new Date(sister.date_of_birth).toLocaleDateString("vi-VN")
+            : "N/A"
+        }\n`;
         contextText += `- Nơi sinh: ${sister.birth_place || "N/A"}\n`;
         contextText += `- Cộng đoàn: ${sister.community_name || "N/A"}\n`;
         contextText += `- Email: ${sister.email || "N/A"}\n`;
@@ -366,12 +384,18 @@ class ChatbotService {
         if (educations.length > 0) {
           contextText += `\n📚 Học vấn:\n`;
           educations.forEach((edu) => {
-            contextText += `- ${edu.degree || edu.level}: ${edu.major || edu.field} tại ${edu.institution}\n`;
+            contextText += `- ${edu.degree || edu.level}: ${
+              edu.major || edu.field
+            } tại ${edu.institution}\n`;
           });
         }
 
         data = { sister, educations };
-        sources.push({ type: "sister", id: sister.id, name: sister.birth_name });
+        sources.push({
+          type: "sister",
+          id: sister.id,
+          name: sister.birth_name,
+        });
       }
     } else {
       // General sister statistics
@@ -439,7 +463,9 @@ class ChatbotService {
         if (members.length > 0) {
           contextText += `\n👥 Danh sách thành viên:\n`;
           members.forEach((member, index) => {
-            contextText += `${index + 1}. ${member.saint_name || ""} ${member.birth_name} (${member.code})\n`;
+            contextText += `${index + 1}. ${member.saint_name || ""} ${
+              member.birth_name
+            } (${member.code})\n`;
           });
         }
 
@@ -512,7 +538,9 @@ class ChatbotService {
       contextText += `\n📝 Cập nhật hành trình gần đây:\n`;
       recentJourneys.forEach((journey) => {
         const date = new Date(journey.created_at).toLocaleDateString("vi-VN");
-        contextText += `- ${date}: ${journey.saint_name || ""} ${journey.birth_name} → ${journey.stage_name || journey.stage}\n`;
+        contextText += `- ${date}: ${journey.saint_name || ""} ${
+          journey.birth_name
+        } → ${journey.stage_name || journey.stage}\n`;
       });
     }
 
@@ -546,12 +574,24 @@ class ChatbotService {
       );
 
       if (educations.length > 0) {
-        contextText = `📚 Học vấn của ${educations[0].saint_name || ""} ${educations[0].birth_name}:\n\n`;
+        contextText = `📚 Học vấn của ${educations[0].saint_name || ""} ${
+          educations[0].birth_name
+        }:\n\n`;
         educations.forEach((edu, index) => {
           contextText += `${index + 1}. ${edu.degree || edu.level}\n`;
-          contextText += `   - Chuyên ngành: ${edu.major || edu.field || "N/A"}\n`;
+          contextText += `   - Chuyên ngành: ${
+            edu.major || edu.field || "N/A"
+          }\n`;
           contextText += `   - Trường: ${edu.institution}\n`;
-          contextText += `   - Thời gian: ${edu.start_date ? new Date(edu.start_date).toLocaleDateString('vi-VN') : 'N/A'} - ${edu.end_date ? new Date(edu.end_date).toLocaleDateString('vi-VN') : 'N/A'}\n`;
+          contextText += `   - Thời gian: ${
+            edu.start_date
+              ? new Date(edu.start_date).toLocaleDateString("vi-VN")
+              : "N/A"
+          } - ${
+            edu.end_date
+              ? new Date(edu.end_date).toLocaleDateString("vi-VN")
+              : "N/A"
+          }\n`;
         });
       } else {
         contextText = "Chưa có thông tin học vấn.";
@@ -638,7 +678,10 @@ Bạn có thể hỏi tôi về thông tin nữ tu, hành trình ơn gọi, cộ
 
     return {
       text: contextText,
-      data: { totalSisters: totalSisters.count, totalCommunities: totalCommunities.count },
+      data: {
+        totalSisters: totalSisters.count,
+        totalCommunities: totalCommunities.count,
+      },
       sources: [],
     };
   }
