@@ -127,8 +127,8 @@ const EducationFormPage = () => {
   return (
     <Container fluid className="py-4">
       <Breadcrumb
+        title={isEdit ? "Chỉnh sửa Học vấn" : "Thêm Học vấn mới"}
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Học vấn", link: "/hoc-van" },
           { label: isEdit ? "Chỉnh sửa" : "Thêm mới" },
         ]}
@@ -150,7 +150,7 @@ const EducationFormPage = () => {
             <Card.Header>
               <h5 className="mb-0">
                 <FaGraduationCap className="me-2" />
-                {isEdit ? "Chỉnh sửa Học vấn" : "Thêm Học vấn mới"}
+                Thông tin Học vấn
               </h5>
             </Card.Header>
             <Card.Body>

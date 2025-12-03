@@ -145,21 +145,15 @@ const ReportListPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
+        title="Danh sách báo cáo"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Báo cáo", link: "/bao-cao" },
           { label: "Danh sách báo cáo" },
         ]}
       />
 
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Danh sách báo cáo</h2>
-          <p className="text-muted mb-0">
-            Quản lý và xem lại các báo cáo đã tạo
-          </p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <Link to="/bao-cao/generate" className="btn btn-primary">
           <i className="fas fa-plus me-2"></i>
           Tạo báo cáo mới

@@ -83,18 +83,14 @@ const EducationListPage = () => {
   return (
     <Container fluid className="py-4">
       <Breadcrumb
+        title="Quản lý Học vấn"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Quản lý Nữ Tu", link: "/nu-tu" },
           { label: "Học vấn" },
         ]}
       />
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Quản lý Học vấn</h2>
-          <p className="text-muted mb-0">Danh sách học vấn và bằng cấp</p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <Button variant="primary" onClick={handleAdd}>
           <i className="fas fa-plus me-2"></i>
           Thêm Học vấn

@@ -86,13 +86,6 @@ const AuditLogPage = () => {
     { value: "setting", label: "Cài Đặt" },
   ];
 
-  // Breadcrumb
-  const breadcrumbItems = [
-    { label: "Trang chủ", path: "/dashboard" },
-    { label: "Cài đặt", path: "/settings" },
-    { label: "Nhật ký hệ thống", active: true },
-  ];
-
   // Fetch logs
   const fetchLogs = useCallback(async () => {
     setLoading(true);
@@ -308,38 +301,33 @@ const AuditLogPage = () => {
 
   return (
     <Container fluid className="audit-log-page py-4">
-      <Breadcrumb items={breadcrumbItems} />
+      <Breadcrumb 
+        title="Nhật ký hệ thống"
+        items={[
+          { label: "Cài đặt", link: "/settings" },
+          { label: "Nhật ký hệ thống" },
+        ]}
+      />
 
       {/* Header */}
-      <div className="page-header mb-4">
-        <div>
-          <h2 className="page-title">
-            <i className="fas fa-history me-2"></i>
-            Nhật ký hệ thống
-          </h2>
-          <p className="text-muted mb-0">
-            Theo dõi tất cả hoạt động trong hệ thống
-          </p>
-        </div>
-        <div className="page-actions">
-          <Button
-            variant="outline-primary"
-            onClick={handleExport}
-            disabled={exporting}
-          >
-            {exporting ? (
-              <>
-                <Spinner size="sm" className="me-2" />
-                Đang xuất...
-              </>
-            ) : (
-              <>
-                <i className="fas fa-download me-2"></i>
-                Xuất Excel
-              </>
-            )}
-          </Button>
-        </div>
+      <div className="d-flex justify-content-end mb-4">
+        <Button
+          variant="outline-primary"
+          onClick={handleExport}
+          disabled={exporting}
+        >
+          {exporting ? (
+            <>
+              <Spinner size="sm" className="me-2" />
+              Đang xuất...
+            </>
+          ) : (
+            <>
+              <i className="fas fa-download me-2"></i>
+              Xuất Excel
+            </>
+          )}
+        </Button>
       </div>
 
       {/* Filters */}

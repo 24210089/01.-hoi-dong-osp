@@ -120,19 +120,15 @@ const SisterReportPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
+        title="Báo cáo Nữ Tu"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Báo cáo", link: "/bao-cao" },
           { label: "Báo cáo Nữ Tu" },
         ]}
       />
 
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Báo cáo Nữ Tu</h2>
-          <p className="text-muted mb-0">Thống kê chi tiết về nữ tu</p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <div className="d-flex gap-2">
           <ReportFilter
             filters={filters}

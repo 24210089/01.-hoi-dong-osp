@@ -197,24 +197,14 @@ const CommunityFormPage = () => {
       </ToastContainer>
 
       <Breadcrumb
+        title={isEdit ? "Chỉnh sửa Cộng Đoàn" : "Thêm Cộng Đoàn Mới"}
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Quản lý Cộng Đoàn", link: "/cong-doan" },
           { label: isEdit ? "Chỉnh sửa" : "Thêm mới" },
         ]}
       />
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">
-            {isEdit ? "Chỉnh sửa Cộng Đoàn" : "Thêm Cộng Đoàn Mới"}
-          </h2>
-          <p className="text-muted mb-0">
-            {isEdit
-              ? "Cập nhật thông tin cộng đoàn"
-              : "Tạo cộng đoàn mới trong hệ thống"}
-          </p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <Button variant="secondary" onClick={() => navigate("/cong-doan")}>
           <i className="fas fa-arrow-left me-2"></i>
           Quay lại

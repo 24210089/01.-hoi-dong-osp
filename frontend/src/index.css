@@ -8,7 +8,7 @@
 
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   background-color: #f0f1f3;
   color: #444444;
   font-size: 16px;
@@ -19,8 +19,13 @@ body {
 }
 
 /* Headings - AKKHOR Style (Poppins) */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Poppins', sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Poppins", sans-serif;
   font-weight: 400;
   margin: 0 0 20px 0;
   color: #000000;

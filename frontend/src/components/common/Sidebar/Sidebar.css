@@ -179,7 +179,7 @@
 }
 
 .user-name {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-weight: 500;
   font-size: 15px;
   margin-bottom: 0.25rem;
@@ -187,7 +187,7 @@
 }
 
 .user-role {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 13px;
   color: #9ea8b5;
   font-weight: 400;
@@ -231,7 +231,7 @@
   border-bottom: 1px solid #021933;
   cursor: pointer;
   position: relative;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
@@ -301,7 +301,7 @@
 
 .menu-item-text {
   flex: 1;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 14px;
   font-weight: 400;
   white-space: nowrap;
@@ -354,7 +354,7 @@
 
 .sidebar-menu-item.child-item {
   padding: 10px 25px 10px 50px;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 13px;
   font-weight: 400;
   border-left: none;
@@ -700,7 +700,7 @@
   padding: 10px 35px 10px 15px;
   border-radius: 4px;
   border: 1px solid #0a4080;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 13px;
   font-weight: 400;
   height: 40px;
@@ -711,7 +711,7 @@
 
 .sidebar-search .search-input::placeholder {
   color: #6c7a8d;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 13px;
   font-weight: 400;
   opacity: 1;

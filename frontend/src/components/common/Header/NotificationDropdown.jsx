@@ -44,7 +44,9 @@ const NotificationDropdown = ({
                 <div
                   key={notification.id}
                   className={`media ${!notification.read ? "unread" : ""}`}
-                  onClick={() => !notification.read && onMarkAsRead(notification.id)}
+                  onClick={() =>
+                    !notification.read && onMarkAsRead(notification.id)
+                  }
                 >
                   <div className={`item-icon ${styleData.bg}`}>
                     <i className={`fas ${styleData.icon}`}></i>
@@ -63,7 +65,10 @@ const NotificationDropdown = ({
             })
           ) : (
             <div className="text-center py-4">
-              <i className="fas fa-bell-slash mb-2" style={{ fontSize: '2rem', color: '#ccc' }}></i>
+              <i
+                className="fas fa-bell-slash mb-2"
+                style={{ fontSize: "2rem", color: "#ccc" }}
+              ></i>
               <p className="text-muted mb-0">Không có thông báo nào</p>
             </div>
           )}
@@ -71,10 +76,17 @@ const NotificationDropdown = ({
 
         {/* Footer */}
         {notifications.length > 0 && (
-          <div className="text-center py-2" style={{ borderTop: '1px solid #f0f0f0' }}>
-            <Link 
-              to="/notifications" 
-              style={{ color: '#ffa901', textDecoration: 'none', fontSize: '14px' }}
+          <div
+            className="text-center py-2"
+            style={{ borderTop: "1px solid #f0f0f0" }}
+          >
+            <Link
+              to="/notifications"
+              style={{
+                color: "#ffa901",
+                textDecoration: "none",
+                fontSize: "14px",
+              }}
             >
               Xem tất cả thông báo
             </Link>

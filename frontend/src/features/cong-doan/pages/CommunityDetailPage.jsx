@@ -128,18 +128,14 @@ const CommunityDetailPage = () => {
   return (
     <Container fluid className="py-4">
       <Breadcrumb
+        title="Thông tin Cộng Đoàn"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Quản lý Cộng Đoàn", link: "/cong-doan" },
           { label: community.name },
         ]}
       />
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Thông tin Cộng Đoàn</h2>
-          <p className="text-muted mb-0">Chi tiết thông tin cộng đoàn</p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <div className="d-flex gap-2">
           <Button variant="success" onClick={handleEdit}>
             <i className="fas fa-edit me-2"></i>Chỉnh sửa

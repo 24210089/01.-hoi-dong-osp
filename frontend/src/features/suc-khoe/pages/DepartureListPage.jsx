@@ -104,20 +104,14 @@ const DepartureListPage = () => {
   return (
     <Container fluid className="py-4">
       <Breadcrumb
+        title="Quản lý Đi vắng"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Quản lý Nữ Tu", link: "/nu-tu" },
           { label: "Đi vắng" },
         ]}
       />
 
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Quản lý Đi vắng</h2>
-          <p className="text-muted mb-0">
-            Theo dõi tình trạng đi vắng của nữ tu
-          </p>
-        </div>
         <Button variant="primary" onClick={handleAdd}>
           <i className="fas fa-plus me-2"></i>
           Đăng ký Đi vắng

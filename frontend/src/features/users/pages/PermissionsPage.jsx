@@ -539,8 +539,8 @@ const PermissionsPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
+        title="Quản lý Phân quyền"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Người dùng", link: "/users" },
           { label: "Phân quyền" },
         ]}
@@ -548,15 +548,6 @@ const PermissionsPage = () => {
 
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">
-            <i className="fas fa-shield-alt me-2 text-primary"></i>
-            Quản lý Phân quyền
-          </h2>
-          <p className="text-muted mb-0">
-            Phân quyền truy cập cho từng vai trò trong hệ thống
-          </p>
-        </div>
         <Button variant="primary" onClick={handleSave} disabled={saving}>
           {saving ? (
             <>

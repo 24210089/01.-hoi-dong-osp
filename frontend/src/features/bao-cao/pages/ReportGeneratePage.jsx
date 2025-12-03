@@ -75,20 +75,12 @@ const ReportGeneratePage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
+        title="Tạo báo cáo mới"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Báo cáo", link: "/bao-cao" },
           { label: "Tạo báo cáo mới" },
         ]}
       />
-
-      {/* Header */}
-      <div className="mb-4">
-        <h2 className="mb-1">Tạo báo cáo mới</h2>
-        <p className="text-muted mb-0">
-          Tùy chỉnh và tạo báo cáo theo nhu cầu của bạn
-        </p>
-      </div>
 
       <Row>
         <Col lg={8}>

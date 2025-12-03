@@ -124,22 +124,11 @@ const EducationListAllPage = () => {
   return (
     <Container fluid className="py-4">
       <Breadcrumb
-        items={[
-          { label: "Trang chủ", link: "/dashboard" },
-          { label: "Học vấn" },
-        ]}
+        title="Quản lý Học vấn"
+        items={[{ label: "Học vấn" }]}
       />
 
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">
-            <FaGraduationCap className="me-2" />
-            Quản lý Học vấn
-          </h2>
-          <p className="text-muted mb-0">
-            Danh sách học vấn và bằng cấp của các nữ tu
-          </p>
-        </div>
         <Link to="/hoc-van/create" className="btn btn-primary">
           <FaPlus className="me-2" />
           Thêm Học vấn

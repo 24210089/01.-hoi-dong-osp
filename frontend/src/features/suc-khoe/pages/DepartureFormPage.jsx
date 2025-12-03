@@ -138,24 +138,14 @@ const DepartureFormPage = () => {
   return (
     <Container fluid className="py-4">
       <Breadcrumb
+        title={isEditMode ? "Chỉnh sửa Phiếu Đi vắng" : "Đăng ký Đi vắng"}
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Đi vắng", link: "/di-vang" },
           { label: isEditMode ? "Chỉnh sửa" : "Đăng ký mới" },
         ]}
       />
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">
-            {isEditMode ? "Chỉnh sửa Phiếu Đi vắng" : "Đăng ký Đi vắng"}
-          </h2>
-          <p className="text-muted mb-0">
-            {isEditMode
-              ? "Cập nhật thông tin đi vắng"
-              : "Tạo phiếu đăng ký đi vắng mới"}
-          </p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <Button variant="secondary" onClick={handleCancel}>
           <i className="fas fa-arrow-left me-2"></i>
           Quay lại

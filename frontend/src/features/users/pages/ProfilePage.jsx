@@ -205,19 +205,9 @@ const ProfilePage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
-        items={[
-          { label: "Trang chủ", link: "/dashboard" },
-          { label: "Hồ sơ cá nhân" },
-        ]}
+        title="Hồ sơ cá nhân"
+        items={[{ label: "Hồ sơ cá nhân" }]}
       />
-
-      {/* Header */}
-      <div className="mb-4">
-        <h2 className="mb-1">Hồ sơ cá nhân</h2>
-        <p className="text-muted mb-0">
-          Quản lý thông tin và bảo mật tài khoản
-        </p>
-      </div>
 
       {error && (
         <Alert variant="danger" dismissible onClose={() => setError("")}>

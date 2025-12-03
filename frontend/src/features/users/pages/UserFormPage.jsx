@@ -173,24 +173,12 @@ const UserFormPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
+        title={isEditMode ? "Chỉnh sửa Người dùng" : "Thêm Người dùng Mới"}
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Người dùng", link: "/users" },
           { label: isEditMode ? "Chỉnh sửa" : "Thêm mới" },
         ]}
       />
-
-      {/* Header */}
-      <div className="mb-4">
-        <h2 className="mb-1">
-          {isEditMode ? "Chỉnh sửa Người dùng" : "Thêm Người dùng Mới"}
-        </h2>
-        <p className="text-muted mb-0">
-          {isEditMode
-            ? "Cập nhật thông tin người dùng"
-            : "Nhập thông tin người dùng mới"}
-        </p>
-      </div>
 
       {error && (
         <Alert variant="danger" dismissible onClose={() => setError("")}>

@@ -199,8 +199,8 @@ const EvaluationFormPage = () => {
   return (
     <Container fluid className="py-4">
       <Breadcrumb
+        title={isEdit ? "Chỉnh sửa Đánh giá" : "Thêm Đánh giá"}
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           {
             label: "Đánh giá",
             link: sisterId ? `/nu-tu/${sisterId}/danh-gia` : "/danh-gia",
@@ -208,19 +208,6 @@ const EvaluationFormPage = () => {
           { label: isEdit ? "Chỉnh sửa" : "Thêm mới" },
         ]}
       />
-
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">
-            {isEdit ? "Chỉnh sửa Đánh giá" : "Thêm Đánh giá"}
-          </h2>
-          <p className="text-muted mb-0">
-            {isEdit
-              ? "Cập nhật thông tin đánh giá"
-              : "Tạo đánh giá mới cho Nữ Tu"}
-          </p>
-        </div>
-      </div>
 
       {error && (
         <Alert variant="danger" onClose={() => setError(null)} dismissible>

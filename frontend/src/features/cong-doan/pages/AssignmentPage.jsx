@@ -478,20 +478,14 @@ const AssignmentPage = () => {
   return (
     <Container fluid className="py-4">
       <Breadcrumb
+        title="Quản Lý Bổ Nhiệm"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Quản lý Cộng Đoàn", link: "/cong-doan" },
           { label: "Quản lý Bổ Nhiệm" },
         ]}
       />
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Quản Lý Bổ Nhiệm</h2>
-          <p className="text-muted mb-0">
-            Quản lý bổ nhiệm thành viên vào các cộng đoàn
-          </p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <Button variant="primary" onClick={handleOpenAddModal}>
           <i className="fas fa-plus me-2"></i>
           Bổ nhiệm mới

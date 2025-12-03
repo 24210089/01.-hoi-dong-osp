@@ -125,19 +125,15 @@ const EvaluationDetailPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
+        title="Chi tiết Đánh giá"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Đánh giá", link: "/danh-gia" },
           { label: "Chi tiết" },
         ]}
       />
 
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Chi tiết Đánh giá</h2>
-          <p className="text-muted mb-0">Thông tin chi tiết về đánh giá</p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <div className="d-flex gap-2">
           <Button variant="success" onClick={handleEdit}>
             <i className="fas fa-edit me-2"></i>

@@ -72,21 +72,15 @@ const ReportDetailPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
+        title={report?.title || "Chi tiết báo cáo"}
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Báo cáo", link: "/bao-cao" },
           { label: "Chi tiết báo cáo" },
         ]}
       />
 
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">{report?.title}</h2>
-          <p className="text-muted mb-0">
-            Tạo ngày: {formatDate(report?.created_at)} bởi {report?.created_by}
-          </p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <div className="d-flex gap-2">
           <Button variant="success" onClick={() => handleExport("excel")}>
             <i className="fas fa-file-excel me-2"></i>

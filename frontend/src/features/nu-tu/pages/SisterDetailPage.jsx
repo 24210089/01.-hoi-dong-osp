@@ -86,19 +86,15 @@ const SisterDetailPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
+        title="Thông tin Nữ Tu"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Quản lý Nữ Tu", link: "/nu-tu" },
           { label: sister.religious_name || sister.birth_name },
         ]}
       />
 
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Thông tin Nữ Tu</h2>
-          <p className="text-muted mb-0">Chi tiết thông tin nữ tu</p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <div className="d-flex gap-2">
           <Button variant="success" onClick={handleEdit}>
             <i className="fas fa-edit me-2"></i>

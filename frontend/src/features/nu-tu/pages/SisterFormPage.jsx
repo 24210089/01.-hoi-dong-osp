@@ -313,22 +313,12 @@ const SisterFormPage = () => {
 
       {/* Breadcrumb */}
       <Breadcrumb
+        title={isEditMode ? "Chỉnh sửa Nữ Tu" : "Thêm Nữ Tu Mới"}
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Quản lý Nữ Tu", link: "/nu-tu" },
           { label: isEditMode ? "Chỉnh sửa" : "Thêm mới" },
         ]}
       />
-
-      {/* Header */}
-      <div className="mb-4">
-        <h2 className="mb-1">
-          {isEditMode ? "Chỉnh sửa Nữ Tu" : "Thêm Nữ Tu Mới"}
-        </h2>
-        <p className="text-muted mb-0">
-          {isEditMode ? "Cập nhật thông tin nữ tu" : "Nhập thông tin nữ tu mới"}
-        </p>
-      </div>
 
       <Form onSubmit={handleSubmit}>
         <Row className="g-4">

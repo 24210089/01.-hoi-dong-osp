@@ -336,24 +336,12 @@ const VocationJourneyFormPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
+        title={isEditMode ? "Chỉnh sửa Hành trình" : "Thêm Hành trình Mới"}
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Hành trình Ơn Gọi", link: "/hanh-trinh" },
           { label: isEditMode ? "Chỉnh sửa" : "Thêm mới" },
         ]}
       />
-
-      {/* Header */}
-      <div className="mb-4">
-        <h2 className="mb-1">
-          {isEditMode ? "Chỉnh sửa Hành trình" : "Thêm Hành trình Mới"}
-        </h2>
-        <p className="text-muted mb-0">
-          {isEditMode
-            ? "Cập nhật thông tin hành trình"
-            : "Nhập thông tin hành trình mới"}
-        </p>
-      </div>
 
       {/* Error Alert */}
       {error && (

@@ -142,8 +142,8 @@ const UserDetailPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
+        title="Chi tiết Người dùng"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Người dùng", link: "/users" },
           { label: "Chi tiết" },
         ]}
@@ -151,12 +151,6 @@ const UserDetailPage = () => {
 
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Chi tiết Người dùng</h2>
-          <p className="text-muted mb-0">
-            Thông tin chi tiết và lịch sử hoạt động
-          </p>
-        </div>
         <div className="d-flex gap-2">
           <Button variant="success" onClick={handleEdit}>
             <i className="fas fa-edit me-2"></i>

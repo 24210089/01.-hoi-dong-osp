@@ -5,10 +5,15 @@ import { Link } from "react-router-dom";
 import "./Breadcrumb.css";
 
 const Breadcrumb = ({ title = "", items = [], className = "" }) => {
-  // Default home item
+  // Filter out "Trang chủ" from items to avoid duplication
+  const filteredItems = items.filter(
+    (item) => item.label !== "Trang chủ" && item.link !== "/dashboard"
+  );
+
+  // Default home item + filtered items
   const breadcrumbItems = [
     { label: "Trang chủ", link: "/dashboard" },
-    ...items,
+    ...filteredItems,
   ];
 
   return (

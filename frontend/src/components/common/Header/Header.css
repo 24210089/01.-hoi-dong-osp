@@ -157,7 +157,7 @@
   border-radius: 0;
   background: transparent;
   color: #111111;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 14px;
   font-weight: 400;
   height: 38px;
@@ -172,7 +172,7 @@
 
 .stylish-input-group .form-control::placeholder {
   color: #888888;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 14px;
   font-weight: 400;
   opacity: 1;
@@ -238,7 +238,7 @@
   border-radius: 0;
   transition: all 0.3s ease;
   line-height: 1;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 14px;
   font-weight: 400;
 }
@@ -287,7 +287,7 @@
 .admin-title h4.item-title,
 .admin-title h5.item-title {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: #111111;
@@ -295,7 +295,7 @@
 }
 
 .admin-title span {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 12px;
   font-weight: 400;
   color: #646464;
@@ -329,7 +329,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-weight: 600;
   font-size: 13px;
   line-height: 1;
@@ -369,7 +369,7 @@
 .header-admin .dropdown-menu .item-header .item-title {
   margin: 0;
   color: #ffffff;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 16px;
   font-weight: 600;
 }
@@ -390,7 +390,7 @@
   padding: 10px 25px;
   color: #646464;
   text-decoration: none;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 14px;
   font-weight: 400;
   transition: all 0.3s ease;
@@ -515,7 +515,7 @@
 .header-notification .item-header .item-title {
   margin: 0;
   color: #ffffff;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 15px;
   font-weight: 600;
 }
@@ -621,14 +621,14 @@
 }
 
 .media-body .item-name {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-weight: 500;
   color: #444444;
   font-size: 14px;
 }
 
 .media-body .item-time {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 13px;
   font-weight: 400;
   color: #848484;
@@ -636,7 +636,7 @@
 
 .media-body p {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 13px;
   font-weight: 400;
   color: #646464;
@@ -648,14 +648,14 @@
 }
 
 .media-body .post-title {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-weight: 500;
   color: #444444;
   font-size: 14px;
 }
 
 .media-body span {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 12px;
   font-weight: 400;
   color: #848484;

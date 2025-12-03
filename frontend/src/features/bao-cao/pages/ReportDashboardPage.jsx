@@ -196,18 +196,12 @@ const ReportDashboardPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
-        items={[
-          { label: "Trang chủ", link: "/dashboard" },
-          { label: "Báo cáo & Thống kê" },
-        ]}
+        title="Báo cáo & Thống kê"
+        items={[{ label: "Báo cáo & Thống kê" }]}
       />
 
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Báo cáo & Thống kê</h2>
-          <p className="text-muted mb-0">Tổng quan và phân tích dữ liệu</p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <div className="d-flex gap-2">
           <ReportFilter
             filters={filters}

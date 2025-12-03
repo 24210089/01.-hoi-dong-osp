@@ -138,18 +138,12 @@ const UserListPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
-        items={[
-          { label: "Trang chủ", link: "/dashboard" },
-          { label: "Quản lý Người dùng" },
-        ]}
+        title="Quản lý Người dùng"
+        items={[{ label: "Quản lý Người dùng" }]}
       />
 
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Quản lý Người dùng</h2>
-          <p className="text-muted mb-0">Quản lý tài khoản và phân quyền</p>
-        </div>
         <Button variant="primary" onClick={handleAdd}>
           <i className="fas fa-plus me-2"></i>
           Thêm Người dùng

@@ -11,7 +11,7 @@ import "./Header.css";
 const Header = ({ toggleSidebar }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  
+
   const [notifications, setNotifications] = useState([
     {
       id: 1,
@@ -79,8 +79,8 @@ const Header = ({ toggleSidebar }) => {
 
       {/* Mobile Nav Bar */}
       <div className="mobile-nav-bar d-lg-none">
-        <button 
-          className="navbar-toggler" 
+        <button
+          className="navbar-toggler"
           type="button"
           onClick={toggleSidebar}
         >
@@ -93,9 +93,9 @@ const Header = ({ toggleSidebar }) => {
         {/* Search Bar */}
         <div className="header-search-bar">
           <div className="stylish-input-group">
-            <input 
-              type="text" 
-              className="form-control" 
+            <input
+              type="text"
+              className="form-control"
               placeholder="Tìm kiếm..."
             />
             <span className="input-group-addon">
@@ -119,7 +119,9 @@ const Header = ({ toggleSidebar }) => {
                 <h6 className="item-title">Tin nhắn</h6>
               </div>
               <div className="item-content">
-                <p className="text-center text-muted py-3">Không có tin nhắn mới</p>
+                <p className="text-center text-muted py-3">
+                  Không có tin nhắn mới
+                </p>
               </div>
             </div>
           </li>
@@ -132,7 +134,9 @@ const Header = ({ toggleSidebar }) => {
             </a>
             <div className="dropdown-menu dropdown-menu-right">
               <div className="item-header">
-                <h6 className="item-title">Thông báo {unreadCount > 0 && `(${unreadCount} mới)`}</h6>
+                <h6 className="item-title">
+                  Thông báo {unreadCount > 0 && `(${unreadCount} mới)`}
+                </h6>
               </div>
               <div className="item-content">
                 {notifications.length > 0 ? (
@@ -140,18 +144,32 @@ const Header = ({ toggleSidebar }) => {
                     <div
                       key={notification.id}
                       className={`media ${!notification.read ? "unread" : ""}`}
-                      onClick={() => !notification.read && handleMarkAsRead(notification.id)}
+                      onClick={() =>
+                        !notification.read && handleMarkAsRead(notification.id)
+                      }
                     >
-                      <div className={`item-icon ${
-                        notification.type === 'info' ? 'bg-skyblue' : 
-                        notification.type === 'warning' ? 'bg-yellow' : 
-                        notification.type === 'success' ? 'bg-skyblue' : 'bg-pink'
-                      }`}>
-                        <i className={`fas ${
-                          notification.type === 'info' ? 'fa-info-circle' : 
-                          notification.type === 'warning' ? 'fa-exclamation-triangle' : 
-                          notification.type === 'success' ? 'fa-check-circle' : 'fa-times-circle'
-                        }`}></i>
+                      <div
+                        className={`item-icon ${
+                          notification.type === "info"
+                            ? "bg-skyblue"
+                            : notification.type === "warning"
+                            ? "bg-yellow"
+                            : notification.type === "success"
+                            ? "bg-skyblue"
+                            : "bg-pink"
+                        }`}
+                      >
+                        <i
+                          className={`fas ${
+                            notification.type === "info"
+                              ? "fa-info-circle"
+                              : notification.type === "warning"
+                              ? "fa-exclamation-triangle"
+                              : notification.type === "success"
+                              ? "fa-check-circle"
+                              : "fa-times-circle"
+                          }`}
+                        ></i>
                       </div>
                       <div className="media-body space-sm">
                         <div className="post-title">{notification.title}</div>
@@ -161,7 +179,9 @@ const Header = ({ toggleSidebar }) => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-muted py-3">Không có thông báo</p>
+                  <p className="text-center text-muted py-3">
+                    Không có thông báo
+                  </p>
                 )}
               </div>
             </div>
@@ -171,30 +191,65 @@ const Header = ({ toggleSidebar }) => {
           <li className="navbar-item header-admin">
             <a className="navbar-nav-link" href="#">
               <div className="admin-title">
-                <h5 className="item-title">{user?.full_name || user?.username || 'User'}</h5>
-                <span>{user?.role === 'admin' ? 'Quản trị viên' : 'Người dùng'}</span>
+                <h5 className="item-title">
+                  {user?.full_name || user?.username || "User"}
+                </h5>
+                <span>
+                  {user?.role === "admin" ? "Quản trị viên" : "Người dùng"}
+                </span>
               </div>
               <div className="admin-img">
                 {user?.avatar ? (
-                  <img src={user.avatar} alt={user?.full_name || 'User'} />
+                  <img src={user.avatar} alt={user?.full_name || "User"} />
                 ) : (
                   <div className="admin-avatar-placeholder">
-                    {(user?.full_name || user?.username || 'U').substring(0, 2).toUpperCase()}
+                    {(user?.full_name || user?.username || "U")
+                      .substring(0, 2)
+                      .toUpperCase()}
                   </div>
                 )}
               </div>
             </a>
             <div className="dropdown-menu dropdown-menu-right">
               <div className="item-header">
-                <h6 className="item-title">{user?.full_name || user?.username || 'User'}</h6>
+                <h6 className="item-title">
+                  {user?.full_name || user?.username || "User"}
+                </h6>
               </div>
               <div className="item-content">
                 <ul className="settings-list">
-                  <li><Link to="/profile"><i className="fas fa-user"></i>Thông tin cá nhân</Link></li>
-                  <li><Link to="/settings"><i className="fas fa-cog"></i>Cài đặt tài khoản</Link></li>
-                  <li><Link to="/profile#password"><i className="fas fa-key"></i>Đổi mật khẩu</Link></li>
-                  <li><Link to="/help"><i className="fas fa-question-circle"></i>Trợ giúp</Link></li>
-                  <li><a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); }} className="text-danger"><i className="fas fa-sign-out-alt"></i>Đăng xuất</a></li>
+                  <li>
+                    <Link to="/profile">
+                      <i className="fas fa-user"></i>Thông tin cá nhân
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/settings">
+                      <i className="fas fa-cog"></i>Cài đặt tài khoản
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/profile#password">
+                      <i className="fas fa-key"></i>Đổi mật khẩu
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/help">
+                      <i className="fas fa-question-circle"></i>Trợ giúp
+                    </Link>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleLogout();
+                      }}
+                      className="text-danger"
+                    >
+                      <i className="fas fa-sign-out-alt"></i>Đăng xuất
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>

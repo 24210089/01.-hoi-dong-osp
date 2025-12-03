@@ -9,7 +9,7 @@ import "./MainLayout.css";
 
 const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
+
   // Track sidebar collapsed state (sync with Sidebar component via localStorage)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     const saved = localStorage.getItem("sidebarCollapsed");
@@ -25,7 +25,7 @@ const MainLayout = () => {
 
     // Custom event for same-tab updates
     window.addEventListener("sidebarToggle", handleStorageChange);
-    
+
     return () => {
       window.removeEventListener("sidebarToggle", handleStorageChange);
     };
@@ -40,14 +40,13 @@ const MainLayout = () => {
   };
 
   return (
-    <div className={`main-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+    <div
+      className={`main-layout ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}
+    >
       <Header toggleSidebar={toggleSidebar} />
 
       <div className="layout-container">
-        <Sidebar
-          isOpen={isSidebarOpen}
-          onClose={closeSidebar}
-        />
+        <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
 
         <main className="main-content">
           <div className="content-wrapper">

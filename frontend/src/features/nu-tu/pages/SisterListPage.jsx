@@ -19,6 +19,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import sisterService from "@services/sisterService";
+import Breadcrumb from "@components/common/Breadcrumb/Breadcrumb";
 
 // Stage labels mapping (từ database ENUM)
 const stageLabels = {
@@ -219,14 +220,14 @@ const SisterListPage = () => {
 
   return (
     <Container fluid className="py-4">
+      {/* Breadcrumb */}
+      <Breadcrumb
+        title="Danh sách Nữ Tu"
+        items={[{ label: "Quản lý Nữ Tu", link: "/nu-tu" }]}
+      />
+
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Quản lý Nữ Tu</h2>
-          <p className="text-muted mb-0">
-            Danh sách tất cả nữ tu trong hệ thống
-          </p>
-        </div>
         <Button variant="primary" onClick={handleCreate}>
           <i className="fas fa-plus me-2"></i>
           Thêm Nữ Tu
@@ -316,7 +317,7 @@ const SisterListPage = () => {
               </thead>
               <tbody>
                 {sisters.map((sister, index) => (
-                  <tr key={sister.id}>
+                  <tr key={`${sister.id}-${index}`}>
                     <td>
                       {(pagination.page - 1) * pagination.limit + index + 1}
                     </td>
@@ -367,8 +368,8 @@ const SisterListPage = () => {
         </Card>
       ) : (
         <Row className="g-4">
-          {sisters.map((sister) => (
-            <Col key={sister.id} xs={12} sm={6} lg={4} xl={3}>
+          {sisters.map((sister, index) => (
+            <Col key={`${sister.id}-${index}`} xs={12} sm={6} lg={4} xl={3}>
               <Card className="h-100 shadow-sm">
                 <Card.Body className="text-center">
                   {getPhotoUrl(sister) ? (

@@ -158,21 +158,9 @@ const VocationJourneyListPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
-        items={[
-          { label: "Trang chủ", link: "/dashboard" },
-          { label: "Hành trình Ơn Gọi" },
-        ]}
+        title="Quản lý Hành trình Ơn Gọi"
+        items={[{ label: "Hành trình Ơn Gọi" }]}
       />
-
-      {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Quản lý Hành trình Ơn Gọi</h2>
-          <p className="text-muted mb-0">
-            Danh sách tất cả hành trình ơn gọi trong hệ thống
-          </p>
-        </div>
-      </div>
 
       {/* Statistics Cards */}
       <Row className="g-3 mb-4">

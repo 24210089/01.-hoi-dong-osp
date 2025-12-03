@@ -135,24 +135,14 @@ const HealthRecordFormPage = () => {
   return (
     <Container fluid className="py-4">
       <Breadcrumb
+        title={isEditMode ? "Chỉnh sửa Hồ sơ Sức khỏe" : "Thêm Hồ sơ Sức khỏe"}
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Hồ sơ Sức khỏe", link: "/suc-khoe" },
           { label: isEditMode ? "Chỉnh sửa" : "Thêm mới" },
         ]}
       />
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">
-            {isEditMode ? "Chỉnh sửa Hồ sơ Sức khỏe" : "Thêm Hồ sơ Sức khỏe"}
-          </h2>
-          <p className="text-muted mb-0">
-            {isEditMode
-              ? "Cập nhật thông tin khám sức khỏe"
-              : "Tạo hồ sơ khám sức khỏe mới"}
-          </p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <Button variant="secondary" onClick={handleCancel}>
           <i className="fas fa-arrow-left me-2"></i>
           Quay lại

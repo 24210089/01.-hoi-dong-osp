@@ -90,21 +90,15 @@ const VocationJourneyDetailPage = () => {
     <Container fluid className="py-4">
       {/* Breadcrumb */}
       <Breadcrumb
+        title="Chi tiết Hành trình"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Hành trình Ơn Gọi", link: "/hanh-trinh" },
           { label: "Chi tiết" },
         ]}
       />
 
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Chi tiết Hành trình</h2>
-          <p className="text-muted mb-0">
-            Thông tin chi tiết về hành trình ơn gọi
-          </p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <div className="d-flex gap-2">
           <Button variant="success" onClick={handleEdit}>
             <i className="fas fa-edit me-2"></i>

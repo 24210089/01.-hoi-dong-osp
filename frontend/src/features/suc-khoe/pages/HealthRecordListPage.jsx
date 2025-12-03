@@ -89,18 +89,14 @@ const HealthRecordListPage = () => {
   return (
     <Container fluid className="py-4">
       <Breadcrumb
+        title="Hồ sơ Sức khỏe"
         items={[
-          { label: "Trang chủ", link: "/dashboard" },
           { label: "Quản lý Nữ Tu", link: "/nu-tu" },
           { label: "Hồ sơ Sức khỏe" },
         ]}
       />
 
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Hồ sơ Sức khỏe</h2>
-          <p className="text-muted mb-0">Quản lý hồ sơ khám sức khỏe</p>
-        </div>
         <Button variant="primary" onClick={handleAdd}>
           <i className="fas fa-plus me-2"></i>
           Thêm Hồ sơ

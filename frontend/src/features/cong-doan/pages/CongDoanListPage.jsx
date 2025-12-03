@@ -163,19 +163,11 @@ const CongDoanListPage = () => {
       </ToastContainer>
 
       <Breadcrumb
-        items={[
-          { label: "Trang chủ", link: "/dashboard" },
-          { label: "Quản lý Cộng Đoàn" },
-        ]}
+        title="Quản lý Cộng Đoàn"
+        items={[{ label: "Quản lý Cộng Đoàn" }]}
       />
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">Quản lý Cộng Đoàn</h2>
-          <p className="text-muted mb-0">
-            Danh sách các cộng đoàn trong hội dòng
-          </p>
-        </div>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <Button variant="primary" onClick={() => navigate("/cong-doan/create")}>
           Thêm Cộng Đoàn
         </Button>

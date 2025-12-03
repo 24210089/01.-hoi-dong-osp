@@ -24,7 +24,7 @@ const Sidebar = ({ isOpen, onClose }) => {
   const [expandedGroups, setExpandedGroups] = useState([]);
   const [activeMenu, setActiveMenu] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   // Sidebar collapsed state
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const saved = localStorage.getItem("sidebarCollapsed");
@@ -149,7 +149,11 @@ const Sidebar = ({ isOpen, onClose }) => {
       {isOpen && <div className="sidebar-overlay" onClick={onClose}></div>}
 
       {/* Sidebar */}
-      <aside className={`sidebar ${isOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
+      <aside
+        className={`sidebar ${isOpen ? "open" : ""} ${
+          isCollapsed ? "collapsed" : ""
+        }`}
+      >
         {/* Search Box & Toggle Arrow */}
         <div className="sidebar-header-area">
           {!isCollapsed ? (
@@ -173,8 +177,8 @@ const Sidebar = ({ isOpen, onClose }) => {
                   )}
                 </div>
               </div>
-              <button 
-                className="sidebar-toggle-btn d-none d-lg-flex" 
+              <button
+                className="sidebar-toggle-btn d-none d-lg-flex"
                 onClick={toggleCollapsed}
                 title="Thu gọn"
               >
@@ -182,15 +186,15 @@ const Sidebar = ({ isOpen, onClose }) => {
               </button>
             </>
           ) : (
-            <button 
-              className="sidebar-toggle-btn d-none d-lg-flex" 
+            <button
+              className="sidebar-toggle-btn d-none d-lg-flex"
               onClick={toggleCollapsed}
               title="Mở rộng"
             >
               <i className="fas fa-chevron-right"></i>
             </button>
           )}
-          
+
           <button className="sidebar-close d-lg-none" onClick={onClose}>
             <i className="fas fa-times"></i>
           </button>
