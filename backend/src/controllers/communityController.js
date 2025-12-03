@@ -313,6 +313,137 @@ const getCommunityMembers = async (req, res) => {
   }
 };
 
+// Add member to community
+const addMember = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, editorRoles)) {
+      return;
+    }
+
+    const { id } = req.params;
+    const { sister_id, role, start_date, end_date, decision_number, notes, is_primary } = req.body;
+
+    // Check if community exists
+    const community = await CommunityModel.findById(id);
+    if (!community) {
+      return res.status(404).json({ message: "Community not found" });
+    }
+
+    // Validate required fields
+    if (!sister_id) {
+      return res.status(400).json({ message: "Sister ID is required" });
+    }
+
+    // Create assignment
+    const assignmentData = {
+      sister_id,
+      community_id: id,
+      role: role || "member",
+      start_date: start_date || new Date().toISOString().split("T")[0],
+      end_date: end_date || null,
+      decision_number: decision_number || null,
+      notes: notes || null,
+    };
+
+    const newAssignment = await CommunityAssignmentModel.create(assignmentData);
+
+    await logAudit(req, "ADD_MEMBER", id, null, newAssignment);
+    clearCacheForResource("communities");
+
+    return res.status(201).json({
+      success: true,
+      message: "Member added successfully",
+      data: newAssignment,
+    });
+  } catch (error) {
+    console.error("addMember error:", error.message);
+    return res.status(500).json({ message: "Failed to add member", error: error.message });
+  }
+};
+
+// Remove member from community
+const removeMember = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, editorRoles)) {
+      return;
+    }
+
+    const { id, memberId } = req.params;
+
+    // Check if community exists
+    const community = await CommunityModel.findById(id);
+    if (!community) {
+      return res.status(404).json({ message: "Community not found" });
+    }
+
+    // Check if assignment exists
+    const assignment = await CommunityAssignmentModel.findById(memberId);
+    if (!assignment) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    // Delete assignment
+    await CommunityAssignmentModel.delete(memberId);
+
+    await logAudit(req, "REMOVE_MEMBER", id, assignment, null);
+    clearCacheForResource("communities");
+
+    return res.status(200).json({
+      success: true,
+      message: "Member removed successfully",
+    });
+  } catch (error) {
+    console.error("removeMember error:", error.message);
+    return res.status(500).json({ message: "Failed to remove member" });
+  }
+};
+
+// Update member role in community
+const updateMemberRole = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, editorRoles)) {
+      return;
+    }
+
+    const { id, memberId } = req.params;
+    const { role, start_date, end_date, decision_number, notes } = req.body;
+
+    // Check if community exists
+    const community = await CommunityModel.findById(id);
+    if (!community) {
+      return res.status(404).json({ message: "Community not found" });
+    }
+
+    // Check if assignment exists
+    const assignment = await CommunityAssignmentModel.findById(memberId);
+    if (!assignment) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    // Update assignment
+    const updateData = {};
+    if (role !== undefined) updateData.role = role;
+    if (start_date !== undefined) updateData.start_date = start_date;
+    if (end_date !== undefined) updateData.end_date = end_date;
+    if (decision_number !== undefined) updateData.decision_number = decision_number;
+    if (notes !== undefined) updateData.notes = notes;
+
+    const updatedAssignment = await CommunityAssignmentModel.update(memberId, updateData);
+
+    await logAudit(req, "UPDATE_MEMBER", id, assignment, updatedAssignment);
+    clearCacheForResource("communities");
+
+    return res.status(200).json({
+      success: true,
+      message: "Member updated successfully",
+      data: updatedAssignment,
+    });
+  } catch (error) {
+    console.error("updateMemberRole error:", error.message);
+    return res.status(500).json({ message: "Failed to update member" });
+  }
+};
+
 module.exports = {
   getAllCommunities,
   getCommunityById,
@@ -320,4 +451,7 @@ module.exports = {
   updateCommunity,
   deleteCommunity,
   getCommunityMembers,
+  addMember,
+  removeMember,
+  updateMemberRole,
 };

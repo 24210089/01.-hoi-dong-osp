@@ -143,10 +143,7 @@ const UserDetailPage = () => {
       {/* Breadcrumb */}
       <Breadcrumb
         title="Chi tiết Người dùng"
-        items={[
-          { label: "Người dùng", link: "/users" },
-          { label: "Chi tiết" },
-        ]}
+        items={[{ label: "Người dùng", link: "/users" }, { label: "Chi tiết" }]}
       />
 
       {/* Header */}

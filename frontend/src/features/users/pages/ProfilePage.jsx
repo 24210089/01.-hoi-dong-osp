@@ -204,10 +204,7 @@ const ProfilePage = () => {
   return (
     <Container fluid className="py-4">
       {/* Breadcrumb */}
-      <Breadcrumb
-        title="Hồ sơ cá nhân"
-        items={[{ label: "Hồ sơ cá nhân" }]}
-      />
+      <Breadcrumb title="Hồ sơ cá nhân" items={[{ label: "Hồ sơ cá nhân" }]} />
 
       {error && (
         <Alert variant="danger" dismissible onClose={() => setError("")}>

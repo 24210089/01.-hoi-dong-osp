@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -6,12 +6,8 @@ import {
   Card,
   Button,
   Form,
-  Table,
-  Alert,
   Modal,
   Badge,
-  Pagination,
-  InputGroup,
   Spinner,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +15,8 @@ import { toast } from "react-toastify";
 import { communityService, sisterService } from "@services";
 import { formatDate } from "@utils";
 import Breadcrumb from "@components/common/Breadcrumb";
+import DataTable from "@components/tables/DataTable";
+import DatePicker from "@components/forms/DatePicker";
 import "./AssignmentPage.css";
 
 // Role labels and styles
@@ -91,24 +89,13 @@ const AssignmentPage = () => {
   const [communities, setCommunities] = useState([]);
   const [sisters, setSisters] = useState([]);
   const [assignments, setAssignments] = useState([]);
-  const [selectedAssignments, setSelectedAssignments] = useState([]);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Filters
   const [filters, setFilters] = useState({
     community_id: "",
     role: "",
     status: "",
-    search: "",
-  });
-
-  // Pagination
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 1,
   });
 
   // Modal states
@@ -133,7 +120,6 @@ const AssignmentPage = () => {
   const [stats, setStats] = useState({
     total: 0,
     active: 0,
-    pending: 0,
     completed: 0,
   });
 
@@ -146,7 +132,7 @@ const AssignmentPage = () => {
     if (communities.length > 0) {
       fetchAssignments();
     }
-  }, [filters, pagination.page, communities]);
+  }, [filters, communities]);
 
   const fetchInitialData = async () => {
     try {
@@ -157,14 +143,22 @@ const AssignmentPage = () => {
       ]);
 
       if (communitiesRes?.data) {
-        setCommunities(communitiesRes.data);
+        // Remove duplicates by id
+        const uniqueCommunities = communitiesRes.data.filter(
+          (c, index, self) => index === self.findIndex((t) => t.id === c.id)
+        );
+        setCommunities(uniqueCommunities);
       }
       if (sistersRes?.data) {
-        setSisters(sistersRes.data);
+        // Remove duplicates by id
+        const uniqueSisters = sistersRes.data.filter(
+          (s, index, self) => index === self.findIndex((t) => t.id === s.id)
+        );
+        setSisters(uniqueSisters);
       }
     } catch (err) {
       console.error("Error fetching initial data:", err);
-      setError("Không thể tải dữ liệu");
+      toast.error("Không thể tải dữ liệu");
     } finally {
       setLoading(false);
     }
@@ -178,7 +172,9 @@ const AssignmentPage = () => {
       const allAssignments = [];
       for (const community of communities) {
         try {
-          const members = await communityService.getMembers(community.id);
+          const response = await communityService.getMembers(community.id);
+          // API returns { members: [...] } or could be array directly
+          const members = response?.members || response?.data?.members || (Array.isArray(response) ? response : []);
           if (members && Array.isArray(members)) {
             members.forEach((m) => {
               allAssignments.push({
@@ -249,15 +245,8 @@ const AssignmentPage = () => {
       setStats({
         total: allAssignments.length,
         active: activeCount,
-        pending: 0,
         completed: completedCount,
       });
-
-      setPagination((prev) => ({
-        ...prev,
-        total: filteredAssignments.length,
-        totalPages: Math.ceil(filteredAssignments.length / prev.limit) || 1,
-      }));
     } catch (err) {
       console.error("Error fetching assignments:", err);
     } finally {
@@ -267,28 +256,11 @@ const AssignmentPage = () => {
 
   const handleFilterChange = (field, value) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
-    setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
-  const handlePageChange = (page) => {
-    setPagination((prev) => ({ ...prev, page }));
-  };
-
-  const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedAssignments(assignments.map((a) => a.id));
-    } else {
-      setSelectedAssignments([]);
-    }
-  };
-
-  const handleSelectAssignment = (id) => {
-    setSelectedAssignments((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter((i) => i !== id);
-      }
-      return [...prev, id];
-    });
+  const resetFilters = () => {
+    setFilters({ community_id: "", role: "", status: "" });
+    setSearchTerm("");
   };
 
   const handleOpenAddModal = () => {
@@ -307,6 +279,7 @@ const AssignmentPage = () => {
   };
 
   const handleOpenEditModal = (assignment) => {
+    console.log("Opening edit modal for assignment:", assignment);
     setFormData({
       sister_id: assignment.sister_id || assignment.id,
       community_id: assignment.community_id,
@@ -336,31 +309,48 @@ const AssignmentPage = () => {
 
   const handleSubmit = async () => {
     if (!formData.sister_id || !formData.community_id) {
-      setError("Vui lòng chọn nữ tu và cộng đoàn");
+      toast.error("Vui lòng chọn nữ tu và cộng đoàn");
       return;
     }
 
     try {
       setSubmitting(true);
-      setError("");
 
       if (isEditing && selectedAssignment) {
-        await communityService.updateMemberRole(
+        console.log("Updating assignment:", {
+          community_id: formData.community_id,
+          assignment_id: selectedAssignment.id,
+          data: {
+            role: formData.role,
+            start_date: formData.start_date || null,
+            end_date: formData.end_date || null,
+            decision_number: formData.decision_number || null,
+            notes: formData.notes || null,
+          }
+        });
+        
+        const result = await communityService.updateMemberRole(
           formData.community_id,
           selectedAssignment.id,
           {
             role: formData.role,
+            start_date: formData.start_date || null,
             end_date: formData.end_date || null,
-            notes: formData.notes,
+            decision_number: formData.decision_number || null,
+            notes: formData.notes || null,
           }
         );
+        console.log("Update result:", result);
         toast.success("Đã cập nhật bổ nhiệm thành công");
       } else {
         await communityService.addMember(formData.community_id, {
-          sister_ids: [parseInt(formData.sister_id)],
+          sister_id: parseInt(formData.sister_id),
           role: formData.role,
-          joined_date: formData.start_date,
-          notes: formData.notes,
+          start_date: formData.start_date,
+          end_date: formData.end_date || null,
+          decision_number: formData.decision_number || null,
+          notes: formData.notes || null,
+          is_primary: formData.is_primary,
         });
         toast.success("Đã thêm bổ nhiệm thành công");
       }
@@ -369,8 +359,7 @@ const AssignmentPage = () => {
       fetchAssignments();
     } catch (err) {
       console.error("Error saving assignment:", err);
-      setError("Có lỗi xảy ra khi lưu bổ nhiệm");
-      toast.error("Không thể lưu bổ nhiệm");
+      toast.error("Có lỗi xảy ra khi lưu bổ nhiệm");
     } finally {
       setSubmitting(false);
     }
@@ -394,15 +383,6 @@ const AssignmentPage = () => {
     }
   };
 
-  const getInitials = (name) => {
-    if (!name) return "?";
-    const words = name.split(" ");
-    if (words.length >= 2) {
-      return (words[0][0] + words[words.length - 1][0]).toUpperCase();
-    }
-    return name.substring(0, 2).toUpperCase();
-  };
-
   const getRoleConfig = (role) => {
     return roleConfig[role] || roleConfig.member;
   };
@@ -423,60 +403,169 @@ const AssignmentPage = () => {
     return communities.find((c) => c.id === id);
   };
 
-  // Get paginated assignments
-  const getPaginatedAssignments = () => {
-    const start = (pagination.page - 1) * pagination.limit;
-    const end = start + pagination.limit;
-    return assignments.slice(start, end);
+  // Get filtered assignments based on search
+  const getFilteredAssignments = () => {
+    if (!searchTerm) return assignments;
+    const searchLower = searchTerm.toLowerCase();
+    return assignments.filter((a) => {
+      const sister = sisters.find((s) => s.id === a.sister_id) || a;
+      const name = sister.saint_name
+        ? `${sister.saint_name} ${sister.birth_name}`
+        : sister.birth_name || sister.full_name || "";
+      const community = getCommunityById(a.community_id) || { name: a.community_name };
+      return name.toLowerCase().includes(searchLower) || 
+             (community?.name || "").toLowerCase().includes(searchLower);
+    });
   };
 
-  // Render pagination
-  const renderPagination = () => {
-    if (pagination.totalPages <= 1) return null;
-
-    const items = [];
-    for (let i = 1; i <= Math.min(pagination.totalPages, 5); i++) {
-      items.push(
-        <Pagination.Item
-          key={i}
-          active={i === pagination.page}
-          onClick={() => handlePageChange(i)}
-        >
-          {i}
-        </Pagination.Item>
-      );
-    }
-
-    return (
-      <Pagination className="mb-0">
-        <Pagination.Prev
-          disabled={pagination.page === 1}
-          onClick={() => handlePageChange(pagination.page - 1)}
-        />
-        {items}
-        <Pagination.Next
-          disabled={pagination.page === pagination.totalPages}
-          onClick={() => handlePageChange(pagination.page + 1)}
-        />
-      </Pagination>
-    );
+  // Role badge color
+  const getRoleBadgeColor = (role) => {
+    const colors = {
+      leader: "#d63031",
+      superior: "#d63031",
+      vice_leader: "#2d3436",
+      assistant: "#2d3436",
+      secretary: "#6c5ce7",
+      treasurer: "#e84393",
+      member: "#0984e3",
+    };
+    return colors[role] || "#6c757d";
   };
+
+  // DataTable columns
+  const columns = [
+    {
+      key: "sister_name",
+      label: "Nữ Tu",
+      sortable: true,
+      render: (row) => {
+        const sister = getSisterById(row.sister_id) || row;
+        return (
+          <div>
+            {sister.saint_name && (
+              <div className="text-primary fw-semibold" style={{ fontSize: "0.85rem" }}>
+                {sister.saint_name}
+              </div>
+            )}
+            <div style={{ fontSize: "0.85rem" }}>{sister.birth_name || row.birth_name}</div>
+            <small className="text-muted">{stageLabels[sister.current_stage] || ""}</small>
+          </div>
+        );
+      },
+    },
+    {
+      key: "community_name",
+      label: "Cộng Đoàn",
+      sortable: true,
+      render: (row) => {
+        const community = getCommunityById(row.community_id) || { name: row.community_name };
+        return community?.name || "N/A";
+      },
+    },
+    {
+      key: "role",
+      label: "Chức Vụ",
+      sortable: true,
+      render: (row) => {
+        const roleInfo = getRoleConfig(row.role);
+        return (
+          <Badge
+            style={{
+              backgroundColor: getRoleBadgeColor(row.role),
+              color: "#fff",
+              fontSize: "0.75rem",
+              fontWeight: 500,
+            }}
+          >
+            {roleInfo.label}
+          </Badge>
+        );
+      },
+    },
+    {
+      key: "start_date",
+      label: "Ngày Bắt Đầu",
+      sortable: true,
+      render: (row) => formatDate(row.start_date || row.joined_date),
+    },
+    {
+      key: "end_date",
+      label: "Ngày Kết Thúc",
+      sortable: true,
+      render: (row) => (row.end_date ? formatDate(row.end_date) : "Hiện tại"),
+    },
+    {
+      key: "status",
+      label: "Trạng Thái",
+      render: (row) => {
+        const statusInfo = getAssignmentStatus(row);
+        return (
+          <Badge bg={statusInfo.className === "status-active" ? "success" : "secondary"}>
+            {statusInfo.label}
+          </Badge>
+        );
+      },
+    },
+    {
+      key: "actions",
+      label: "Thao Tác",
+      align: "center",
+      className: "action-column",
+      render: (row) => (
+        <div className="d-flex justify-content-center">
+          <Button
+            variant="outline-info"
+            size="sm"
+            className="me-1"
+            title="Xem chi tiết"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewAssignment(row);
+            }}
+          >
+            <i className="fas fa-eye"></i>
+          </Button>
+          <Button
+            variant="outline-primary"
+            size="sm"
+            className="me-1"
+            title="Chỉnh sửa"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenEditModal(row);
+            }}
+          >
+            <i className="fas fa-edit"></i>
+          </Button>
+          <Button
+            variant="outline-danger"
+            size="sm"
+            title="Xóa"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(row);
+            }}
+          >
+            <i className="fas fa-trash"></i>
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   if (loading && assignments.length === 0 && communities.length === 0) {
     return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ minHeight: "60vh" }}
-      >
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
         <Spinner animation="border" variant="primary" />
       </div>
     );
   }
 
-  const paginatedAssignments = getPaginatedAssignments();
+  const filteredAssignments = getFilteredAssignments();
 
   return (
     <Container fluid className="py-4">
+      {/* Breadcrumb */}
       <Breadcrumb
         title="Quản Lý Bổ Nhiệm"
         items={[
@@ -485,316 +574,139 @@ const AssignmentPage = () => {
         ]}
       />
 
-      <div className="d-flex justify-content-end align-items-center mb-4">
-        <Button variant="primary" onClick={handleOpenAddModal}>
-          <i className="fas fa-plus me-2"></i>
-          Bổ nhiệm mới
-        </Button>
-      </div>
-
-      {/* Alerts */}
-      {error && (
-        <Alert variant="danger" dismissible onClose={() => setError("")}>
-          {error}
-        </Alert>
-      )}
-      {success && (
-        <Alert variant="success" dismissible onClose={() => setSuccess("")}>
-          {success}
-        </Alert>
-      )}
-
-      {/* Stats Cards */}
-      <Row className="mb-4 animate-in">
-        <Col md={3} className="mb-3">
-          <div className="stats-card primary">
-            <div className="d-flex align-items-center">
-              <div className="stats-icon bg-gradient-primary">
-                <i className="fas fa-users"></i>
+      {/* Statistics Cards */}
+      <Row className="g-3 mb-4">
+        <Col xs={6} md={3}>
+          <Card className="stat-card">
+            <Card.Body>
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <small className="text-muted">Tổng số</small>
+                  <h4 className="mb-0">{stats.total}</h4>
+                </div>
+                <div className="stat-icon bg-primary">
+                  <i className="fas fa-users"></i>
+                </div>
               </div>
-              <div className="ms-3 flex-grow-1">
-                <div className="stats-value">{stats.total}</div>
-                <p className="stats-label">Tổng bổ nhiệm</p>
-              </div>
-            </div>
-          </div>
+            </Card.Body>
+          </Card>
         </Col>
-        <Col md={3} className="mb-3">
-          <div className="stats-card success">
-            <div className="d-flex align-items-center">
-              <div className="stats-icon bg-gradient-success">
-                <i className="fas fa-check-circle"></i>
+        <Col xs={6} md={3}>
+          <Card className="stat-card">
+            <Card.Body>
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <small className="text-muted">Đang hoạt động</small>
+                  <h4 className="mb-0">{stats.active}</h4>
+                </div>
+                <div className="stat-icon bg-success">
+                  <i className="fas fa-check-circle"></i>
+                </div>
               </div>
-              <div className="ms-3 flex-grow-1">
-                <div className="stats-value">{stats.active}</div>
-                <p className="stats-label">Đang hoạt động</p>
-              </div>
-            </div>
-          </div>
+            </Card.Body>
+          </Card>
         </Col>
-        <Col md={3} className="mb-3">
-          <div className="stats-card warning">
-            <div className="d-flex align-items-center">
-              <div className="stats-icon bg-gradient-warning">
-                <i className="fas fa-clock"></i>
+        <Col xs={6} md={3}>
+          <Card className="stat-card">
+            <Card.Body>
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <small className="text-muted">Đã kết thúc</small>
+                  <h4 className="mb-0">{stats.completed}</h4>
+                </div>
+                <div className="stat-icon bg-info">
+                  <i className="fas fa-history"></i>
+                </div>
               </div>
-              <div className="ms-3 flex-grow-1">
-                <div className="stats-value">{stats.pending}</div>
-                <p className="stats-label">Chờ xử lý</p>
-              </div>
-            </div>
-          </div>
+            </Card.Body>
+          </Card>
         </Col>
-        <Col md={3} className="mb-3">
-          <div className="stats-card danger">
-            <div className="d-flex align-items-center">
-              <div className="stats-icon bg-gradient-danger">
-                <i className="fas fa-history"></i>
+        <Col xs={6} md={3}>
+          <Card className="stat-card">
+            <Card.Body>
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <small className="text-muted">Cộng đoàn</small>
+                  <h4 className="mb-0">{communities.length}</h4>
+                </div>
+                <div className="stat-icon bg-warning">
+                  <i className="fas fa-home"></i>
+                </div>
               </div>
-              <div className="ms-3 flex-grow-1">
-                <div className="stats-value">{stats.completed}</div>
-                <p className="stats-label">Đã kết thúc</p>
-              </div>
-            </div>
-          </div>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
 
-      {/* Main Card */}
-      <Card className="main-card animate-in">
-        {/* Card Header */}
-        <div className="card-header-custom">
-          <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <h5 className="mb-0">
-              <i className="fas fa-list me-2"></i>
-              Danh Sách Bổ Nhiệm
-            </h5>
-            <div className="d-flex gap-2">
-              <Button variant="light" size="sm">
-                <i className="fas fa-file-excel me-1"></i>
-                Xuất Excel
-              </Button>
-              <Button variant="light" size="sm" onClick={() => window.print()}>
-                <i className="fas fa-print me-1"></i>
-                In
-              </Button>
-            </div>
-          </div>
-        </div>
+      {/* Search & Filter */}
+      <Row className="g-3 mb-4">
+        <Col md={4}>
+          <Form.Control
+            type="text"
+            placeholder="Tìm kiếm theo tên nữ tu, cộng đoàn..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </Col>
+        <Col md={2}>
+          <Form.Select
+            value={filters.community_id}
+            onChange={(e) => handleFilterChange("community_id", e.target.value)}
+          >
+            <option value="">Tất cả cộng đoàn</option>
+            {communities.map((c) => (
+              <option key={`filter-community-${c.id}`} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </Form.Select>
+        </Col>
+        <Col md={2}>
+          <Form.Select
+            value={filters.role}
+            onChange={(e) => handleFilterChange("role", e.target.value)}
+          >
+            <option value="">Tất cả chức vụ</option>
+            <option value="superior">Bề trên</option>
+            <option value="assistant">Phó bề trên</option>
+            <option value="secretary">Thư ký</option>
+            <option value="treasurer">Thủ quỹ</option>
+            <option value="member">Thành viên</option>
+          </Form.Select>
+        </Col>
+        <Col md={2}>
+          <Form.Select
+            value={filters.status}
+            onChange={(e) => handleFilterChange("status", e.target.value)}
+          >
+            <option value="">Tất cả trạng thái</option>
+            <option value="active">Đang hoạt động</option>
+            <option value="completed">Đã kết thúc</option>
+          </Form.Select>
+        </Col>
+        <Col md={2} className="d-flex gap-2">
+          <Button variant="outline-secondary" className="flex-grow-1" onClick={resetFilters}>
+            <i className="fas fa-redo me-1"></i>
+            Đặt lại
+          </Button>
+          <Button variant="primary" onClick={handleOpenAddModal}>
+            <i className="fas fa-plus me-1"></i>
+            Thêm
+          </Button>
+        </Col>
+      </Row>
 
-        {/* Filters */}
-        <div className="filter-section">
-          <Row className="g-3">
-            <Col md={3}>
-              <Form.Label>Cộng đoàn</Form.Label>
-              <Form.Select
-                value={filters.community_id}
-                onChange={(e) =>
-                  handleFilterChange("community_id", e.target.value)
-                }
-              >
-                <option value="">Tất cả cộng đoàn</option>
-                {communities.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Col>
-            <Col md={3}>
-              <Form.Label>Chức vụ</Form.Label>
-              <Form.Select
-                value={filters.role}
-                onChange={(e) => handleFilterChange("role", e.target.value)}
-              >
-                <option value="">Tất cả chức vụ</option>
-                <option value="leader">Bề trên</option>
-                <option value="superior">Bề trên</option>
-                <option value="vice_leader">Phó bề trên</option>
-                <option value="assistant">Phó bề trên</option>
-                <option value="secretary">Thư ký</option>
-                <option value="treasurer">Thủ quỹ</option>
-                <option value="member">Thành viên</option>
-              </Form.Select>
-            </Col>
-            <Col md={3}>
-              <Form.Label>Trạng thái</Form.Label>
-              <Form.Select
-                value={filters.status}
-                onChange={(e) => handleFilterChange("status", e.target.value)}
-              >
-                <option value="">Tất cả trạng thái</option>
-                <option value="active">Đang hoạt động</option>
-                <option value="completed">Đã hoàn thành</option>
-              </Form.Select>
-            </Col>
-            <Col md={3}>
-              <Form.Label>Tìm kiếm</Form.Label>
-              <InputGroup>
-                <Form.Control
-                  type="text"
-                  placeholder="Tên nữ tu..."
-                  value={filters.search}
-                  onChange={(e) => handleFilterChange("search", e.target.value)}
-                />
-                <Button variant="primary">
-                  <i className="fas fa-search"></i>
-                </Button>
-              </InputGroup>
-            </Col>
-          </Row>
-        </div>
-
-        {/* Table */}
-        <div className="table-responsive p-3">
-          <Table hover className="custom-table mb-0">
-            <thead>
-              <tr>
-                <th style={{ width: "50px" }}>
-                  <Form.Check
-                    type="checkbox"
-                    checked={
-                      selectedAssignments.length ===
-                        paginatedAssignments.length &&
-                      paginatedAssignments.length > 0
-                    }
-                    onChange={handleSelectAll}
-                  />
-                </th>
-                <th>Nữ Tu</th>
-                <th>Cộng Đoàn</th>
-                <th>Chức Vụ</th>
-                <th>Ngày Bắt Đầu</th>
-                <th>Ngày Kết Thúc</th>
-                <th>Trạng Thái</th>
-                <th style={{ width: "120px" }}>Thao Tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedAssignments.length > 0 ? (
-                paginatedAssignments.map((assignment) => {
-                  const sister =
-                    getSisterById(assignment.sister_id) || assignment;
-                  const community = getCommunityById(
-                    assignment.community_id
-                  ) || { name: assignment.community_name };
-                  const roleInfo = getRoleConfig(assignment.role);
-                  const statusInfo = getAssignmentStatus(assignment);
-                  const sisterName = sister.saint_name
-                    ? `${sister.saint_name} ${sister.birth_name}`
-                    : sister.birth_name || sister.full_name || "N/A";
-
-                  return (
-                    <tr key={`${assignment.community_id}-${assignment.id}`}>
-                      <td>
-                        <Form.Check
-                          type="checkbox"
-                          checked={selectedAssignments.includes(assignment.id)}
-                          onChange={() => handleSelectAssignment(assignment.id)}
-                        />
-                      </td>
-                      <td>
-                        <div className="sister-info">
-                          <div className="sister-avatar">
-                            {getInitials(sisterName)}
-                          </div>
-                          <div className="sister-details">
-                            <div className="sister-name">{sisterName}</div>
-                            <div className="sister-stage">
-                              {stageLabels[sister.current_stage] ||
-                                sister.current_stage ||
-                                "Chưa xác định"}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div>
-                          <i className="fas fa-home text-primary me-1"></i>
-                          {community?.name || "N/A"}
-                        </div>
-                      </td>
-                      <td>
-                        <span className={`role-badge ${roleInfo.className}`}>
-                          <i className={`fas ${roleInfo.icon} me-1`}></i>
-                          {roleInfo.label}
-                        </span>
-                      </td>
-                      <td>
-                        <i className="far fa-calendar-alt text-muted me-1"></i>
-                        {formatDate(
-                          assignment.start_date || assignment.joined_date
-                        )}
-                      </td>
-                      <td>
-                        <i className="far fa-calendar-alt text-muted me-1"></i>
-                        {assignment.end_date
-                          ? formatDate(assignment.end_date)
-                          : "—"}
-                      </td>
-                      <td>
-                        <span
-                          className={`status-badge ${statusInfo.className}`}
-                        >
-                          <i className={`fas ${statusInfo.icon} me-1`}></i>
-                          {statusInfo.label}
-                        </span>
-                      </td>
-                      <td>
-                        <button
-                          className="action-btn btn-view"
-                          onClick={() => handleViewAssignment(assignment)}
-                          title="Xem chi tiết"
-                        >
-                          <i className="fas fa-eye"></i>
-                        </button>
-                        <button
-                          className="action-btn btn-edit"
-                          onClick={() => handleOpenEditModal(assignment)}
-                          title="Chỉnh sửa"
-                        >
-                          <i className="fas fa-edit"></i>
-                        </button>
-                        <button
-                          className="action-btn btn-delete"
-                          onClick={() => handleDelete(assignment)}
-                          title="Xóa"
-                        >
-                          <i className="fas fa-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan="8" className="text-center py-5">
-                    <div className="empty-state">
-                      <i className="fas fa-users-slash"></i>
-                      <p>Không có bổ nhiệm nào</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
-        </div>
-
-        {/* Pagination */}
-        <div className="d-flex justify-content-between align-items-center p-3 border-top flex-wrap gap-2">
-          <div className="text-muted">
-            Hiển thị{" "}
-            <strong>
-              {Math.min(
-                (pagination.page - 1) * pagination.limit + 1,
-                pagination.total
-              )}
-              -{Math.min(pagination.page * pagination.limit, pagination.total)}
-            </strong>{" "}
-            trong tổng số <strong>{pagination.total}</strong> bản ghi
-          </div>
-          {renderPagination()}
-        </div>
+      {/* Table */}
+      <Card className="assignment-table">
+        <Card.Body className="p-0">
+          <DataTable
+            columns={columns}
+            data={filteredAssignments}
+            loading={loading}
+            emptyText="Không có dữ liệu bổ nhiệm"
+            emptyIcon="fas fa-users-slash"
+          />
+        </Card.Body>
       </Card>
 
       {/* Add/Edit Modal */}
@@ -829,7 +741,7 @@ const AssignmentPage = () => {
                 >
                   <option value="">-- Chọn nữ tu --</option>
                   {sisters.map((s) => (
-                    <option key={s.id} value={s.id}>
+                    <option key={`form-sister-${s.id}`} value={s.id}>
                       {s.saint_name
                         ? `${s.saint_name} ${s.birth_name}`
                         : s.birth_name}
@@ -853,7 +765,7 @@ const AssignmentPage = () => {
                 >
                   <option value="">-- Chọn cộng đoàn --</option>
                   {communities.map((c) => (
-                    <option key={c.id} value={c.id}>
+                    <option key={`form-community-${c.id}`} value={c.id}>
                       {c.name}
                     </option>
                   ))}
@@ -897,33 +809,33 @@ const AssignmentPage = () => {
               </Col>
 
               <Col md={6} className="mb-3">
-                <Form.Label>
-                  <i className="fas fa-calendar-alt text-primary me-1"></i>
-                  Ngày Bắt Đầu <span className="text-danger">*</span>
-                </Form.Label>
-                <Form.Control
-                  type="date"
-                  value={formData.start_date}
-                  onChange={(e) =>
-                    handleFormChange("start_date", e.target.value)
+                <DatePicker
+                  label={
+                    <>
+                      <i className="fas fa-calendar-alt text-primary me-1"></i>
+                      Ngày Bắt Đầu
+                    </>
                   }
+                  name="start_date"
+                  value={formData.start_date}
+                  onChange={(value) => handleFormChange("start_date", value)}
                   required
                 />
               </Col>
 
               <Col md={6} className="mb-3">
-                <Form.Label>
-                  <i className="fas fa-calendar-check text-primary me-1"></i>
-                  Ngày Kết Thúc
-                </Form.Label>
-                <Form.Control
-                  type="date"
+                <DatePicker
+                  label={
+                    <>
+                      <i className="fas fa-calendar-check text-primary me-1"></i>
+                      Ngày Kết Thúc
+                    </>
+                  }
+                  name="end_date"
                   value={formData.end_date}
-                  onChange={(e) => handleFormChange("end_date", e.target.value)}
+                  onChange={(value) => handleFormChange("end_date", value)}
+                  helpText="Để trống nếu không xác định"
                 />
-                <Form.Text className="text-muted">
-                  Để trống nếu không xác định
-                </Form.Text>
               </Col>
 
               <Col md={12} className="mb-3">
@@ -983,11 +895,7 @@ const AssignmentPage = () => {
       </Modal>
 
       {/* View Modal */}
-      <Modal
-        show={showViewModal}
-        onHide={() => setShowViewModal(false)}
-        size="lg"
-      >
+      <Modal show={showViewModal} onHide={() => setShowViewModal(false)} size="lg">
         <Modal.Header closeButton className="modal-header-custom">
           <Modal.Title>
             <i className="fas fa-info-circle me-2"></i>
@@ -995,145 +903,94 @@ const AssignmentPage = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {selectedAssignment &&
-            (() => {
-              const sister =
-                getSisterById(selectedAssignment.sister_id) ||
-                selectedAssignment;
-              const community = getCommunityById(
-                selectedAssignment.community_id
-              ) || { name: selectedAssignment.community_name };
-              const roleInfo = getRoleConfig(selectedAssignment.role);
-              const statusInfo = getAssignmentStatus(selectedAssignment);
-              const sisterName = sister.saint_name
-                ? `${sister.saint_name} ${sister.birth_name}`
-                : sister.birth_name || sister.full_name || "N/A";
+          {selectedAssignment && (() => {
+            const sister = getSisterById(selectedAssignment.sister_id) || selectedAssignment;
+            const community = getCommunityById(selectedAssignment.community_id) || { name: selectedAssignment.community_name };
+            const roleInfo = getRoleConfig(selectedAssignment.role);
+            const statusInfo = getAssignmentStatus(selectedAssignment);
 
-              return (
-                <Row>
-                  <Col md={6} className="mb-4">
-                    <Card className="border-0 bg-light">
-                      <Card.Body>
-                        <h6 className="text-muted mb-3">
-                          <i className="fas fa-user me-2"></i>
-                          Thông Tin Nữ Tu
-                        </h6>
-                        <div className="d-flex align-items-center mb-3">
-                          <div
-                            className="sister-avatar"
-                            style={{
-                              width: 60,
-                              height: 60,
-                              fontSize: "1.5rem",
-                            }}
-                          >
-                            {getInitials(sisterName)}
-                          </div>
-                          <div className="ms-3">
-                            <h5 className="mb-1">{sisterName}</h5>
-                            <p className="text-muted mb-0">
-                              {stageLabels[sister.current_stage] ||
-                                "Chưa xác định"}
-                            </p>
-                          </div>
+            return (
+              <Row>
+                <Col md={6} className="mb-3">
+                  <div className="info-card">
+                    <h6><i className="fas fa-user me-2"></i>Thông Tin Nữ Tu</h6>
+                    <div className="info-content">
+                      <div className="info-item">
+                        <span className="info-label">Tên thánh:</span>
+                        <span className="info-value">{sister.saint_name || "—"}</span>
+                      </div>
+                      <div className="info-item">
+                        <span className="info-label">Họ tên:</span>
+                        <span className="info-value">{sister.birth_name || "—"}</span>
+                      </div>
+                      <div className="info-item">
+                        <span className="info-label">Giai đoạn:</span>
+                        <span className="info-value">{stageLabels[sister.current_stage] || "Chưa xác định"}</span>
+                      </div>
+                      {sister.phone && (
+                        <div className="info-item">
+                          <span className="info-label">Điện thoại:</span>
+                          <span className="info-value">{sister.phone}</span>
                         </div>
-                        {sister.date_of_birth && (
-                          <div className="mb-2">
-                            <i className="fas fa-birthday-cake text-primary me-2"></i>
-                            <strong>Ngày sinh:</strong>{" "}
-                            {formatDate(sister.date_of_birth)}
-                          </div>
-                        )}
-                        {sister.phone && (
-                          <div className="mb-2">
-                            <i className="fas fa-phone text-primary me-2"></i>
-                            <strong>Điện thoại:</strong> {sister.phone}
-                          </div>
-                        )}
-                        {sister.email && (
-                          <div>
-                            <i className="fas fa-envelope text-primary me-2"></i>
-                            <strong>Email:</strong> {sister.email}
-                          </div>
-                        )}
-                      </Card.Body>
-                    </Card>
-                  </Col>
-
-                  <Col md={6} className="mb-4">
-                    <Card className="border-0 bg-light">
-                      <Card.Body>
-                        <h6 className="text-muted mb-3">
-                          <i className="fas fa-briefcase me-2"></i>
-                          Thông Tin Bổ Nhiệm
-                        </h6>
-                        <div className="mb-2">
-                          <i className="fas fa-home text-primary me-2"></i>
-                          <strong>Cộng đoàn:</strong> {community?.name}
-                        </div>
-                        <div className="mb-2">
-                          <i className="fas fa-user-tag text-primary me-2"></i>
-                          <strong>Chức vụ:</strong>
-                          <span
-                            className={`role-badge ${roleInfo.className} ms-2`}
-                          >
+                      )}
+                    </div>
+                  </div>
+                </Col>
+                <Col md={6} className="mb-3">
+                  <div className="info-card">
+                    <h6><i className="fas fa-briefcase me-2"></i>Thông Tin Bổ Nhiệm</h6>
+                    <div className="info-content">
+                      <div className="info-item">
+                        <span className="info-label">Cộng đoàn:</span>
+                        <span className="info-value">{community?.name || "—"}</span>
+                      </div>
+                      <div className="info-item">
+                        <span className="info-label">Chức vụ:</span>
+                        <span className="info-value">
+                          <Badge style={{ backgroundColor: getRoleBadgeColor(selectedAssignment.role), color: "#fff" }}>
                             {roleInfo.label}
-                          </span>
-                        </div>
-                        <div className="mb-2">
-                          <i className="fas fa-calendar-alt text-primary me-2"></i>
-                          <strong>Bắt đầu:</strong>{" "}
-                          {formatDate(
-                            selectedAssignment.start_date ||
-                              selectedAssignment.joined_date
-                          )}
-                        </div>
-                        <div className="mb-2">
-                          <i className="fas fa-calendar-check text-primary me-2"></i>
-                          <strong>Kết thúc:</strong>{" "}
-                          {selectedAssignment.end_date
-                            ? formatDate(selectedAssignment.end_date)
-                            : "Chưa xác định"}
-                        </div>
-                        <div>
-                          <i className="fas fa-info-circle text-primary me-2"></i>
-                          <strong>Trạng thái:</strong>
-                          <span
-                            className={`status-badge ${statusInfo.className} ms-2`}
-                          >
+                          </Badge>
+                        </span>
+                      </div>
+                      <div className="info-item">
+                        <span className="info-label">Ngày bắt đầu:</span>
+                        <span className="info-value">{formatDate(selectedAssignment.start_date || selectedAssignment.joined_date)}</span>
+                      </div>
+                      <div className="info-item">
+                        <span className="info-label">Ngày kết thúc:</span>
+                        <span className="info-value">{selectedAssignment.end_date ? formatDate(selectedAssignment.end_date) : "Chưa xác định"}</span>
+                      </div>
+                      <div className="info-item">
+                        <span className="info-label">Trạng thái:</span>
+                        <span className="info-value">
+                          <Badge bg={statusInfo.className === "status-active" ? "success" : "secondary"}>
                             {statusInfo.label}
-                          </span>
-                        </div>
-                      </Card.Body>
-                    </Card>
+                          </Badge>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+                {selectedAssignment.notes && (
+                  <Col md={12}>
+                    <div className="info-card">
+                      <h6><i className="fas fa-sticky-note me-2"></i>Ghi Chú</h6>
+                      <div className="info-content">
+                        <p className="mb-0">{selectedAssignment.notes}</p>
+                      </div>
+                    </div>
                   </Col>
-
-                  {selectedAssignment.notes && (
-                    <Col md={12}>
-                      <Card className="border-0 bg-light">
-                        <Card.Body>
-                          <h6 className="text-muted mb-3">
-                            <i className="fas fa-file-alt me-2"></i>
-                            Chi Tiết
-                          </h6>
-                          <div>
-                            <strong>Ghi chú:</strong> {selectedAssignment.notes}
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  )}
-                </Row>
-              );
-            })()}
+                )}
+              </Row>
+            );
+          })()}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowViewModal(false)}>
-            <i className="fas fa-times me-1"></i>
             Đóng
           </Button>
           <Button
-            variant="primary"
+            variant="warning"
             onClick={() => {
               setShowViewModal(false);
               handleOpenEditModal(selectedAssignment);

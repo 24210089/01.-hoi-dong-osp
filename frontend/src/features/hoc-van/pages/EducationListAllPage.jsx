@@ -123,10 +123,7 @@ const EducationListAllPage = () => {
 
   return (
     <Container fluid className="py-4">
-      <Breadcrumb
-        title="Quản lý Học vấn"
-        items={[{ label: "Học vấn" }]}
-      />
+      <Breadcrumb title="Quản lý Học vấn" items={[{ label: "Học vấn" }]} />
 
       <div className="d-flex justify-content-between align-items-center mb-4">
         <Link to="/hoc-van/create" className="btn btn-primary">

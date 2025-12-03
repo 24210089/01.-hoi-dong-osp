@@ -45,4 +45,23 @@ router.delete(
   communityController.deleteCommunity
 );
 
+// Member management routes
+router.post(
+  "/:id/members",
+  authorize(...editorRoles),
+  communityController.addMember
+);
+
+router.put(
+  "/:id/members/:memberId",
+  authorize(...editorRoles),
+  communityController.updateMemberRole
+);
+
+router.delete(
+  "/:id/members/:memberId",
+  authorize(...editorRoles),
+  communityController.removeMember
+);
+
 module.exports = router;

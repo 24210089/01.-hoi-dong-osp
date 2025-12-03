@@ -101,10 +101,7 @@ const MissionListPage = () => {
 
   return (
     <Container fluid className="py-4">
-      <Breadcrumb
-        title="Quản lý Sứ vụ"
-        items={[{ label: "Quản lý Sứ vụ" }]}
-      />
+      <Breadcrumb title="Quản lý Sứ vụ" items={[{ label: "Quản lý Sứ vụ" }]} />
 
       <div className="d-flex justify-content-between align-items-center mb-4">
         <Button variant="primary" onClick={handleAdd}>

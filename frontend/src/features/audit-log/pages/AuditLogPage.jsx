@@ -301,7 +301,7 @@ const AuditLogPage = () => {
 
   return (
     <Container fluid className="audit-log-page py-4">
-      <Breadcrumb 
+      <Breadcrumb
         title="Nhật ký hệ thống"
         items={[
           { label: "Cài đặt", link: "/settings" },
