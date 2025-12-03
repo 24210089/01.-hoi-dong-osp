@@ -1,8 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Dropdown, Badge } from "react-bootstrap";
-import { formatDistanceToNow } from "date-fns";
-import { vi } from "date-fns/locale";
+import { Dropdown } from "react-bootstrap";
 
 const NotificationDropdown = ({
   notifications,
@@ -11,144 +9,77 @@ const NotificationDropdown = ({
   onMarkAllAsRead,
   onDelete,
 }) => {
-  // Get icon based on notification type
-  const getNotificationIcon = (type) => {
-    const icons = {
-      info: { icon: "fa-info-circle", color: "text-info" },
-      warning: { icon: "fa-exclamation-triangle", color: "text-warning" },
-      success: { icon: "fa-check-circle", color: "text-success" },
-      error: { icon: "fa-times-circle", color: "text-danger" },
+  // Get icon and background based on notification type
+  const getNotificationStyle = (type) => {
+    const styles = {
+      info: { icon: "fa-info-circle", bg: "bg-skyblue" },
+      warning: { icon: "fa-exclamation-triangle", bg: "bg-yellow" },
+      success: { icon: "fa-check-circle", bg: "bg-skyblue" },
+      error: { icon: "fa-times-circle", bg: "bg-pink" },
     };
-    return icons[type] || icons.info;
+    return styles[type] || styles.info;
   };
 
   return (
-    <Dropdown align="end" className="notification-dropdown me-2">
-      <Dropdown.Toggle
-        variant="link"
-        id="notification-dropdown"
-        className="notification-toggle position-relative"
-      >
-        <i className="fas fa-bell notification-icon"></i>
-        {unreadCount > 0 && (
-          <Badge
-            bg="danger"
-            pill
-            className="notification-badge position-absolute"
-          >
-            {unreadCount > 9 ? "9+" : unreadCount}
-          </Badge>
-        )}
+    <Dropdown align="end">
+      <Dropdown.Toggle as="a" className="navbar-nav-link">
+        <i className="far fa-bell"></i>
+        <span>{unreadCount}</span>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu className="notification-dropdown-menu">
+      <Dropdown.Menu>
         {/* Header */}
-        <div className="dropdown-header d-flex justify-content-between align-items-center">
-          <h6 className="mb-0">
-            <i className="fas fa-bell me-2"></i>
-            Thông báo
-            {unreadCount > 0 && (
-              <Badge bg="danger" pill className="ms-2">
-                {unreadCount}
-              </Badge>
-            )}
+        <div className="item-header">
+          <h6 className="item-title">
+            Thông báo {unreadCount > 0 && `(${unreadCount} mới)`}
           </h6>
-          {unreadCount > 0 && (
-            <button
-              className="btn btn-sm btn-link text-primary p-0"
-              onClick={onMarkAllAsRead}
-            >
-              Đánh dấu đã đọc
-            </button>
-          )}
         </div>
 
-        <Dropdown.Divider className="my-0" />
-
         {/* Notification List */}
-        <div className="notification-list">
+        <div className="item-content">
           {notifications.length > 0 ? (
             notifications.map((notification) => {
-              const iconData = getNotificationIcon(notification.type);
+              const styleData = getNotificationStyle(notification.type);
               return (
                 <div
                   key={notification.id}
-                  className={`notification-item ${
-                    !notification.read ? "unread" : ""
-                  }`}
+                  className={`media ${!notification.read ? "unread" : ""}`}
+                  onClick={() => !notification.read && onMarkAsRead(notification.id)}
                 >
-                  <div className="notification-content">
-                    <div className="d-flex">
-                      <div
-                        className={`notification-icon-wrapper ${iconData.color}`}
-                      >
-                        <i className={`fas ${iconData.icon}`}></i>
-                      </div>
-                      <div className="flex-grow-1 ms-3">
-                        <div className="notification-title">
-                          {notification.title}
-                          {!notification.read && (
-                            <span className="unread-dot ms-2"></span>
-                          )}
-                        </div>
-                        <div className="notification-message">
-                          {notification.message}
-                        </div>
-                        <div className="notification-time">
-                          <i className="far fa-clock me-1"></i>
-                          {notification.time}
-                        </div>
-                      </div>
-                      <div className="notification-actions">
-                        <Dropdown align="end">
-                          <Dropdown.Toggle
-                            variant="link"
-                            size="sm"
-                            className="notification-action-toggle"
-                          >
-                            <i className="fas fa-ellipsis-v"></i>
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            {!notification.read && (
-                              <Dropdown.Item
-                                onClick={() => onMarkAsRead(notification.id)}
-                              >
-                                <i className="fas fa-check me-2"></i>
-                                Đánh dấu đã đọc
-                              </Dropdown.Item>
-                            )}
-                            <Dropdown.Item
-                              onClick={() => onDelete(notification.id)}
-                              className="text-danger"
-                            >
-                              <i className="fas fa-trash me-2"></i>
-                              Xóa
-                            </Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </div>
+                  <div className={`item-icon ${styleData.bg}`}>
+                    <i className={`fas ${styleData.icon}`}></i>
+                  </div>
+                  <div className="media-body space-sm">
+                    <div className="item-title">
+                      <a href="#">
+                        <span className="item-name">{notification.title}</span>
+                        <span className="item-time">{notification.time}</span>
+                      </a>
                     </div>
+                    <p>{notification.message}</p>
                   </div>
                 </div>
               );
             })
           ) : (
-            <div className="empty-notifications">
-              <i className="fas fa-bell-slash"></i>
-              <p>Không có thông báo nào</p>
+            <div className="text-center py-4">
+              <i className="fas fa-bell-slash mb-2" style={{ fontSize: '2rem', color: '#ccc' }}></i>
+              <p className="text-muted mb-0">Không có thông báo nào</p>
             </div>
           )}
         </div>
 
-        <Dropdown.Divider className="my-0" />
-
         {/* Footer */}
-        <div className="dropdown-footer text-center">
-          <Link to="/notifications" className="btn btn-sm btn-link">
-            Xem tất cả thông báo
-            <i className="fas fa-arrow-right ms-2"></i>
-          </Link>
-        </div>
+        {notifications.length > 0 && (
+          <div className="text-center py-2" style={{ borderTop: '1px solid #f0f0f0' }}>
+            <Link 
+              to="/notifications" 
+              style={{ color: '#ffa901', textDecoration: 'none', fontSize: '14px' }}
+            >
+              Xem tất cả thông báo
+            </Link>
+          </div>
+        )}
       </Dropdown.Menu>
     </Dropdown>
   );

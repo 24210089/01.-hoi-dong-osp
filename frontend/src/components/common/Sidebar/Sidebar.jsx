@@ -1,4 +1,4 @@
-// src/components/common/Sidebar/Sidebar.jsx
+// src/components/common/Sidebar/Sidebar.jsx - AKKHOR STYLE
 
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -17,31 +17,38 @@ import { menuConfig } from "@config/menu.config";
 // Styles
 import "./Sidebar.css";
 
-const Sidebar = ({ isOpen, onClose, isCompact = false, onToggleCompact }) => {
-  // ← THÊM isCompact prop
+const Sidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [expandedGroups, setExpandedGroups] = useState([]);
   const [activeMenu, setActiveMenu] = useState("");
-  const [searchTerm, setSearchTerm] = useState(""); // ← THÊM search state
-  const [pinnedItems, setPinnedItems] = useState([]); // ← THÊM pinned state
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  // Sidebar collapsed state
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const saved = localStorage.getItem("sidebarCollapsed");
+    return saved === "true";
+  });
 
-  // Load pinned items from localStorage
+  // Save collapsed state
   useEffect(() => {
-    const saved = localStorage.getItem("pinnedMenuItems");
-    if (saved) {
-      setPinnedItems(JSON.parse(saved));
-    }
-  }, []);
+    localStorage.setItem("sidebarCollapsed", isCollapsed);
+    // Dispatch custom event to notify MainLayout
+    window.dispatchEvent(new Event("sidebarToggle"));
+  }, [isCollapsed]);
+
+  const toggleCollapsed = () => {
+    setIsCollapsed(!isCollapsed);
+  };
 
   // Check if menu item is active
   useEffect(() => {
     const currentPath = location.pathname;
     setActiveMenu(currentPath);
 
-    // Auto expand group if child is active (chỉ khi không compact)
-    if (!isCompact) {
+    // Auto expand group if child is active (chỉ khi không collapsed)
+    if (!isCollapsed) {
       menuConfig.forEach((item) => {
         if (item.children) {
           const hasActiveChild = item.children.some((child) =>
@@ -53,11 +60,11 @@ const Sidebar = ({ isOpen, onClose, isCompact = false, onToggleCompact }) => {
         }
       });
     }
-  }, [location.pathname, isCompact]);
+  }, [location.pathname, isCollapsed]);
 
   // Toggle group expansion
   const toggleGroup = (groupId) => {
-    if (isCompact) return; // Không expand khi compact mode
+    if (isCollapsed) return; // Không expand khi collapsed mode
 
     setExpandedGroups((prev) =>
       prev.includes(groupId)
@@ -80,23 +87,16 @@ const Sidebar = ({ isOpen, onClose, isCompact = false, onToggleCompact }) => {
     return roles.includes(user?.role);
   };
 
-  // ← THÊM: Toggle pin item
-  const togglePin = (itemId) => {
-    const newPinned = pinnedItems.includes(itemId)
-      ? pinnedItems.filter((id) => id !== itemId)
-      : [...pinnedItems, itemId];
-
-    setPinnedItems(newPinned);
-    localStorage.setItem("pinnedMenuItems", JSON.stringify(newPinned));
-  };
-
-  // ← THÊM: Filter menu by search
+  // Filter menu by search (exclude dividers and labels)
   const filterMenu = (items) => {
-    if (!searchTerm) return items;
+    // First filter out dividers and labels
+    const menuItems = items.filter(
+      (item) => item.type !== "divider" && item.type !== "label"
+    );
 
-    return items.filter((item) => {
-      if (item.type === "divider" || item.type === "label") return false;
+    if (!searchTerm) return menuItems;
 
+    return menuItems.filter((item) => {
       const matchLabel = item.label
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase());
@@ -113,30 +113,8 @@ const Sidebar = ({ isOpen, onClose, isCompact = false, onToggleCompact }) => {
     menuConfig.filter((item) => hasPermission(item.roles))
   );
 
-  // ← THÊM: Separate pinned and unpinned items
-  const pinnedMenuItems = filteredMenu.filter((item) =>
-    pinnedItems.includes(item.id)
-  );
-  const unpinnedMenuItems = filteredMenu.filter(
-    (item) => !pinnedItems.includes(item.id)
-  );
-
-  // ← THÊM: Render menu items
-  const renderMenuItem = (item, isPinned = false) => {
-    // Handle divider
-    if (item.type === "divider") {
-      return <div key={item.id} className="menu-divider"></div>;
-    }
-
-    // Handle label
-    if (item.type === "label") {
-      return (
-        <div key={item.id} className="menu-label">
-          {item.label}
-        </div>
-      );
-    }
-
+  // Render menu items
+  const renderMenuItem = (item) => {
     // Handle menu group
     if (item.children) {
       return (
@@ -147,9 +125,7 @@ const Sidebar = ({ isOpen, onClose, isCompact = false, onToggleCompact }) => {
           onToggle={() => toggleGroup(item.id)}
           activeMenu={activeMenu}
           onMenuClick={handleMenuClick}
-          isCompact={isCompact}
-          isPinned={isPinned}
-          onTogglePin={() => togglePin(item.id)}
+          isCollapsed={isCollapsed}
         />
       );
     }
@@ -161,10 +137,8 @@ const Sidebar = ({ isOpen, onClose, isCompact = false, onToggleCompact }) => {
         item={item}
         isActive={activeMenu === item.path}
         onClick={() => handleMenuClick(item.path)}
-        isCompact={isCompact}
-        isPinned={isPinned}
-        onTogglePin={() => togglePin(item.id)}
-        tooltip={item.label} // ← For compact mode tooltip
+        isCollapsed={isCollapsed}
+        tooltip={item.label}
       />
     );
   };
@@ -175,62 +149,59 @@ const Sidebar = ({ isOpen, onClose, isCompact = false, onToggleCompact }) => {
       {isOpen && <div className="sidebar-overlay" onClick={onClose}></div>}
 
       {/* Sidebar */}
-      <aside
-        className={`sidebar ${isOpen ? "open" : ""} ${
-          isCompact ? "compact" : ""
-        }`}
-      >
-        {/* Search Box with Compact Toggle */}
-        {!isCompact && (
-          <div className="sidebar-search">
-            <div className="search-wrapper flex-grow-1">
-              <input
-                type="text"
-                className="form-control search-input"
-                placeholder="Tìm kiếm menu..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              {searchTerm && (
-                <button
-                  className="search-clear"
-                  onClick={() => setSearchTerm("")}
-                >
-                  <i className="fas fa-times"></i>
-                </button>
-              )}
-            </div>
-            <button
-              className="sidebar-compact-toggle d-none d-lg-flex"
-              onClick={onToggleCompact}
-              title="Thu gọn sidebar"
+      <aside className={`sidebar ${isOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
+        {/* Search Box & Toggle Arrow */}
+        <div className="sidebar-header-area">
+          {!isCollapsed ? (
+            <>
+              <div className="sidebar-search">
+                <div className="search-wrapper">
+                  <input
+                    type="text"
+                    className="form-control search-input"
+                    placeholder="Tìm kiếm menu..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  {searchTerm && (
+                    <button
+                      className="search-clear"
+                      onClick={() => setSearchTerm("")}
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                  )}
+                </div>
+              </div>
+              <button 
+                className="sidebar-toggle-btn d-none d-lg-flex" 
+                onClick={toggleCollapsed}
+                title="Thu gọn"
+              >
+                <i className="fas fa-chevron-left"></i>
+              </button>
+            </>
+          ) : (
+            <button 
+              className="sidebar-toggle-btn d-none d-lg-flex" 
+              onClick={toggleCollapsed}
+              title="Mở rộng"
             >
-              <i className="fas fa-angle-double-left"></i>
+              <i className="fas fa-chevron-right"></i>
             </button>
-            <button className="sidebar-close d-lg-none" onClick={onClose}>
-              <i className="fas fa-times"></i>
-            </button>
-          </div>
-        )}
+          )}
+          
+          <button className="sidebar-close d-lg-none" onClick={onClose}>
+            <i className="fas fa-times"></i>
+          </button>
+        </div>
 
         {/* Navigation Menu */}
         <Nav className="sidebar-nav flex-column">
-          {/* ← THÊM: Pinned Items Section */}
-          {!isCompact && pinnedMenuItems.length > 0 && (
-            <>
-              <div className="menu-label">
-                <i className="fas fa-thumbtack me-2"></i>
-                Đã ghim
-              </div>
-              {pinnedMenuItems.map((item) => renderMenuItem(item, true))}
-              <div className="menu-divider"></div>
-            </>
-          )}
+          {/* Menu Items */}
+          {filteredMenu.map((item) => renderMenuItem(item))}
 
-          {/* Regular Menu Items */}
-          {unpinnedMenuItems.map((item) => renderMenuItem(item, false))}
-
-          {/* ← THÊM: Empty state when search has no results */}
+          {/* Empty state when search has no results */}
           {searchTerm && filteredMenu.length === 0 && (
             <div className="empty-search">
               <i className="fas fa-search"></i>
@@ -240,28 +211,15 @@ const Sidebar = ({ isOpen, onClose, isCompact = false, onToggleCompact }) => {
         </Nav>
 
         {/* Sidebar Footer */}
-        {!isCompact && (
+        {!isCollapsed && (
           <div className="sidebar-footer">
             <div className="sidebar-footer-content">
               <div className="app-version">
                 <i className="fas fa-code-branch me-2"></i>
                 Version 1.0.0
               </div>
-              <div className="copyright">© 2024 Hội Dòng</div>
+              <div className="copyright">© 2024 Hội Dòng OSP</div>
             </div>
-          </div>
-        )}
-
-        {/* ← THÊM: Compact mode expand button */}
-        {isCompact && (
-          <div className="sidebar-expand-btn">
-            <button
-              className="btn-expand"
-              onClick={onToggleCompact}
-              title="Mở rộng sidebar"
-            >
-              <i className="fas fa-angle-double-right"></i>
-            </button>
           </div>
         )}
       </aside>

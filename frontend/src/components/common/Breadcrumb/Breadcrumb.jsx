@@ -1,51 +1,34 @@
-// src/components/common/Breadcrumb/Breadcrumb.jsx
+// src/components/common/Breadcrumb/Breadcrumb.jsx - AKKHOR STYLE
 
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Breadcrumb as BootstrapBreadcrumb } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import "./Breadcrumb.css";
 
-const Breadcrumb = ({ items = [], className = "" }) => {
-  const navigate = useNavigate();
-
+const Breadcrumb = ({ title = "", items = [], className = "" }) => {
   // Default home item
   const breadcrumbItems = [
-    { label: "Trang chủ", link: "/dashboard", icon: "fas fa-home" },
+    { label: "Trang chủ", link: "/dashboard" },
     ...items,
   ];
 
   return (
-    <div className={`app-breadcrumb ${className}`}>
-      <BootstrapBreadcrumb className="breadcrumb-nav">
+    <div className={`breadcrumbs-area ${className}`}>
+      <h3>{title || breadcrumbItems[breadcrumbItems.length - 1]?.label}</h3>
+      <ul>
         {breadcrumbItems.map((item, index) => {
           const isLast = index === breadcrumbItems.length - 1;
 
           return (
-            <BootstrapBreadcrumb.Item
-              key={index}
-              active={isLast || item.active}
-              linkAs={isLast || item.active ? "span" : Link}
-              linkProps={
-                !isLast && !item.active ? { to: item.link } : undefined
-              }
-              className={isLast || item.active ? "active-item" : ""}
-            >
-              {item.icon && <i className={`${item.icon} me-2`}></i>}
-              {item.label}
-            </BootstrapBreadcrumb.Item>
+            <li key={index}>
+              {isLast || item.active ? (
+                <span>{item.label}</span>
+              ) : (
+                <Link to={item.link}>{item.label}</Link>
+              )}
+            </li>
           );
         })}
-      </BootstrapBreadcrumb>
-
-      {/* Back button */}
-      <button
-        className="btn-back"
-        onClick={() => navigate(-1)}
-        title="Quay lại"
-      >
-        <i className="fas fa-arrow-left me-2"></i>
-        <span className="d-none d-md-inline">Quay lại</span>
-      </button>
+      </ul>
     </div>
   );
 };

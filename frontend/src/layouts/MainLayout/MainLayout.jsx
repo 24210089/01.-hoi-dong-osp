@@ -1,4 +1,4 @@
-// src/layouts/MainLayout/MainLayout.jsx
+// src/layouts/MainLayout/MainLayout.jsx - AKKHOR STYLE
 
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
@@ -9,18 +9,27 @@ import "./MainLayout.css";
 
 const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // ← THÊM: Compact mode state
-  const [isCompact, setIsCompact] = useState(() => {
-    // Load from localStorage
-    const saved = localStorage.getItem("sidebarCompact");
+  
+  // Track sidebar collapsed state (sync with Sidebar component via localStorage)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    const saved = localStorage.getItem("sidebarCollapsed");
     return saved === "true";
   });
 
-  // ← THÊM: Save compact state to localStorage
+  // Listen for localStorage changes (when Sidebar toggles)
   useEffect(() => {
-    localStorage.setItem("sidebarCompact", isCompact);
-  }, [isCompact]);
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem("sidebarCollapsed");
+      setIsSidebarCollapsed(saved === "true");
+    };
+
+    // Custom event for same-tab updates
+    window.addEventListener("sidebarToggle", handleStorageChange);
+    
+    return () => {
+      window.removeEventListener("sidebarToggle", handleStorageChange);
+    };
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -30,24 +39,17 @@ const MainLayout = () => {
     setIsSidebarOpen(false);
   };
 
-  // ← THÊM: Toggle compact mode
-  const toggleCompact = () => {
-    setIsCompact(!isCompact);
-  };
-
   return (
-    <div className="main-layout">
-      <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+    <div className={`main-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+      <Header toggleSidebar={toggleSidebar} />
 
       <div className="layout-container">
         <Sidebar
           isOpen={isSidebarOpen}
           onClose={closeSidebar}
-          isCompact={isCompact}
-          onToggleCompact={toggleCompact}
         />
 
-        <main className={`main-content ${isCompact ? "compact-mode" : ""}`}>
+        <main className="main-content">
           <div className="content-wrapper">
             <Outlet />
           </div>

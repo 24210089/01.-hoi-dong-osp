@@ -1,4 +1,4 @@
-// src/components/common/Sidebar/MenuGroup.jsx
+// src/components/common/Sidebar/MenuGroup.jsx - AKKHOR STYLE
 
 import React from "react";
 import { Nav, Collapse } from "react-bootstrap";
@@ -10,9 +10,7 @@ const MenuGroup = ({
   onToggle,
   activeMenu,
   onMenuClick,
-  isCompact = false,
-  isPinned = false,
-  onTogglePin,
+  isCollapsed = false,
 }) => {
   const hasActiveChild = item.children?.some((child) =>
     activeMenu.startsWith(child.path)
@@ -23,34 +21,19 @@ const MenuGroup = ({
       <Nav.Link
         className={`sidebar-menu-item group-item ${
           hasActiveChild ? "active" : ""
-        } ${isExpanded ? "expanded" : ""} ${isPinned ? "pinned" : ""}`}
+        } ${isExpanded ? "expanded" : ""}`}
         onClick={onToggle}
-        data-tooltip={isCompact ? item.label : undefined}
+        data-tooltip={isCollapsed ? item.label : undefined}
       >
         <div className="menu-item-content">
           <div className="menu-item-icon">
             <i className={item.icon}></i>
           </div>
-          {!isCompact && (
+          {!isCollapsed && (
             <>
               <span className="menu-item-text">{item.label}</span>
-              {/* ← THÊM: Pin button for group */}
-              {onTogglePin && (
-                <button
-                  className="btn-pin"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onTogglePin();
-                  }}
-                  title={isPinned ? "Bỏ ghim" : "Ghim menu"}
-                >
-                  <i
-                    className={`fas fa-thumbtack ${isPinned ? "pinned" : ""}`}
-                  ></i>
-                </button>
-              )}
               <i
-                className={`fas fa-chevron-down ms-auto menu-arrow ${
+                className={`fas fa-chevron-right ms-auto menu-arrow ${
                   isExpanded ? "rotated" : ""
                 }`}
               ></i>
@@ -59,8 +42,8 @@ const MenuGroup = ({
         </div>
       </Nav.Link>
 
-      {/* Không hiển thị submenu trong compact mode */}
-      {!isCompact && (
+      {/* Không hiển thị submenu trong collapsed mode */}
+      {!isCollapsed && (
         <Collapse in={isExpanded}>
           <div className="sidebar-submenu">
             {item.children?.map((child) => (

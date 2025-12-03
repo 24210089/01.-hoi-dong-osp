@@ -90,7 +90,11 @@
 }
 
 .card-header-custom {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 100%
+  );
   color: white;
   padding: 1.5rem;
   border: none;
@@ -149,7 +153,11 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -271,7 +279,11 @@
 
 /* Modal Styles */
 .modal-header-custom {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 100%
+  );
   color: white;
   border: none;
 }
@@ -307,7 +319,7 @@
 }
 
 .assignment-timeline::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0.5rem;
   top: 0;

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Dropdown } from "react-bootstrap";
 
 const UserMenu = ({ user, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,23 +12,19 @@ const UserMenu = ({ user, onLogout }) => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     window.location.href = "/login";
-    return null; // Don't render anything
+    return null;
   }
 
   // If user is null/undefined, show minimal UI
   if (!user) {
     return (
-      <div className="user-menu-dropdown dropdown" ref={dropdownRef}>
-        <button type="button" className="user-menu-toggle btn btn-link">
-          <div className="user-info d-flex align-items-center">
-            <img
-              src="https://ui-avatars.com/api/?name=U&background=667eea&color=fff&size=40&bold=true"
-              alt="User"
-              className="user-avatar"
-            />
+      <Dropdown ref={dropdownRef}>
+        <Dropdown.Toggle as="a" className="navbar-nav-link">
+          <div className="admin-img">
+            <div className="admin-avatar-placeholder">U</div>
           </div>
-        </button>
-      </div>
+        </Dropdown.Toggle>
+      </Dropdown>
     );
   }
 
@@ -45,12 +42,12 @@ const UserMenu = ({ user, onLogout }) => {
     return roles[role] || "Người dùng";
   };
 
-  // Safe string getter - ensures we always return a string
+  // Safe string getter
   const safeString = (value, defaultValue = "") => {
     if (value === null || value === undefined) return defaultValue;
     if (typeof value === "string") return value;
     if (typeof value === "number") return String(value);
-    return defaultValue; // Don't render objects
+    return defaultValue;
   };
 
   const userName =
@@ -58,14 +55,21 @@ const UserMenu = ({ user, onLogout }) => {
   const userEmail = safeString(user.email);
   const userRole = safeString(user.role, "user");
 
+  // Get initials for avatar placeholder
+  const getInitials = () => {
+    const parts = userName.split(" ");
+    if (parts.length >= 2) {
+      return parts[0][0] + parts[parts.length - 1][0];
+    }
+    return userName.substring(0, 2);
+  };
+
   // Get avatar URL
   const getAvatar = () => {
     if (user.avatar && typeof user.avatar === "string") {
       return user.avatar;
     }
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      userName
-    )}&background=667eea&color=fff&size=40&bold=true`;
+    return null;
   };
 
   // Close dropdown when clicking outside
@@ -96,102 +100,63 @@ const UserMenu = ({ user, onLogout }) => {
   };
 
   return (
-    <div
-      className={`user-menu-dropdown dropdown ${isOpen ? "show" : ""}`}
-      ref={dropdownRef}
-    >
-      <button
-        type="button"
-        className="user-menu-toggle btn btn-link"
-        onClick={handleToggle}
-        aria-expanded={isOpen}
-      >
-        <div className="user-info d-flex align-items-center">
-          <img src={getAvatar()} alt={userName} className="user-avatar" />
-          <div className="user-details d-none d-lg-block ms-2">
-            <div className="user-name">{userName}</div>
-            <div className="user-role">{getRoleLabel(userRole)}</div>
-          </div>
-          <i
-            className={`fas fa-chevron-${
-              isOpen ? "up" : "down"
-            } ms-2 d-none d-lg-inline`}
-          ></i>
+    <Dropdown show={isOpen} onToggle={handleToggle} ref={dropdownRef}>
+      <Dropdown.Toggle as="a" className="navbar-nav-link">
+        <div className="admin-title">
+          <h4 className="item-title">{userName}</h4>
+          <span>{getRoleLabel(userRole)}</span>
         </div>
-      </button>
-
-      <div
-        className={`dropdown-menu user-menu-dropdown-menu ${
-          isOpen ? "show" : ""
-        }`}
-      >
-        {/* User Info Header */}
-        <div className="dropdown-header">
-          <div className="d-flex align-items-center">
-            <img
-              src={getAvatar()}
-              alt={userName}
-              className="user-avatar-large"
-            />
-            <div className="ms-3">
-              <div className="user-name-large">{userName}</div>
-              <div className="user-email">{userEmail}</div>
-              <div className="user-role-badge">
-                <span className="badge bg-light text-dark">
-                  {getRoleLabel(userRole)}
-                </span>
-              </div>
+        <div className="admin-img">
+          {getAvatar() ? (
+            <img src={getAvatar()} alt={userName} />
+          ) : (
+            <div className="admin-avatar-placeholder">
+              {getInitials().toUpperCase()}
             </div>
-          </div>
+          )}
         </div>
+      </Dropdown.Toggle>
 
-        <div className="dropdown-divider"></div>
-
-        {/* Menu Items */}
-        <Link to="/profile" className="dropdown-item" onClick={handleItemClick}>
-          <i className="fas fa-user me-2"></i>
-          Thông tin cá nhân
-        </Link>
-
-        <Link
-          to="/settings"
-          className="dropdown-item"
-          onClick={handleItemClick}
-        >
-          <i className="fas fa-cog me-2"></i>
-          Cài đặt
-        </Link>
-
-        <Link
-          to="/profile#password"
-          className="dropdown-item"
-          onClick={handleItemClick}
-        >
-          <i className="fas fa-key me-2"></i>
-          Đổi mật khẩu
-        </Link>
-
-        <div className="dropdown-divider"></div>
-
-        {/* Help & Support */}
-        <Link to="/help" className="dropdown-item" onClick={handleItemClick}>
-          <i className="fas fa-question-circle me-2"></i>
-          Trợ giúp
-        </Link>
-
-        <div className="dropdown-divider"></div>
-
-        {/* Logout */}
-        <button
-          type="button"
-          className="dropdown-item text-danger"
-          onClick={handleLogoutClick}
-        >
-          <i className="fas fa-sign-out-alt me-2"></i>
-          Đăng xuất
-        </button>
-      </div>
-    </div>
+      <Dropdown.Menu align="end">
+        <div className="item-header">
+          <h6 className="item-title">{userName}</h6>
+        </div>
+        <div className="item-content">
+          <ul className="settings-list">
+            <li>
+              <Link to="/profile" onClick={handleItemClick}>
+                <i className="fas fa-user"></i>
+                Thông tin cá nhân
+              </Link>
+            </li>
+            <li>
+              <Link to="/settings" onClick={handleItemClick}>
+                <i className="fas fa-cog"></i>
+                Cài đặt tài khoản
+              </Link>
+            </li>
+            <li>
+              <Link to="/profile#password" onClick={handleItemClick}>
+                <i className="fas fa-key"></i>
+                Đổi mật khẩu
+              </Link>
+            </li>
+            <li>
+              <Link to="/help" onClick={handleItemClick}>
+                <i className="fas fa-question-circle"></i>
+                Trợ giúp
+              </Link>
+            </li>
+            <li>
+              <a href="#" onClick={handleLogoutClick} className="text-danger">
+                <i className="fas fa-sign-out-alt"></i>
+                Đăng xuất
+              </a>
+            </li>
+          </ul>
+        </div>
+      </Dropdown.Menu>
+    </Dropdown>
   );
 };
 
