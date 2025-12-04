@@ -17,10 +17,12 @@ router.use(authenticateToken);
 router.get("/", missionController.getAllMissions);
 router.get("/sister/:sisterId", missionController.getMissionsBySister);
 router.get("/field/:field", missionController.getSistersByMissionField);
+router.get("/:id", missionController.getMissionById);
 
 router.post("/", authorize(...editorRoles), missionController.createMission);
 
 router.put("/:id", authorize(...editorRoles), missionController.updateMission);
+router.delete("/:id", authorize(...editorRoles), missionController.deleteMission);
 
 router.post(
   "/:id/end",

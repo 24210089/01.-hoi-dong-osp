@@ -104,9 +104,7 @@ const EducationListPage = () => {
     <Container fluid className="py-4">
       <Breadcrumb
         title={
-          sisterInfo?.code
-            ? `Học vấn - ${sisterInfo.code}`
-            : "Quản lý Học vấn"
+          sisterInfo?.code ? `Học vấn - ${sisterInfo.code}` : "Quản lý Học vấn"
         }
         items={[
           { label: "Quản lý Nữ Tu", link: "/nu-tu" },

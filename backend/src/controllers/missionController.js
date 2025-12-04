@@ -59,7 +59,7 @@ const getAllMissions = async (req, res) => {
     const params = field ? [field] : [];
 
     const missions = await MissionModel.executeQuery(
-      `SELECT m.*, s.religious_name
+      `SELECT m.*, s.saint_name as religious_name, s.birth_name as sister_name
        FROM missions m
        INNER JOIN sisters s ON s.id = m.sister_id
        ${filterClause}
@@ -93,6 +93,32 @@ const getMissionsBySister = async (req, res) => {
   } catch (error) {
     console.error("getMissionsBySister error:", error.message);
     return res.status(500).json({ message: "Failed to fetch missions" });
+  }
+};
+
+const getMissionById = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, viewerRoles)) {
+      return;
+    }
+
+    const { id } = req.params;
+    const missions = await MissionModel.executeQuery(
+      `SELECT m.*, s.saint_name as religious_name, s.birth_name as sister_name
+       FROM missions m
+       INNER JOIN sisters s ON s.id = m.sister_id
+       WHERE m.id = ?`,
+      [id]
+    );
+
+    if (!missions || missions.length === 0) {
+      return res.status(404).json({ message: "Mission not found" });
+    }
+
+    return res.status(200).json({ data: missions[0] });
+  } catch (error) {
+    console.error("getMissionById error:", error.message);
+    return res.status(500).json({ message: "Failed to fetch mission" });
   }
 };
 
@@ -234,11 +260,39 @@ const getSistersByMissionField = async (req, res) => {
   }
 };
 
+const deleteMission = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, editorRoles)) {
+      return;
+    }
+
+    const { id } = req.params;
+    const existingRows = await MissionModel.executeQuery(
+      "SELECT * FROM missions WHERE id = ?",
+      [id]
+    );
+    const mission = existingRows[0];
+    if (!mission) {
+      return res.status(404).json({ message: "Mission not found" });
+    }
+
+    await MissionModel.delete(id);
+    await logAudit(req, "DELETE", id, mission, null);
+
+    return res.status(200).json({ message: "Mission deleted successfully" });
+  } catch (error) {
+    console.error("deleteMission error:", error.message);
+    return res.status(500).json({ message: "Failed to delete mission" });
+  }
+};
+
 module.exports = {
   getAllMissions,
   getMissionsBySister,
+  getMissionById,
   createMission,
   updateMission,
+  deleteMission,
   endMission,
   getSistersByMissionField,
 };

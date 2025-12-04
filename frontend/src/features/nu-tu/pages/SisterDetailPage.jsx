@@ -611,40 +611,74 @@ const SisterDetailPage = () => {
                                     {edu.level === "high_school" && "THPT"}
                                     {edu.level === "certificate" && "Chứng chỉ"}
                                     {edu.level === "other" && "Khác"}
-                                    {!["doctorate", "master", "bachelor", "associate", "vocational", "high_school", "certificate", "other"].includes(edu.level) && edu.level}
+                                    {![
+                                      "doctorate",
+                                      "master",
+                                      "bachelor",
+                                      "associate",
+                                      "vocational",
+                                      "high_school",
+                                      "certificate",
+                                      "other",
+                                    ].includes(edu.level) && edu.level}
                                   </h6>
-                                  <p className="mb-1 text-primary">{edu.institution}</p>
+                                  <p className="mb-1 text-primary">
+                                    {edu.institution}
+                                  </p>
                                   {edu.major && (
                                     <p className="mb-1">
-                                      <small className="text-muted">Chuyên ngành: </small>
+                                      <small className="text-muted">
+                                        Chuyên ngành:{" "}
+                                      </small>
                                       {edu.major}
                                     </p>
                                   )}
                                   <small className="text-muted">
                                     {formatDate(edu.start_date)}
-                                    {edu.end_date ? ` - ${formatDate(edu.end_date)}` : " - Hiện tại"}
+                                    {edu.end_date
+                                      ? ` - ${formatDate(edu.end_date)}`
+                                      : " - Hiện tại"}
                                   </small>
                                 </div>
                                 <div className="d-flex flex-column align-items-end gap-2">
-                                  <Badge bg={edu.status === "da_tot_nghiep" ? "success" : edu.status === "dang_hoc" ? "info" : "secondary"}>
-                                    {edu.status === "da_tot_nghiep" && "Đã tốt nghiệp"}
+                                  <Badge
+                                    bg={
+                                      edu.status === "da_tot_nghiep"
+                                        ? "success"
+                                        : edu.status === "dang_hoc"
+                                        ? "info"
+                                        : "secondary"
+                                    }
+                                  >
+                                    {edu.status === "da_tot_nghiep" &&
+                                      "Đã tốt nghiệp"}
                                     {edu.status === "dang_hoc" && "Đang học"}
                                     {edu.status === "tam_nghi" && "Tạm nghỉ"}
                                     {edu.status === "da_nghi" && "Đã nghỉ"}
-                                    {!["da_tot_nghiep", "dang_hoc", "tam_nghi", "da_nghi"].includes(edu.status) && (edu.graduation_year || "Đang học")}
+                                    {![
+                                      "da_tot_nghiep",
+                                      "dang_hoc",
+                                      "tam_nghi",
+                                      "da_nghi",
+                                    ].includes(edu.status) &&
+                                      (edu.graduation_year || "Đang học")}
                                   </Badge>
                                   <div className="d-flex gap-1">
                                     <Button
                                       variant="outline-primary"
                                       size="sm"
-                                      onClick={() => navigate(`/hoc-van/${edu.id}`)}
+                                      onClick={() =>
+                                        navigate(`/hoc-van/${edu.id}`)
+                                      }
                                     >
                                       Xem
                                     </Button>
                                     <Button
                                       variant="outline-secondary"
                                       size="sm"
-                                      onClick={() => navigate(`/hoc-van/${edu.id}/edit`)}
+                                      onClick={() =>
+                                        navigate(`/hoc-van/${edu.id}/edit`)
+                                      }
                                     >
                                       Sửa
                                     </Button>
@@ -659,7 +693,9 @@ const SisterDetailPage = () => {
                               )}
                               {edu.thesis_title && (
                                 <p className="mb-0 mt-1">
-                                  <small className="text-muted">Luận văn: </small>
+                                  <small className="text-muted">
+                                    Luận văn:{" "}
+                                  </small>
                                   {edu.thesis_title}
                                 </p>
                               )}
@@ -669,10 +705,14 @@ const SisterDetailPage = () => {
                       </div>
                     ) : (
                       <div className="text-center py-4">
-                        <p className="text-muted mb-3">Chưa có thông tin học vấn</p>
+                        <p className="text-muted mb-3">
+                          Chưa có thông tin học vấn
+                        </p>
                         <Button
                           variant="outline-primary"
-                          onClick={() => navigate(`/nu-tu/${id}/hoc-van/create`)}
+                          onClick={() =>
+                            navigate(`/nu-tu/${id}/hoc-van/create`)
+                          }
                         >
                           Thêm học vấn đầu tiên
                         </Button>

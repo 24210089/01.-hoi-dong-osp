@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Button, Card, Nav, Tab } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { missionService } from "@services";
 import { useTable, useDebounce } from "@hooks";
 import MissionCard from "../components/MissionCard";
@@ -14,6 +15,7 @@ import Breadcrumb from "@components/common/Breadcrumb";
 
 const MissionListPage = () => {
   const navigate = useNavigate();
+  const { sisterId } = useParams();
   const [loading, setLoading] = useState(true);
   const [missions, setMissions] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -33,11 +35,19 @@ const MissionListPage = () => {
     try {
       setLoading(true);
       const params = table.getTableParams();
-      const response = await missionService.getList(params);
+      
+      let response;
+      if (sisterId) {
+        // Fetch missions for specific sister
+        response = await missionService.getBySister(sisterId, params);
+      } else {
+        response = await missionService.getList(params);
+      }
 
       if (response.success) {
-        setMissions(response.data.items);
-        table.setTotalItems(response.data.total);
+        const items = response.data?.items || response.data || [];
+        setMissions(Array.isArray(items) ? items : []);
+        table.setTotalItems(response.data?.total || items.length);
       }
     } catch (error) {
       console.error("Error fetching missions:", error);
@@ -63,25 +73,47 @@ const MissionListPage = () => {
   const handleDelete = async (mission) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa sứ vụ này?")) {
       try {
-        await missionService.delete(mission.id);
-        fetchMissions();
+        const result = await missionService.delete(mission.id);
+        if (result.success) {
+          toast.success("Xóa sứ vụ thành công!");
+          fetchMissions();
+        } else {
+          toast.error(result.error || "Không thể xóa sứ vụ");
+        }
       } catch (error) {
         console.error("Error deleting mission:", error);
+        toast.error("Đã xảy ra lỗi khi xóa sứ vụ");
       }
     }
   };
 
   const handleSubmit = async (values) => {
     try {
+      // Add sisterId if provided via URL
+      const payload = sisterId ? { ...values, sister_id: sisterId } : values;
+      
       if (selectedMission) {
-        await missionService.update(selectedMission.id, values);
+        const result = await missionService.update(selectedMission.id, payload);
+        if (result.success) {
+          toast.success("Cập nhật sứ vụ thành công!");
+        } else {
+          toast.error(result.error || "Không thể cập nhật sứ vụ");
+          return;
+        }
       } else {
-        await missionService.create(values);
+        const result = await missionService.create(payload);
+        if (result.success) {
+          toast.success("Thêm sứ vụ mới thành công!");
+        } else {
+          toast.error(result.error || "Không thể thêm sứ vụ");
+          return;
+        }
       }
       setShowForm(false);
       fetchMissions();
     } catch (error) {
       console.error("Error saving mission:", error);
+      toast.error("Đã xảy ra lỗi khi lưu sứ vụ");
     }
   };
 
@@ -225,6 +257,7 @@ const MissionListPage = () => {
         onHide={() => setShowForm(false)}
         mission={selectedMission}
         onSubmit={handleSubmit}
+        sisterId={sisterId}
       />
     </Container>
   );

@@ -1,18 +1,23 @@
 // src/features/auth/components/LoginForm/LoginForm.jsx
 
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Form, Button, Alert } from "react-bootstrap";
+import { Form, Button, Alert, InputGroup } from "react-bootstrap";
 import { useForm } from "@hooks";
-import Input from "@components/forms/Input";
 import "./LoginForm.css";
 
 const LoginForm = ({ onSubmit, loading, error, onClearError }) => {
+  const [showPassword, setShowPassword] = useState(false);
+  
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
     useForm({
       username: "",
       password: "",
     });
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div className="login-form">
@@ -37,34 +42,60 @@ const LoginForm = ({ onSubmit, loading, error, onClearError }) => {
 
       {/* Login Form */}
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Input
-          label="Tên đăng nhập"
-          name="username"
-          value={values.username}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={errors.username}
-          touched={touched.username}
-          leftIcon="fas fa-user"
-          placeholder="Nhập tên đăng nhập"
-          disabled={loading}
-          required
-        />
+        <Form.Group className="mb-3">
+          <Form.Label className="fw-semibold">
+            Tên đăng nhập <span className="text-danger">*</span>
+          </Form.Label>
+          <InputGroup>
+            <InputGroup.Text className="input-icon">
+              <i className="fas fa-user"></i>
+            </InputGroup.Text>
+            <Form.Control
+              type="text"
+              name="username"
+              value={values.username}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Nhập tên đăng nhập"
+              disabled={loading}
+              isInvalid={touched.username && errors.username}
+            />
+          </InputGroup>
+          {touched.username && errors.username && (
+            <Form.Text className="text-danger">{errors.username}</Form.Text>
+          )}
+        </Form.Group>
 
-        <Input
-          label="Mật khẩu"
-          name="password"
-          type="password"
-          value={values.password}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={errors.password}
-          touched={touched.password}
-          leftIcon="fas fa-lock"
-          placeholder="Nhập mật khẩu"
-          disabled={loading}
-          required
-        />
+        <Form.Group className="mb-3">
+          <Form.Label className="fw-semibold">
+            Mật khẩu <span className="text-danger">*</span>
+          </Form.Label>
+          <InputGroup>
+            <InputGroup.Text className="input-icon">
+              <i className="fas fa-lock"></i>
+            </InputGroup.Text>
+            <Form.Control
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="Nhập mật khẩu"
+              disabled={loading}
+              isInvalid={touched.password && errors.password}
+            />
+            <InputGroup.Text 
+              className="password-toggle"
+              onClick={togglePasswordVisibility}
+              style={{ cursor: 'pointer' }}
+            >
+              <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+            </InputGroup.Text>
+          </InputGroup>
+          {touched.password && errors.password && (
+            <Form.Text className="text-danger">{errors.password}</Form.Text>
+          )}
+        </Form.Group>
 
         <div className="d-flex justify-content-between align-items-center mb-4">
           <Form.Check type="checkbox" label="Ghi nhớ đăng nhập" id="remember" />

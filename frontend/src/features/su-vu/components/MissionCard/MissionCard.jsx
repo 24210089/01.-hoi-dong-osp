@@ -5,7 +5,31 @@ import { Card, Badge } from "react-bootstrap";
 import { formatDate } from "@utils";
 import "./MissionCard.css";
 
-const MissionCard = ({ mission, onEdit, onDelete }) => {
+const getFieldLabel = (field) => {
+  const fields = {
+    education: "Giáo dục",
+    pastoral: "Mục vụ",
+    publishing: "Xuất bản",
+    media: "Truyền thông",
+    healthcare: "Y tế",
+    social: "Xã hội",
+  };
+  return fields[field] || field;
+};
+
+const getFieldIcon = (field) => {
+  const icons = {
+    education: "fa-graduation-cap",
+    pastoral: "fa-church",
+    publishing: "fa-book",
+    media: "fa-broadcast-tower",
+    healthcare: "fa-heartbeat",
+    social: "fa-hands-helping",
+  };
+  return icons[field] || "fa-briefcase";
+};
+
+const MissionCard = ({ mission, onView, onEdit, onDelete }) => {
   const isActive = !mission.end_date;
 
   return (
@@ -13,23 +37,26 @@ const MissionCard = ({ mission, onEdit, onDelete }) => {
       <Card.Body>
         <div className="d-flex justify-content-between align-items-start mb-3">
           <div className="mission-icon">
-            <i className="fas fa-briefcase"></i>
+            <i className={`fas ${getFieldIcon(mission.field)}`}></i>
           </div>
           <Badge bg={isActive ? "success" : "secondary"}>
             {isActive ? "Đang làm" : "Đã kết thúc"}
           </Badge>
         </div>
 
-        <h5 className="mission-position mb-2">{mission.position}</h5>
-        <p className="mission-organization mb-2">
-          <i className="fas fa-building me-2"></i>
-          {mission.organization}
-        </p>
+        <Badge bg="info" className="mb-2">
+          {getFieldLabel(mission.field)}
+        </Badge>
 
-        {mission.type && (
-          <Badge bg="info" className="mb-2">
-            {getMissionTypeLabel(mission.type)}
-          </Badge>
+        {mission.specific_role && (
+          <h5 className="mission-position mb-2">{mission.specific_role}</h5>
+        )}
+
+        {mission.religious_name && (
+          <p className="mission-organization mb-2">
+            <i className="fas fa-user me-2"></i>
+            {mission.religious_name}
+          </p>
         )}
 
         <div className="mission-details">
@@ -43,16 +70,9 @@ const MissionCard = ({ mission, onEdit, onDelete }) => {
             </span>
           </div>
 
-          {mission.location && (
-            <div className="detail-item">
-              <i className="fas fa-map-marker-alt text-danger me-2"></i>
-              <span>{mission.location}</span>
-            </div>
-          )}
-
-          {mission.description && (
+          {mission.notes && (
             <div className="mission-description mt-2">
-              <small className="text-muted">{mission.description}</small>
+              <small className="text-muted">{mission.notes}</small>
             </div>
           )}
         </div>
@@ -60,6 +80,15 @@ const MissionCard = ({ mission, onEdit, onDelete }) => {
 
       <Card.Footer className="bg-white border-top">
         <div className="d-flex gap-2">
+          {onView && (
+            <button
+              className="btn btn-sm btn-outline-primary flex-grow-1"
+              onClick={() => onView(mission)}
+            >
+              <i className="fas fa-eye me-1"></i>
+              Xem
+            </button>
+          )}
           <button
             className="btn btn-sm btn-outline-success flex-grow-1"
             onClick={() => onEdit(mission)}
@@ -77,18 +106,6 @@ const MissionCard = ({ mission, onEdit, onDelete }) => {
       </Card.Footer>
     </Card>
   );
-};
-
-const getMissionTypeLabel = (type) => {
-  const types = {
-    teaching: "Giảng dạy",
-    healthcare: "Y tế",
-    social: "Xã hội",
-    pastoral: "Mục vụ",
-    administration: "Hành chính",
-    other: "Khác",
-  };
-  return types[type] || type;
 };
 
 export default MissionCard;

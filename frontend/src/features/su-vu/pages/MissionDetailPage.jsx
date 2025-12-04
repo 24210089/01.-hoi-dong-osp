@@ -142,42 +142,33 @@ const MissionDetailPage = () => {
                       ></i>
                       {isActive ? "Đang làm việc" : "Đã kết thúc"}
                     </Badge>
-                    {mission.type && (
+                    {mission.field && (
                       <Badge bg="info" className="p-3 ms-2">
                         <i className="fas fa-tag me-2"></i>
-                        {getMissionTypeLabel(mission.type)}
+                        {getFieldLabel(mission.field)}
                       </Badge>
                     )}
                   </div>
                 </Col>
 
-                {/* Position & Organization */}
+                {/* Field (Lĩnh vực) */}
                 <Col md={12}>
                   <InfoItem
-                    icon="fas fa-briefcase"
-                    iconColor="primary"
-                    label="Chức vụ / Vai trò"
-                    value={mission.position}
+                    icon="fas fa-tags"
+                    iconColor="info"
+                    label="Lĩnh vực sứ vụ"
+                    value={getFieldLabel(mission.field)}
                   />
                 </Col>
 
-                <Col md={12}>
-                  <InfoItem
-                    icon="fas fa-building"
-                    iconColor="success"
-                    label="Tổ chức / Cơ quan"
-                    value={mission.organization}
-                  />
-                </Col>
-
-                {/* Location */}
-                {mission.location && (
+                {/* Specific Role */}
+                {mission.specific_role && (
                   <Col md={12}>
                     <InfoItem
-                      icon="fas fa-map-marker-alt"
-                      iconColor="danger"
-                      label="Địa điểm"
-                      value={mission.location}
+                      icon="fas fa-briefcase"
+                      iconColor="primary"
+                      label="Vai trò cụ thể"
+                      value={mission.specific_role}
                     />
                   </Col>
                 )}
@@ -215,16 +206,16 @@ const MissionDetailPage = () => {
                   />
                 </Col>
 
-                {/* Description */}
-                {mission.description && (
+                {/* Notes */}
+                {mission.notes && (
                   <Col xs={12}>
                     <div className="description-section">
                       <h6 className="mb-2">
                         <i className="fas fa-align-left text-primary me-2"></i>
-                        Mô tả công việc
+                        Ghi chú
                       </h6>
                       <div className="description-content">
-                        {mission.description}
+                        {mission.notes}
                       </div>
                     </div>
                   </Col>
@@ -506,16 +497,16 @@ const InfoItem = ({ icon, iconColor, label, value }) => (
 );
 
 // Helper Function
-const getMissionTypeLabel = (type) => {
-  const types = {
-    teaching: "Giảng dạy",
+const getFieldLabel = (field) => {
+  const fields = {
+    education: "Giáo dục",
+    pastoral: "Mục vụ",
+    publishing: "Xuất bản",
+    media: "Truyền thông",
     healthcare: "Y tế",
     social: "Xã hội",
-    pastoral: "Mục vụ",
-    administration: "Hành chính",
-    other: "Khác",
   };
-  return types[type] || type;
+  return fields[field] || field;
 };
 
 export default MissionDetailPage;

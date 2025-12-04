@@ -118,7 +118,10 @@ const EducationDetailPage = () => {
       <Container fluid className="py-4">
         <Breadcrumb
           title="Chi tiết Học vấn"
-          items={[{ label: "Học vấn", link: "/hoc-van" }, { label: "Chi tiết" }]}
+          items={[
+            { label: "Học vấn", link: "/hoc-van" },
+            { label: "Chi tiết" },
+          ]}
         />
         <Alert variant="danger" className="mt-4">
           {error || "Không tìm thấy dữ liệu học vấn"}
@@ -184,7 +187,9 @@ const EducationDetailPage = () => {
                 <Col md={6}>
                   <div className="text-muted">Nữ tu</div>
                   <div className="fw-semibold">
-                    {education.religious_name || education.sister_name || "Không rõ"}
+                    {education.religious_name ||
+                      education.sister_name ||
+                      "Không rõ"}
                     {education.sister_code && (
                       <span className="text-muted ms-2">
                         ({education.sister_code})
@@ -248,7 +253,9 @@ const EducationDetailPage = () => {
               <Row className="g-3">
                 <Col md={4}>
                   <div className="text-muted">GPA</div>
-                  <div className="fw-semibold">{education.gpa || "Chưa cập nhật"}</div>
+                  <div className="fw-semibold">
+                    {education.gpa || "Chưa cập nhật"}
+                  </div>
                 </Col>
                 <Col md={8}>
                   <div className="text-muted">Tên luận văn / Đề tài</div>
@@ -285,7 +292,9 @@ const EducationDetailPage = () => {
                       className="d-flex justify-content-between align-items-center"
                     >
                       <div>
-                        <div className="fw-semibold">{doc.name || "Tài liệu"}</div>
+                        <div className="fw-semibold">
+                          {doc.name || "Tài liệu"}
+                        </div>
                         {doc.size && (
                           <small className="text-muted">
                             {(doc.size / (1024 * 1024)).toFixed(2)} MB
@@ -314,7 +323,10 @@ const EducationDetailPage = () => {
             <Card.Header>Hành động</Card.Header>
             <Card.Body>
               <div className="d-grid gap-2">
-                <Link to={`/hoc-van/${education.id}/edit`} className="btn btn-primary">
+                <Link
+                  to={`/hoc-van/${education.id}/edit`}
+                  className="btn btn-primary"
+                >
                   <FaEdit className="me-2" />
                   Chỉnh sửa học vấn
                 </Link>

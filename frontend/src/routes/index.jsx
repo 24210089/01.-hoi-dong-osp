@@ -57,7 +57,7 @@ import {
 } from "@features/hoc-van";
 
 // Su Vu (Mission)
-import { MissionListPage, MissionDetailPage } from "@features/su-vu";
+import { MissionListPage, MissionDetailPage, MissionFormPage } from "@features/su-vu";
 
 // Bao Cao (Reports)
 import {
@@ -209,8 +209,11 @@ const AppRoutes = () => {
 
           {/* Su Vu (Mission) */}
           <Route path="/su-vu" element={<MissionListPage />} />
+          <Route path="/su-vu/create" element={<MissionFormPage />} />
           <Route path="/su-vu/:id" element={<MissionDetailPage />} />
+          <Route path="/su-vu/:id/edit" element={<MissionFormPage />} />
           <Route path="/nu-tu/:sisterId/su-vu" element={<MissionListPage />} />
+          <Route path="/nu-tu/:sisterId/su-vu/create" element={<MissionFormPage />} />
 
           {/* Bao Cao (Reports) */}
           <Route path="/bao-cao" element={<ReportDashboardPage />} />

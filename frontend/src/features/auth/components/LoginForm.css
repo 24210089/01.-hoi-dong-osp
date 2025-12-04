@@ -1,5 +1,9 @@
 /* src/features/auth/components/LoginForm/LoginForm.css */
 
+.login-form {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
 .login-card {
   border-radius: 0;
   border: none;
@@ -9,6 +13,53 @@
 
 .login-card .card-body {
   padding: 0 !important;
+}
+
+/* Input Group Styling */
+.login-form .input-group {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.login-form .input-icon {
+  background-color: #f8f9fa;
+  border: 2px solid #e2e8f0;
+  border-right: none;
+  color: #042954;
+}
+
+.login-form .input-group .form-control {
+  border: 2px solid #e2e8f0;
+  border-left: none;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+
+.login-form .input-group .form-control:focus {
+  border-color: #042954;
+  box-shadow: none;
+}
+
+.login-form .input-group:focus-within .input-icon,
+.login-form .input-group:focus-within .password-toggle {
+  border-color: #042954;
+}
+
+.login-form .password-toggle {
+  background-color: #f8f9fa;
+  border: 2px solid #e2e8f0;
+  border-left: none;
+  color: #6c757d;
+  transition: all 0.2s ease;
+}
+
+.login-form .password-toggle:hover {
+  color: #042954;
+  background-color: #e9ecef;
+}
+
+.login-form .input-group:focus-within .form-control {
+  border-color: #042954;
 }
 
 @keyframes fadeInUp {
@@ -23,18 +74,19 @@
 }
 
 .login-logo {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #042954 0%, #031d40 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
-  color: #ffffff;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+  color: #ffa901;
+  box-shadow: 0 10px 30px rgba(4, 41, 84, 0.4);
   animation: pulse 2s ease-in-out infinite;
+  border: 3px solid #ffa901;
 }
 
 @keyframes pulse {
@@ -48,31 +100,105 @@
 }
 
 .login-title {
-  font-size: 1.5rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.6rem;
   font-weight: 700;
-  color: #2d3748;
+  color: #042954;
   margin-bottom: 0.25rem;
 }
 
 .login-subtitle {
+  font-family: 'Roboto', sans-serif;
   font-size: 0.95rem;
   color: #6c757d;
   margin-bottom: 0;
 }
 
+/* Form inputs styling */
+.login-form .form-control {
+  font-family: 'Roboto', sans-serif;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.login-form .form-control:focus {
+  border-color: #042954;
+  box-shadow: 0 0 0 3px rgba(4, 41, 84, 0.15);
+}
+
+.login-form .form-label {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  color: #042954;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Remember me checkbox */
+.login-form .form-check-input:checked {
+  background-color: #042954;
+  border-color: #042954;
+}
+
+.login-form .form-check-label {
+  font-family: 'Roboto', sans-serif;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+/* Forgot password link */
+.login-form a.text-primary {
+  font-family: 'Roboto', sans-serif;
+  color: #042954 !important;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.login-form a.text-primary:hover {
+  color: #ffa901 !important;
+}
+
 .btn-login {
+  font-family: 'Roboto', sans-serif;
   padding: 0.875rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
   border-radius: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #042954 0%, #031d40 100%);
   border: none;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-login::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 169, 1, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-login:hover::before {
+  left: 100%;
 }
 
 .btn-login:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 10px 25px rgba(4, 41, 84, 0.4);
+  background: linear-gradient(135deg, #031d40 0%, #042954 100%);
+}
+
+.btn-login:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .btn-login:disabled {
@@ -80,14 +206,34 @@
   cursor: not-allowed;
 }
 
+/* Alert styling */
+.login-form .alert-danger {
+  font-family: 'Roboto', sans-serif;
+  border-radius: 10px;
+  border: none;
+  background-color: #fff5f5;
+  color: #c53030;
+  font-size: 0.9rem;
+}
+
+/* Footer text */
+.login-form .text-muted.small {
+  font-family: 'Roboto', sans-serif;
+  color: #718096 !important;
+}
+
 @media (max-width: 576px) {
   .login-logo {
-    width: 60px;
-    height: 60px;
-    font-size: 1.75rem;
+    width: 70px;
+    height: 70px;
+    font-size: 2rem;
   }
 
   .login-title {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
+  }
+
+  .btn-login {
+    padding: 0.75rem 1.25rem;
   }
 }

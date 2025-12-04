@@ -210,7 +210,8 @@ const EducationFormPage = () => {
         setMessage({ type: "danger", text: errorMsg });
       }
     } catch (error) {
-      const errorMsg = error?.response?.data?.message || "Lỗi khi lưu thông tin học vấn";
+      const errorMsg =
+        error?.response?.data?.message || "Lỗi khi lưu thông tin học vấn";
       toast.error(errorMsg);
       setMessage({ type: "danger", text: errorMsg });
     } finally {
@@ -337,7 +338,9 @@ const EducationFormPage = () => {
                       label="Ngày bắt đầu"
                       name="start_date"
                       value={formData.start_date}
-                      onChange={(value) => setFormData(prev => ({ ...prev, start_date: value }))}
+                      onChange={(value) =>
+                        setFormData((prev) => ({ ...prev, start_date: value }))
+                      }
                       className="mb-3"
                     />
                   </Col>
@@ -346,7 +349,9 @@ const EducationFormPage = () => {
                       label="Ngày kết thúc"
                       name="end_date"
                       value={formData.end_date}
-                      onChange={(value) => setFormData(prev => ({ ...prev, end_date: value }))}
+                      onChange={(value) =>
+                        setFormData((prev) => ({ ...prev, end_date: value }))
+                      }
                       className="mb-3"
                     />
                   </Col>

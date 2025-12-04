@@ -9,7 +9,7 @@ const MISSION_ENDPOINTS = {
   DETAIL: (id) => `/missions/${id}`,
   UPDATE: (id) => `/missions/${id}`,
   DELETE: (id) => `/missions/${id}`,
-  BY_SISTER: (sisterId) => `/sisters/${sisterId}/missions`,
+  BY_SISTER: (sisterId) => `/missions/sister/${sisterId}`,
   STATISTICS: "/missions/statistics",
 
   // Journey (Hành trình ơn gọi)
@@ -52,7 +52,7 @@ const missionService = {
       const response = await api.get(MISSION_ENDPOINTS.LIST, { params });
       return {
         success: true,
-        data: response.data || { items: [], total: 0 },
+        data: response || { items: [], total: 0 },
       };
     } catch (error) {
       console.error("Error fetching missions:", error);
@@ -74,7 +74,7 @@ const missionService = {
       const response = await api.get(MISSION_ENDPOINTS.DETAIL(id));
       return {
         success: true,
-        data: response.data,
+        data: response,
       };
     } catch (error) {
       console.error("Error fetching mission detail:", error);
@@ -98,7 +98,7 @@ const missionService = {
       });
       return {
         success: true,
-        data: response.data,
+        data: response,
       };
     } catch (error) {
       console.error("Error fetching sister missions:", error);
@@ -120,7 +120,7 @@ const missionService = {
       const response = await api.post(MISSION_ENDPOINTS.CREATE, data);
       return {
         success: true,
-        data: response.data,
+        data: response,
       };
     } catch (error) {
       console.error("Error creating mission:", error);
@@ -142,7 +142,7 @@ const missionService = {
       const response = await api.put(MISSION_ENDPOINTS.UPDATE(id), data);
       return {
         success: true,
-        data: response.data,
+        data: response,
       };
     } catch (error) {
       console.error("Error updating mission:", error);
@@ -183,7 +183,7 @@ const missionService = {
       const response = await api.get(MISSION_ENDPOINTS.STATISTICS, { params });
       return {
         success: true,
-        data: response.data,
+        data: response,
       };
     } catch (error) {
       console.error("Error fetching mission statistics:", error);
@@ -210,7 +210,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error fetching journey list:", error);
@@ -235,7 +235,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error fetching journey timeline:", error);
@@ -261,7 +261,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error fetching journey detail:", error);
@@ -287,7 +287,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error creating journey:", error);
@@ -313,7 +313,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error updating journey:", error);
@@ -360,7 +360,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error filtering journey by stage:", error);
@@ -384,7 +384,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error fetching current stage:", error);
@@ -405,7 +405,7 @@ const missionService = {
         const response = await api.get(MISSION_ENDPOINTS.JOURNEY.STATISTICS);
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error fetching journey statistics:", error);
@@ -434,7 +434,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error fetching assignment list:", error);
@@ -460,7 +460,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error fetching assignment detail:", error);
@@ -486,7 +486,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error creating assignment:", error);
@@ -512,7 +512,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error updating assignment:", error);
@@ -556,7 +556,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error fetching current assignment:", error);
@@ -580,7 +580,7 @@ const missionService = {
         );
         return {
           success: true,
-          data: response.data,
+          data: response,
         };
       } catch (error) {
         console.error("Error fetching assignment history:", error);

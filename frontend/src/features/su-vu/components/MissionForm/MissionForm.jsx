@@ -1,15 +1,35 @@
 // src/features/su-vu/components/MissionForm/MissionForm.jsx
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Form, Button, Row, Col } from "react-bootstrap";
 import { useForm } from "@hooks";
+import { sisterService } from "@services";
 import Input from "@components/forms/Input";
 import Select from "@components/forms/Select";
 import DatePicker from "@components/forms/DatePicker";
 import TextArea from "@components/forms/TextArea";
 
-const MissionForm = ({ show, onHide, mission, onSubmit }) => {
+const MissionForm = ({ show, onHide, mission, onSubmit, sisterId }) => {
   const isEditMode = !!mission;
+  const [sisters, setSisters] = useState([]);
+
+  useEffect(() => {
+    if (show && !sisterId) {
+      fetchSisters();
+    }
+  }, [show, sisterId]);
+
+  const fetchSisters = async () => {
+    try {
+      const response = await sisterService.getList({ limit: 1000, status: "all" });
+      if (response.success) {
+        const items = response.data?.items || response.data || [];
+        setSisters(items);
+      }
+    } catch (error) {
+      console.error("Error fetching sisters:", error);
+    }
+  };
 
   const {
     values,
@@ -21,21 +41,20 @@ const MissionForm = ({ show, onHide, mission, onSubmit }) => {
     handleSubmit,
   } = useForm(
     mission || {
-      position: "",
-      organization: "",
-      type: "",
+      sister_id: sisterId || "",
+      field: "",
+      specific_role: "",
       start_date: "",
       end_date: "",
-      location: "",
-      description: "",
+      notes: "",
     }
   );
 
   const validate = () => {
     const newErrors = {};
 
-    if (!values.position) newErrors.position = "Chức vụ là bắt buộc";
-    if (!values.organization) newErrors.organization = "Tổ chức là bắt buộc";
+    if (!values.sister_id && !sisterId) newErrors.sister_id = "Nữ tu là bắt buộc";
+    if (!values.field) newErrors.field = "Lĩnh vực sứ vụ là bắt buộc";
     if (!values.start_date) newErrors.start_date = "Ngày bắt đầu là bắt buộc";
 
     return newErrors;
@@ -64,60 +83,59 @@ const MissionForm = ({ show, onHide, mission, onSubmit }) => {
       <Form onSubmit={handleFormSubmit}>
         <Modal.Body>
           <Row className="g-3">
-            <Col md={8}>
-              <Input
-                label="Chức vụ / Vai trò"
-                name="position"
-                value={values.position}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={errors.position}
-                touched={touched.position}
-                placeholder="VD: Giáo viên, Y tá..."
-                required
-              />
-            </Col>
+            {/* Sister selector - only show if sisterId not provided */}
+            {!sisterId && (
+              <Col md={12}>
+                <Select
+                  label="Nữ tu"
+                  name="sister_id"
+                  value={values.sister_id}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={errors.sister_id}
+                  touched={touched.sister_id}
+                  required
+                >
+                  <option value="">-- Chọn nữ tu --</option>
+                  {sisters.map((sister) => (
+                    <option key={sister.id} value={sister.id}>
+                      {sister.saint_name || sister.religious_name || sister.birth_name}
+                      {sister.code ? ` (${sister.code})` : ""}
+                    </option>
+                  ))}
+                </Select>
+              </Col>
+            )}
 
-            <Col md={4}>
+            <Col md={6}>
               <Select
-                label="Loại sứ vụ"
-                name="type"
-                value={values.type}
+                label="Lĩnh vực sứ vụ"
+                name="field"
+                value={values.field}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                error={errors.field}
+                touched={touched.field}
+                required
               >
-                <option value="">Chọn loại</option>
-                <option value="teaching">Giảng dạy</option>
+                <option value="">-- Chọn lĩnh vực --</option>
+                <option value="education">Giáo dục</option>
+                <option value="pastoral">Mục vụ</option>
+                <option value="publishing">Xuất bản</option>
+                <option value="media">Truyền thông</option>
                 <option value="healthcare">Y tế</option>
                 <option value="social">Xã hội</option>
-                <option value="pastoral">Mục vụ</option>
-                <option value="administration">Hành chính</option>
-                <option value="other">Khác</option>
               </Select>
             </Col>
 
-            <Col md={12}>
+            <Col md={6}>
               <Input
-                label="Tổ chức / Cơ quan"
-                name="organization"
-                value={values.organization}
+                label="Vai trò cụ thể"
+                name="specific_role"
+                value={values.specific_role}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={errors.organization}
-                touched={touched.organization}
-                placeholder="Tên tổ chức, cơ quan"
-                required
-              />
-            </Col>
-
-            <Col md={12}>
-              <Input
-                label="Địa điểm"
-                name="location"
-                value={values.location}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="Địa điểm làm việc"
+                placeholder="VD: Giáo viên, Y tá, Quản lý..."
               />
             </Col>
 
@@ -147,13 +165,13 @@ const MissionForm = ({ show, onHide, mission, onSubmit }) => {
 
             <Col md={12}>
               <TextArea
-                label="Mô tả công việc"
-                name="description"
-                value={values.description}
+                label="Ghi chú"
+                name="notes"
+                value={values.notes}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 rows={3}
-                placeholder="Mô tả chi tiết về công việc..."
+                placeholder="Ghi chú thêm về sứ vụ..."
               />
             </Col>
           </Row>

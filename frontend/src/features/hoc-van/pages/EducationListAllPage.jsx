@@ -13,12 +13,7 @@ import {
   Badge,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import {
-  FaGraduationCap,
-  FaEye,
-  FaEdit,
-  FaTrash,
-} from "react-icons/fa";
+import { FaGraduationCap, FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { educationService } from "@services";
 import LoadingSpinner from "@components/common/Loading/LoadingSpinner";
@@ -76,7 +71,9 @@ const EducationListAllPage = () => {
       const response = await educationService.getList(params);
       if (response.success) {
         setEducations(response.data.items || response.data || []);
-        setTotalPages(response.data.totalPages || Math.ceil((response.data.total || 0) / 10));
+        setTotalPages(
+          response.data.totalPages || Math.ceil((response.data.total || 0) / 10)
+        );
       }
     } catch (error) {
       console.error("Error fetching educations:", error);
@@ -162,60 +159,60 @@ const EducationListAllPage = () => {
               </Form.Group>
             </Col>
             <Col md={3}>
-                <Form.Group>
-                  <Form.Label>Trình độ</Form.Label>
-                  <Form.Select
-                    value={filter.level}
-                    onChange={(e) => {
-                      setFilter({ ...filter, level: e.target.value });
-                      setCurrentPage(1);
-                    }}
-                  >
-                    <option value="">Tất cả</option>
-                    <option value="high_school">THPT</option>
-                    <option value="vocational">Trung cấp</option>
-                    <option value="associate">Cao đẳng</option>
-                    <option value="bachelor">Cử nhân</option>
-                    <option value="master">Thạc sĩ</option>
-                    <option value="doctorate">Tiến sĩ</option>
-                    <option value="certificate">Chứng chỉ</option>
-                    <option value="other">Khác</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-              <Col md={3}>
-                <Form.Group>
-                  <Form.Label>Trạng thái</Form.Label>
-                  <Form.Select
-                    value={filter.status}
-                    onChange={(e) => {
-                      setFilter({ ...filter, status: e.target.value });
-                      setCurrentPage(1);
-                    }}
-                  >
-                    <option value="">Tất cả</option>
-                    <option value="dang_hoc">Đang học</option>
-                    <option value="da_tot_nghiep">Đã tốt nghiệp</option>
-                    <option value="tam_nghi">Tạm nghỉ</option>
-                    <option value="da_nghi">Đã nghỉ</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-              <Col md={2}>
-                <Button
-                  variant="outline-secondary"
-                  className="w-100"
-                  onClick={() => {
-                    setSearchTerm("");
-                    setDebouncedSearch("");
-                    setFilter({ level: "", status: "" });
+              <Form.Group>
+                <Form.Label>Trình độ</Form.Label>
+                <Form.Select
+                  value={filter.level}
+                  onChange={(e) => {
+                    setFilter({ ...filter, level: e.target.value });
                     setCurrentPage(1);
                   }}
                 >
-                  Xóa bộ lọc
-                </Button>
-              </Col>
-            </Row>
+                  <option value="">Tất cả</option>
+                  <option value="high_school">THPT</option>
+                  <option value="vocational">Trung cấp</option>
+                  <option value="associate">Cao đẳng</option>
+                  <option value="bachelor">Cử nhân</option>
+                  <option value="master">Thạc sĩ</option>
+                  <option value="doctorate">Tiến sĩ</option>
+                  <option value="certificate">Chứng chỉ</option>
+                  <option value="other">Khác</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col md={3}>
+              <Form.Group>
+                <Form.Label>Trạng thái</Form.Label>
+                <Form.Select
+                  value={filter.status}
+                  onChange={(e) => {
+                    setFilter({ ...filter, status: e.target.value });
+                    setCurrentPage(1);
+                  }}
+                >
+                  <option value="">Tất cả</option>
+                  <option value="dang_hoc">Đang học</option>
+                  <option value="da_tot_nghiep">Đã tốt nghiệp</option>
+                  <option value="tam_nghi">Tạm nghỉ</option>
+                  <option value="da_nghi">Đã nghỉ</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col md={2}>
+              <Button
+                variant="outline-secondary"
+                className="w-100"
+                onClick={() => {
+                  setSearchTerm("");
+                  setDebouncedSearch("");
+                  setFilter({ level: "", status: "" });
+                  setCurrentPage(1);
+                }}
+              >
+                Xóa bộ lọc
+              </Button>
+            </Col>
+          </Row>
         </Card.Body>
       </Card>
 

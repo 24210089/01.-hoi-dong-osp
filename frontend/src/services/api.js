@@ -49,6 +49,8 @@ api.interceptors.response.use(
     // Handle errors
     if (error.response) {
       const { status, data } = error.response;
+      const requestUrl = error.config?.url || "";
+      const isAuthLoginRequest = requestUrl.includes("/auth/login");
 
       switch (status) {
         case 400:
@@ -56,6 +58,11 @@ api.interceptors.response.use(
           break;
 
         case 401:
+          // Skip global handling for direct login attempts so UI can show inline errors
+          if (isAuthLoginRequest) {
+            break;
+          }
+
           // Unauthorized - only redirect if not on login page
           if (!window.location.pathname.includes("/login")) {
             localStorage.removeItem("token");
