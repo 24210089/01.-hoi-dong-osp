@@ -105,6 +105,7 @@ const SisterFormPage = () => {
 
     // Avatar
     photo_url: "",
+    photo_file: null,
   });
 
   useEffect(() => {
@@ -134,12 +135,12 @@ const SisterFormPage = () => {
         // Convert null values to empty strings for form inputs
         const data = response.data;
         const sanitizedData = {};
-        Object.keys(data).forEach(key => {
-          if (key === 'documents') {
+        Object.keys(data).forEach((key) => {
+          if (key === "documents") {
             // Parse documents - could be array, JSON string, or null
             if (Array.isArray(data[key])) {
               sanitizedData[key] = data[key];
-            } else if (typeof data[key] === 'string' && data[key]) {
+            } else if (typeof data[key] === "string" && data[key]) {
               try {
                 sanitizedData[key] = JSON.parse(data[key]);
               } catch (e) {
@@ -152,6 +153,7 @@ const SisterFormPage = () => {
             sanitizedData[key] = data[key] === null ? "" : data[key];
           }
         });
+        sanitizedData.photo_file = null;
         updateValues(sanitizedData);
       }
     } catch (error) {
@@ -197,21 +199,45 @@ const SisterFormPage = () => {
 
     try {
       setSubmitting(true);
+      const excludedFields = [
+        "id",
+        "created_at",
+        "created_by",
+        "updated_at",
+        "vocationJourney",
+        "communityAssignments",
+        "missions",
+        "education",
+        "educations",
+        "trainingCourses",
+        "healthRecords",
+        "health_records",
+        "evaluations",
+        "departureRecords",
+        "current_community_name",
+        "currentCommunity",
+        "target",
+        "photo_file",
+      ];
 
-      // Prepare data - remove empty strings and null values for optional fields
       const submitData = {};
       Object.entries(values).forEach(([key, value]) => {
-        // Keep required fields even if empty (validation will catch them)
-        // For optional fields, only include if they have value
+        if (excludedFields.includes(key)) {
+          return;
+        }
+
+        if (key === "photo_url" && value && typeof value === "object") {
+          // Defensive guard: skip accidental event objects
+          return;
+        }
+
         if (value !== "" && value !== null && value !== undefined) {
           submitData[key] = value;
         } else if (["birth_name", "date_of_birth"].includes(key)) {
-          // Always include required fields
           submitData[key] = value;
         }
       });
 
-      // Remove documents if empty array
       if (
         Array.isArray(submitData.documents) &&
         submitData.documents.length === 0
@@ -224,8 +250,34 @@ const SisterFormPage = () => {
       let response;
       if (isEditMode) {
         response = await sisterService.update(id, submitData);
+
+        if (response.success && values.photo_file) {
+          try {
+            await sisterService.uploadAvatar(id, values.photo_file);
+          } catch (uploadError) {
+            console.error("Avatar upload failed:", uploadError);
+            showToast(
+              "warning",
+              "Ảnh đại diện chưa được cập nhật",
+              "Thông tin đã lưu nhưng tải ảnh thất bại."
+            );
+          }
+        }
       } else {
         response = await sisterService.create(submitData);
+
+        if (response.success && values.photo_file) {
+          try {
+            await sisterService.uploadAvatar(response.data.id, values.photo_file);
+          } catch (uploadError) {
+            console.error("Avatar upload failed:", uploadError);
+            showToast(
+              "warning",
+              "Ảnh đại diện chưa được tải lên",
+              "Nữ tu đã được tạo nhưng ảnh chưa được lưu."
+            );
+          }
+        }
       }
 
       if (response.success) {
@@ -236,12 +288,10 @@ const SisterFormPage = () => {
             ? `Đã cập nhật thông tin nữ tu "${submitData.birth_name}".`
             : `Đã thêm nữ tu "${submitData.birth_name}" vào hệ thống.`
         );
-        // Delay navigation to show toast
         setTimeout(() => {
           navigate(`/nu-tu/${response.data.id}`);
         }, 1500);
       } else {
-        // API returned success: false
         showToast(
           "danger",
           isEditMode ? "Cập nhật thất bại!" : "Tạo mới thất bại!",
@@ -349,8 +399,14 @@ const SisterFormPage = () => {
               <Card.Body>
                 <h5 className="mb-3">Ảnh đại diện</h5>
                 <FileUpload
-                  value={values.photo_url}
-                  onChange={(url) => setFieldValue("photo_url", url)}
+                  onChange={(event) => {
+                    const selectedFiles = event?.target?.value || [];
+                    const file =
+                      Array.isArray(selectedFiles) && selectedFiles.length > 0
+                        ? selectedFiles[0]
+                        : null;
+                    setFieldValue("photo_file", file);
+                  }}
                   accept="image/*"
                   maxSize={5 * 1024 * 1024}
                   preview

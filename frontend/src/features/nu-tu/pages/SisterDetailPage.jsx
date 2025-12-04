@@ -13,7 +13,7 @@ import {
 } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import { sisterService } from "@services";
-import { formatDate, calculateAge } from "@utils";
+import { formatDate, calculateAge, resolveMediaUrl } from "@utils";
 import { JOURNEY_STAGE_LABELS } from "@utils/constants";
 import LoadingSpinner from "@components/common/Loading/LoadingSpinner";
 import Breadcrumb from "@components/common/Breadcrumb";
@@ -82,6 +82,8 @@ const SisterDetailPage = () => {
     );
   }
 
+  const avatarUrl = resolveMediaUrl(sister.photo_url || sister.avatar_url);
+
   return (
     <Container fluid className="py-4">
       {/* Breadcrumb */}
@@ -118,9 +120,9 @@ const SisterDetailPage = () => {
             <Card.Body className="text-center">
               {/* Avatar */}
               <div className="sister-avatar-large mb-3">
-                {sister.avatar_url ? (
+                {avatarUrl ? (
                   <img
-                    src={sister.avatar_url}
+                    src={avatarUrl}
                     alt={sister.religious_name || sister.birth_name}
                   />
                 ) : (

@@ -144,7 +144,7 @@ const AssignmentPage = () => {
       setAssignments([]);
       return;
     }
-    
+
     let filtered = allAssignmentsData;
 
     if (filters.community_id) {
@@ -212,12 +212,12 @@ const AssignmentPage = () => {
   // Fetch assignments from API (no filtering here)
   const fetchAssignmentsFromAPI = async (communitiesToUse) => {
     const comms = communitiesToUse || communities;
-    
+
     if (!comms || comms.length === 0) {
       console.log("Communities not loaded yet");
       return;
     }
-    
+
     try {
       setLoading(true);
 
@@ -239,12 +239,15 @@ const AssignmentPage = () => {
             });
           }
         } catch (err) {
-          console.error(`Error fetching members for community ${community.id}:`, err);
+          console.error(
+            `Error fetching members for community ${community.id}:`,
+            err
+          );
         }
       }
-      
+
       console.log("All assignments fetched:", allAssignments.length);
-      
+
       // Store all data (unfiltered)
       setAllAssignmentsData(allAssignments);
 
@@ -343,9 +346,10 @@ const AssignmentPage = () => {
       setSubmitting(true);
 
       if (isEditing && selectedAssignment) {
-        const communityId = parseInt(formData.community_id) || selectedAssignment.community_id;
+        const communityId =
+          parseInt(formData.community_id) || selectedAssignment.community_id;
         const assignmentId = selectedAssignment.id;
-        
+
         console.log("Updating assignment:", {
           community_id: communityId,
           assignment_id: assignmentId,
@@ -385,7 +389,7 @@ const AssignmentPage = () => {
       }
 
       setShowAddModal(false);
-      
+
       // Small delay to ensure backend has processed the update
       setTimeout(() => {
         fetchAssignmentsFromAPI();
@@ -876,7 +880,9 @@ const AssignmentPage = () => {
                   type="date"
                   name="start_date"
                   value={formData.start_date}
-                  onChange={(e) => handleFormChange("start_date", e.target.value)}
+                  onChange={(e) =>
+                    handleFormChange("start_date", e.target.value)
+                  }
                   required
                 />
               </Col>
@@ -892,7 +898,9 @@ const AssignmentPage = () => {
                   value={formData.end_date}
                   onChange={(e) => handleFormChange("end_date", e.target.value)}
                 />
-                <Form.Text className="text-muted">Để trống nếu không xác định</Form.Text>
+                <Form.Text className="text-muted">
+                  Để trống nếu không xác định
+                </Form.Text>
               </Col>
 
               <Col md={12} className="mb-3">

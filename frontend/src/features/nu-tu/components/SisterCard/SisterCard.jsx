@@ -2,19 +2,21 @@
 
 import React from "react";
 import { Card, Badge } from "react-bootstrap";
-import { formatDate, calculateAge } from "@utils";
+import { formatDate, calculateAge, resolveMediaUrl } from "@utils";
 import { JOURNEY_STAGE_LABELS, JOURNEY_STAGE_COLORS } from "@utils/constants";
 import "./SisterCard.css";
 
 const SisterCard = ({ sister, onView, onEdit, onDelete }) => {
+  const avatarUrl = resolveMediaUrl(sister.photo_url || sister.avatar_url);
+
   return (
     <Card className="sister-card h-100">
       <Card.Body>
         <div className="d-flex align-items-start mb-3">
           {/* Avatar */}
           <div className="sister-avatar me-3">
-            {sister.avatar_url ? (
-              <img src={sister.avatar_url} alt={sister.full_name} />
+            {avatarUrl ? (
+              <img src={avatarUrl} alt={sister.full_name} />
             ) : (
               <div className="avatar-placeholder">
                 <i className="fas fa-user"></i>

@@ -3,6 +3,7 @@ const BaseModel = require("./BaseModel");
 class SisterModel extends BaseModel {
   constructor() {
     super({ tableName: "sisters", primaryKey: "id" });
+    // Only columns that really exist in the DB and that we allow callers to mutate
     this.allowedFields = [
       "code",
       "birth_name",
@@ -37,8 +38,6 @@ class SisterModel extends BaseModel {
       "current_stage",
       "current_community_id",
       "created_by",
-      "created_at",
-      "updated_at",
     ];
     this.requiredFields = ["birth_name", "date_of_birth"];
   }
@@ -48,7 +47,12 @@ class SisterModel extends BaseModel {
 
     Object.entries(data).forEach(([key, value]) => {
       if (!this.allowedFields.includes(key)) {
-        throw new Error(`Field ${key} is not allowed in Sisters model.`);
+        console.warn(
+          `SisterModel: skipping unknown field "${key}" during ${
+            partial ? "partial " : ""
+          }validation`
+        );
+        return;
       }
       sanitized[key] = value;
     });

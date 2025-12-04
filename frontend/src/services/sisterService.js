@@ -187,7 +187,7 @@ const sisterService = {
   uploadAvatar: async (id, file) => {
     try {
       const formData = new FormData();
-      formData.append("avatar", file);
+      formData.append("photo", file);
 
       const response = await api.post(
         API_ENDPOINTS.SISTER.UPLOAD_AVATAR(id),

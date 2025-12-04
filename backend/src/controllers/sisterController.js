@@ -310,31 +310,69 @@ const updateSister = async (req, res) => {
       return res.status(404).json({ message: "Sister not found" });
     }
 
-    const updateData = { ...req.body };
-    
-    // Remove fields that shouldn't be updated (system fields and relations)
-    delete updateData.id;
-    delete updateData.created_at;
-    delete updateData.created_by;
-    delete updateData.updated_at;
-    
-    // Remove relation fields (these come from getFullProfile)
-    delete updateData.vocationJourney;
-    delete updateData.communityAssignments;
-    delete updateData.missions;
-    delete updateData.education;
-    delete updateData.educations;
-    delete updateData.trainingCourses;
-    delete updateData.healthRecords;
-    delete updateData.health_records;
-    delete updateData.evaluations;
-    delete updateData.departureRecords;
-    delete updateData.current_community_name;
-    delete updateData.currentCommunity;
+    const allowedFields = [
+      "code",
+      "birth_name",
+      "saint_name",
+      "date_of_birth",
+      "place_of_birth",
+      "permanent_address",
+      "current_address",
+      "nationality",
+      "id_card",
+      "id_card_date",
+      "id_card_place",
+      "father_name",
+      "father_occupation",
+      "mother_name",
+      "mother_occupation",
+      "siblings_count",
+      "family_address",
+      "family_religion",
+      "baptism_date",
+      "baptism_place",
+      "confirmation_date",
+      "first_communion_date",
+      "phone",
+      "email",
+      "emergency_contact_name",
+      "emergency_contact_phone",
+      "photo_url",
+      "documents",
+      "notes",
+      "status",
+      "current_stage",
+      "current_community_id",
+      "created_by",
+    ];
 
-    // Convert documents array to JSON string if needed
-    if (Array.isArray(updateData.documents)) {
-      updateData.documents = JSON.stringify(updateData.documents);
+    const updateData = {};
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        updateData[field] = req.body[field];
+      }
+    });
+
+    if (Array.isArray(req.body.documents)) {
+      updateData.documents = JSON.stringify(req.body.documents);
+    }
+
+    if (
+      Object.prototype.hasOwnProperty.call(updateData, "photo_url") &&
+      updateData.photo_url &&
+      typeof updateData.photo_url === "object"
+    ) {
+      console.warn(
+        "updateSister: ignoring non-string photo_url payload",
+        updateData.photo_url
+      );
+      delete updateData.photo_url;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No valid fields to update" });
     }
 
     const updated = await SisterModel.update(id, updateData);
@@ -345,7 +383,11 @@ const updateSister = async (req, res) => {
     console.error("updateSister error:", error.message, error.stack);
     return res
       .status(500)
-      .json({ success: false, message: "Failed to update sister", error: error.message });
+      .json({
+        success: false,
+        message: "Failed to update sister",
+        error: error.message,
+      });
   }
 };
 

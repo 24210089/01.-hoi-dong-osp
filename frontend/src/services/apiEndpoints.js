@@ -27,7 +27,7 @@ export const API_ENDPOINTS = {
     EXPORT: "/sisters/export",
     IMPORT: "/sisters/import",
     STATISTICS: "/sisters/statistics",
-    UPLOAD_AVATAR: (id) => `/sisters/${id}/avatar`,
+    UPLOAD_AVATAR: (id) => `/sisters/${id}/photo`,
   },
 
   // ============================================
