@@ -53,6 +53,7 @@ import {
   EducationListPage,
   EducationListAllPage,
   EducationFormPage,
+  EducationDetailPage,
 } from "@features/hoc-van";
 
 // Su Vu (Mission)
@@ -195,6 +196,7 @@ const AppRoutes = () => {
           {/* Hoc Van (Education) */}
           <Route path="/hoc-van" element={<EducationListAllPage />} />
           <Route path="/hoc-van/create" element={<EducationFormPage />} />
+          <Route path="/hoc-van/:id" element={<EducationDetailPage />} />
           <Route path="/hoc-van/:id/edit" element={<EducationFormPage />} />
           <Route
             path="/nu-tu/:sisterId/hoc-van"

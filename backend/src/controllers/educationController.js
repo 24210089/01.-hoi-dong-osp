@@ -70,6 +70,35 @@ const getEducationBySister = async (req, res) => {
   }
 };
 
+const getEducationById = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, viewerRoles)) return;
+
+    const { id } = req.params;
+    const education = await EducationModel.findById(id);
+    if (!education) {
+      return res.status(404).json({ message: "Education record not found" });
+    }
+
+    let sister = null;
+    if (education.sister_id) {
+      sister = await SisterModel.findById(education.sister_id);
+    }
+
+    return res.status(200).json({
+      ...education,
+      sister_name: sister?.birth_name || null,
+      religious_name: sister?.saint_name || null,
+      sister_code: sister?.code || null,
+    });
+  } catch (error) {
+    console.error("getEducationById error:", error.message);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch education record" });
+  }
+};
+
 const addEducation = async (req, res) => {
   try {
     if (!ensurePermission(req, res, editorRoles)) return;
@@ -245,7 +274,10 @@ const getAllEducation = async (req, res) => {
     if (!ensurePermission(req, res, viewerRoles)) return;
 
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
+    const limit = Math.min(
+      Math.max(parseInt(req.query.limit, 10) || 10, 1),
+      100
+    );
     const offset = (page - 1) * limit;
     const { search, level, status } = req.query;
 
@@ -253,7 +285,8 @@ const getAllEducation = async (req, res) => {
     const params = [];
 
     if (search) {
-      whereClause += " AND (s.birth_name LIKE ? OR s.religious_name LIKE ? OR e.institution LIKE ? OR e.major LIKE ?)";
+      whereClause +=
+        " AND (s.birth_name LIKE ? OR s.saint_name LIKE ? OR e.institution LIKE ? OR e.major LIKE ?)";
       const searchPattern = `%${search}%`;
       params.push(searchPattern, searchPattern, searchPattern, searchPattern);
     }
@@ -279,7 +312,7 @@ const getAllEducation = async (req, res) => {
 
     // Get data with pagination
     const items = await EducationModel.executeQuery(
-            `SELECT e.*, 
+      `SELECT e.*, 
               s.birth_name as sister_name, 
               s.saint_name as religious_name,
               s.code as sister_code
@@ -311,6 +344,7 @@ const getAllEducation = async (req, res) => {
 
 module.exports = {
   getAllEducation,
+  getEducationById,
   getEducationBySister,
   addEducation,
   updateEducation,

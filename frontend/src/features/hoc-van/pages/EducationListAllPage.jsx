@@ -9,21 +9,18 @@ import {
   Table,
   Button,
   Form,
-  InputGroup,
   Pagination,
   Badge,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import {
   FaGraduationCap,
-  FaSearch,
-  FaPlus,
   FaEye,
   FaEdit,
   FaTrash,
 } from "react-icons/fa";
+import { toast } from "react-toastify";
 import { educationService } from "@services";
-import { formatDate } from "@utils/formatters";
 import LoadingSpinner from "@components/common/Loading/LoadingSpinner";
 import Breadcrumb from "@components/common/Breadcrumb";
 
@@ -31,6 +28,7 @@ const EducationListAllPage = () => {
   const [loading, setLoading] = useState(true);
   const [educations, setEducations] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [filter, setFilter] = useState({
@@ -38,24 +36,47 @@ const EducationListAllPage = () => {
     status: "",
   });
 
+  // Debounce search - chờ 500ms sau khi ngừng gõ
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Fetch khi thay đổi page, filter hoặc debouncedSearch
   useEffect(() => {
     fetchEducations();
-  }, [currentPage, filter]);
+  }, [currentPage, filter.level, filter.status, debouncedSearch]);
+
+  // Reset về trang 1 khi search thay đổi
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch]);
 
   const fetchEducations = async () => {
     try {
       setLoading(true);
-      const response = await educationService.getList({
+      const params = {
         page: currentPage,
         limit: 10,
-        search: searchTerm,
-        ...filter,
-      });
+      };
+      // Chỉ gửi search nếu có giá trị
+      if (debouncedSearch.trim()) {
+        params.search = debouncedSearch.trim();
+      }
+      // Chỉ gửi filter nếu có giá trị
+      if (filter.level) {
+        params.level = filter.level;
+      }
+      if (filter.status) {
+        params.status = filter.status;
+      }
+
+      const response = await educationService.getList(params);
       if (response.success) {
         setEducations(response.data.items || response.data || []);
-        setTotalPages(
-          Math.ceil((response.data.total || response.data.length) / 10)
-        );
+        setTotalPages(response.data.totalPages || Math.ceil((response.data.total || 0) / 10));
       }
     } catch (error) {
       console.error("Error fetching educations:", error);
@@ -64,31 +85,33 @@ const EducationListAllPage = () => {
     }
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setCurrentPage(1);
-    fetchEducations();
-  };
-
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa học vấn này?")) {
       try {
         const result = await educationService.delete(id);
         if (result.success) {
+          toast.success("Xóa học vấn thành công!");
           fetchEducations();
+        } else {
+          toast.error(result.error || "Không thể xóa học vấn");
         }
       } catch (error) {
         console.error("Error deleting education:", error);
+        toast.error("Lỗi khi xóa học vấn");
       }
     }
   };
 
   const getLevelBadge = (level) => {
     const levels = {
-      secondary: { label: "Trung học", variant: "secondary" },
-      bachelor: { label: "Đại học", variant: "primary" },
+      high_school: { label: "THPT", variant: "secondary" },
+      vocational: { label: "Trung cấp", variant: "secondary" },
+      associate: { label: "Cao đẳng", variant: "info" },
+      bachelor: { label: "Cử nhân", variant: "primary" },
       master: { label: "Thạc sĩ", variant: "success" },
       doctorate: { label: "Tiến sĩ", variant: "danger" },
+      certificate: { label: "Chứng chỉ", variant: "warning" },
+      other: { label: "Khác", variant: "dark" },
     };
     const levelInfo = levels[level] || { label: level, variant: "secondary" };
     return <Badge bg={levelInfo.variant}>{levelInfo.label}</Badge>;
@@ -123,48 +146,40 @@ const EducationListAllPage = () => {
     <Container fluid className="py-4">
       <Breadcrumb title="Quản lý Học vấn" items={[{ label: "Học vấn" }]} />
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <Link to="/hoc-van/create" className="btn btn-primary">
-          <FaPlus className="me-2" />
-          Thêm Học vấn
-        </Link>
-      </div>
-
       {/* Filters */}
       <Card className="mb-4">
         <Card.Body>
-          <Form onSubmit={handleSearch}>
-            <Row className="align-items-end">
-              <Col md={4}>
-                <Form.Group>
-                  <Form.Label>Tìm kiếm</Form.Label>
-                  <InputGroup>
-                    <Form.Control
-                      type="text"
-                      placeholder="Tên nữ tu, trường học, ngành học..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <Button type="submit" variant="primary">
-                      <FaSearch />
-                    </Button>
-                  </InputGroup>
-                </Form.Group>
-              </Col>
-              <Col md={3}>
+          <Row className="align-items-end">
+            <Col md={4}>
+              <Form.Group>
+                <Form.Label>Tìm kiếm</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Tên nữ tu, trường học, ngành học..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={3}>
                 <Form.Group>
                   <Form.Label>Trình độ</Form.Label>
                   <Form.Select
                     value={filter.level}
-                    onChange={(e) =>
-                      setFilter({ ...filter, level: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setFilter({ ...filter, level: e.target.value });
+                      setCurrentPage(1);
+                    }}
                   >
                     <option value="">Tất cả</option>
-                    <option value="secondary">Trung học</option>
-                    <option value="bachelor">Đại học</option>
+                    <option value="high_school">THPT</option>
+                    <option value="vocational">Trung cấp</option>
+                    <option value="associate">Cao đẳng</option>
+                    <option value="bachelor">Cử nhân</option>
                     <option value="master">Thạc sĩ</option>
                     <option value="doctorate">Tiến sĩ</option>
+                    <option value="certificate">Chứng chỉ</option>
+                    <option value="other">Khác</option>
                   </Form.Select>
                 </Form.Group>
               </Col>
@@ -173,9 +188,10 @@ const EducationListAllPage = () => {
                   <Form.Label>Trạng thái</Form.Label>
                   <Form.Select
                     value={filter.status}
-                    onChange={(e) =>
-                      setFilter({ ...filter, status: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setFilter({ ...filter, status: e.target.value });
+                      setCurrentPage(1);
+                    }}
                   >
                     <option value="">Tất cả</option>
                     <option value="dang_hoc">Đang học</option>
@@ -191,6 +207,7 @@ const EducationListAllPage = () => {
                   className="w-100"
                   onClick={() => {
                     setSearchTerm("");
+                    setDebouncedSearch("");
                     setFilter({ level: "", status: "" });
                     setCurrentPage(1);
                   }}
@@ -199,7 +216,6 @@ const EducationListAllPage = () => {
                 </Button>
               </Col>
             </Row>
-          </Form>
         </Card.Body>
       </Card>
 
@@ -211,12 +227,8 @@ const EducationListAllPage = () => {
               <FaGraduationCap size={48} className="text-muted mb-3" />
               <h5>Chưa có thông tin học vấn</h5>
               <p className="text-muted">
-                Thêm học vấn đầu tiên để theo dõi quá trình học tập
+                Vui lòng thêm học vấn từ trang thông tin nữ tu
               </p>
-              <Link to="/hoc-van/create" className="btn btn-primary">
-                <FaPlus className="me-2" />
-                Thêm Học vấn
-              </Link>
             </div>
           ) : (
             <>
@@ -245,17 +257,23 @@ const EducationListAllPage = () => {
                       <td>{edu.institution || "N/A"}</td>
                       <td>{edu.major || "N/A"}</td>
                       <td>{getLevelBadge(edu.level)}</td>
-                      <td>
-                        {edu.graduation_year || "Đang học"}
-                      </td>
+                      <td>{edu.graduation_year || "Đang học"}</td>
                       <td>{getStatusBadge(edu.status)}</td>
                       <td className="text-end">
                         <Link
-                          to={`/nu-tu/${edu.sister_id}/hoc-van`}
+                          to={`/hoc-van/${edu.id}`}
+                          state={{ education: edu }}
                           className="btn btn-sm btn-outline-info me-1"
                           title="Xem chi tiết"
                         >
                           <FaEye />
+                        </Link>
+                        <Link
+                          to={`/hoc-van/${edu.id}/edit`}
+                          className="btn btn-sm btn-outline-primary me-1"
+                          title="Chỉnh sửa"
+                        >
+                          <FaEdit />
                         </Link>
                         <Button
                           variant="outline-danger"

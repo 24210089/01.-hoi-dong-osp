@@ -24,6 +24,7 @@ router.get("/", educationController.getAllEducation);
 
 router.get("/sister/:sisterId", educationController.getEducationBySister);
 router.get("/statistics/level", educationController.getStatisticsByLevel);
+router.get("/:id", educationController.getEducationById);
 
 router.post(
   "/",

@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { educationService } from "@services";
 import EducationCard from "../components/EducationCard";
 import EducationForm from "../components/EducationForm";
@@ -11,10 +12,12 @@ import Breadcrumb from "@components/common/Breadcrumb";
 
 const EducationListPage = () => {
   const { sisterId } = useParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [educations, setEducations] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedEducation, setSelectedEducation] = useState(null);
+  const [sisterInfo, setSisterInfo] = useState(null);
 
   useEffect(() => {
     fetchEducations();
@@ -25,10 +28,19 @@ const EducationListPage = () => {
       setLoading(true);
       const response = await educationService.getBySister(sisterId);
       if (response.success) {
-        setEducations(response.data || []);
+        const list = Array.isArray(response.data?.education)
+          ? response.data.education
+          : [];
+        setEducations(list);
+        setSisterInfo(response.data?.sister || null);
+      } else {
+        toast.error(
+          response.error || "Không thể tải danh sách học vấn của nữ tu"
+        );
       }
     } catch (error) {
       console.error("Error fetching educations:", error);
+      toast.error("Lỗi khi tải danh sách học vấn của nữ tu");
     } finally {
       setLoading(false);
     }
@@ -53,6 +65,14 @@ const EducationListPage = () => {
         console.error("Error deleting education:", error);
       }
     }
+  };
+
+  const handleView = (education) => {
+    if (!education?.id) {
+      toast.error("Không xác định được học vấn cần xem chi tiết");
+      return;
+    }
+    navigate(`/hoc-van/${education.id}`, { state: { education } });
   };
 
   const handleSubmit = async (values) => {
@@ -83,9 +103,22 @@ const EducationListPage = () => {
   return (
     <Container fluid className="py-4">
       <Breadcrumb
-        title="Quản lý Học vấn"
+        title={
+          sisterInfo?.code
+            ? `Học vấn - ${sisterInfo.code}`
+            : "Quản lý Học vấn"
+        }
         items={[
           { label: "Quản lý Nữ Tu", link: "/nu-tu" },
+          sisterInfo
+            ? {
+                label:
+                  sisterInfo.code || sisterInfo.id
+                    ? `Nữ tu ${sisterInfo.code || sisterInfo.id}`
+                    : "Thông tin Nữ tu",
+                link: `/nu-tu/${sisterInfo.id || sisterId}`,
+              }
+            : { label: "Nữ tu" },
           { label: "Học vấn" },
         ]}
       />
@@ -103,6 +136,7 @@ const EducationListPage = () => {
             <Col key={education.id} xs={12} sm={6} lg={4}>
               <EducationCard
                 education={education}
+                onView={handleView}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
               />

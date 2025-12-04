@@ -5,7 +5,7 @@ import { Card, Badge } from "react-bootstrap";
 import { formatDate } from "@utils";
 import "./EducationCard.css";
 
-const EducationCard = ({ education, onEdit, onDelete }) => {
+const EducationCard = ({ education, onView, onEdit, onDelete }) => {
   return (
     <Card className="education-card h-100">
       <Card.Body>
@@ -55,6 +55,15 @@ const EducationCard = ({ education, onEdit, onDelete }) => {
 
       <Card.Footer className="bg-white border-top">
         <div className="d-flex gap-2">
+          {onView && (
+            <button
+              className="btn btn-sm btn-outline-info flex-grow-1"
+              onClick={() => onView(education)}
+            >
+              <i className="fas fa-eye me-1"></i>
+              Chi tiết
+            </button>
+          )}
           <button
             className="btn btn-sm btn-outline-success flex-grow-1"
             onClick={() => onEdit(education)}

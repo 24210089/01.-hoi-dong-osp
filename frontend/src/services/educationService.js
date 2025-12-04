@@ -8,8 +8,8 @@ const EDUCATION_ENDPOINTS = {
   DETAIL: (id) => `/education/${id}`,
   UPDATE: (id) => `/education/${id}`,
   DELETE: (id) => `/education/${id}`,
-  BY_SISTER: (sisterId) => `/sisters/${sisterId}/education`,
-  CERTIFICATES: (sisterId) => `/sisters/${sisterId}/education/certificates`,
+  BY_SISTER: (sisterId) => `/education/sister/${sisterId}`,
+  CERTIFICATES: (sisterId) => `/education/sister/${sisterId}/certificates`,
   STATISTICS: "/education/statistics",
 };
 
@@ -44,9 +44,10 @@ const educationService = {
   getById: async (id) => {
     try {
       const response = await api.get(EDUCATION_ENDPOINTS.DETAIL(id));
+      // api interceptor đã unwrap response.data, nên response ở đây chính là data
       return {
         success: true,
-        data: response.data,
+        data: response,
       };
     } catch (error) {
       console.error("Error fetching education detail:", error);

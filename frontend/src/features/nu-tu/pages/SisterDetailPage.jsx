@@ -585,30 +585,98 @@ const SisterDetailPage = () => {
 
                   {/* Education Tab */}
                   <Tab.Pane eventKey="education">
-                    <h5 className="mb-3">Học vấn</h5>
-                    {sister.educations && sister.educations.length > 0 ? (
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h5 className="mb-0">Học vấn</h5>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => navigate(`/nu-tu/${id}/hoc-van/create`)}
+                      >
+                        + Thêm học vấn
+                      </Button>
+                    </div>
+                    {sister.education && sister.education.length > 0 ? (
                       <div className="education-list">
-                        {sister.educations.map((edu, index) => (
-                          <Card key={index} className="mb-3">
+                        {sister.education.map((edu, index) => (
+                          <Card key={edu.id || index} className="mb-3">
                             <Card.Body>
                               <div className="d-flex justify-content-between align-items-start">
                                 <div>
-                                  <h6 className="mb-1">{edu.degree}</h6>
-                                  <p className="mb-1">{edu.institution}</p>
+                                  <h6 className="mb-1">
+                                    {edu.level === "doctorate" && "Tiến sĩ"}
+                                    {edu.level === "master" && "Thạc sĩ"}
+                                    {edu.level === "bachelor" && "Cử nhân"}
+                                    {edu.level === "associate" && "Cao đẳng"}
+                                    {edu.level === "vocational" && "Trung cấp"}
+                                    {edu.level === "high_school" && "THPT"}
+                                    {edu.level === "certificate" && "Chứng chỉ"}
+                                    {edu.level === "other" && "Khác"}
+                                    {!["doctorate", "master", "bachelor", "associate", "vocational", "high_school", "certificate", "other"].includes(edu.level) && edu.level}
+                                  </h6>
+                                  <p className="mb-1 text-primary">{edu.institution}</p>
+                                  {edu.major && (
+                                    <p className="mb-1">
+                                      <small className="text-muted">Chuyên ngành: </small>
+                                      {edu.major}
+                                    </p>
+                                  )}
                                   <small className="text-muted">
-                                    {edu.major && `Chuyên ngành: ${edu.major}`}
+                                    {formatDate(edu.start_date)}
+                                    {edu.end_date ? ` - ${formatDate(edu.end_date)}` : " - Hiện tại"}
                                   </small>
                                 </div>
-                                <Badge bg="info">
-                                  {edu.graduation_year || "Đang học"}
-                                </Badge>
+                                <div className="d-flex flex-column align-items-end gap-2">
+                                  <Badge bg={edu.status === "da_tot_nghiep" ? "success" : edu.status === "dang_hoc" ? "info" : "secondary"}>
+                                    {edu.status === "da_tot_nghiep" && "Đã tốt nghiệp"}
+                                    {edu.status === "dang_hoc" && "Đang học"}
+                                    {edu.status === "tam_nghi" && "Tạm nghỉ"}
+                                    {edu.status === "da_nghi" && "Đã nghỉ"}
+                                    {!["da_tot_nghiep", "dang_hoc", "tam_nghi", "da_nghi"].includes(edu.status) && (edu.graduation_year || "Đang học")}
+                                  </Badge>
+                                  <div className="d-flex gap-1">
+                                    <Button
+                                      variant="outline-primary"
+                                      size="sm"
+                                      onClick={() => navigate(`/hoc-van/${edu.id}`)}
+                                    >
+                                      Xem
+                                    </Button>
+                                    <Button
+                                      variant="outline-secondary"
+                                      size="sm"
+                                      onClick={() => navigate(`/hoc-van/${edu.id}/edit`)}
+                                    >
+                                      Sửa
+                                    </Button>
+                                  </div>
+                                </div>
                               </div>
+                              {edu.gpa && (
+                                <p className="mb-0 mt-2">
+                                  <small className="text-muted">GPA: </small>
+                                  <strong>{edu.gpa}</strong>
+                                </p>
+                              )}
+                              {edu.thesis_title && (
+                                <p className="mb-0 mt-1">
+                                  <small className="text-muted">Luận văn: </small>
+                                  {edu.thesis_title}
+                                </p>
+                              )}
                             </Card.Body>
                           </Card>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-muted">Chưa có thông tin học vấn</p>
+                      <div className="text-center py-4">
+                        <p className="text-muted mb-3">Chưa có thông tin học vấn</p>
+                        <Button
+                          variant="outline-primary"
+                          onClick={() => navigate(`/nu-tu/${id}/hoc-van/create`)}
+                        >
+                          Thêm học vấn đầu tiên
+                        </Button>
+                      </div>
                     )}
                   </Tab.Pane>
 

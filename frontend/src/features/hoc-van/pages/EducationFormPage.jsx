@@ -12,10 +12,17 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { FaGraduationCap, FaSave, FaArrowLeft, FaPaperclip } from "react-icons/fa";
+import {
+  FaGraduationCap,
+  FaSave,
+  FaArrowLeft,
+  FaPaperclip,
+} from "react-icons/fa";
+import { toast } from "react-toastify";
 import { educationService, sisterService } from "@services";
 import Breadcrumb from "@components/common/Breadcrumb";
 import MultiFileUpload from "@components/forms/MultiFileUpload";
+import DatePicker from "@components/forms/DatePicker";
 
 // Chuẩn hóa danh sách nữ tu, loại bỏ trùng lặp
 const normalizeSisters = (rawList = []) => {
@@ -43,6 +50,46 @@ const extractSisterItems = (payload) => {
   return [];
 };
 
+const defaultFormState = {
+  sister_id: "",
+  level: "bachelor",
+  major: "",
+  institution: "",
+  start_date: "",
+  end_date: "",
+  graduation_year: "",
+  status: "dang_hoc",
+  gpa: "",
+  thesis_title: "",
+  notes: "",
+};
+
+const normalizeDateInput = (value) => {
+  if (!value) return "";
+  if (typeof value === "string") {
+    return value.length >= 10 ? value.slice(0, 10) : value;
+  }
+  try {
+    return new Date(value).toISOString().slice(0, 10);
+  } catch (error) {
+    return "";
+  }
+};
+
+const parseDocumentsValue = (docs) => {
+  if (!docs) return [];
+  if (Array.isArray(docs)) return docs;
+  if (typeof docs === "string") {
+    try {
+      const parsed = JSON.parse(docs);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  }
+  return [];
+};
+
 const EducationFormPage = () => {
   const navigate = useNavigate();
   const { id, sisterId } = useParams();
@@ -55,17 +102,8 @@ const EducationFormPage = () => {
   const [documents, setDocuments] = useState([]);
 
   const [formData, setFormData] = useState({
+    ...defaultFormState,
     sister_id: sisterId || "",
-    level: "bachelor",
-    major: "",
-    institution: "",
-    start_date: "",
-    end_date: "",
-    graduation_year: "",
-    status: "dang_hoc",
-    gpa: "",
-    thesis_title: "",
-    notes: "",
   });
 
   useEffect(() => {
@@ -77,7 +115,10 @@ const EducationFormPage = () => {
 
   const fetchSisters = async () => {
     try {
-      const response = await sisterService.getList({ limit: 1000, status: "all" });
+      const response = await sisterService.getList({
+        limit: 1000,
+        status: "all",
+      });
       const list = normalizeSisters(
         extractSisterItems(response?.data) || extractSisterItems(response)
       );
@@ -93,7 +134,18 @@ const EducationFormPage = () => {
     try {
       const response = await educationService.getById(id);
       if (response.success) {
-        setFormData(response.data);
+        const data = response.data || {};
+        setFormData({
+          ...defaultFormState,
+          ...data,
+          sister_id: data.sister_id ? String(data.sister_id) : "",
+          start_date: normalizeDateInput(data.start_date),
+          end_date: normalizeDateInput(data.end_date),
+          graduation_year: data.graduation_year
+            ? String(data.graduation_year)
+            : "",
+        });
+        setDocuments(parseDocumentsValue(data.documents));
       }
     } catch (error) {
       console.error("Error fetching education:", error);
@@ -122,7 +174,9 @@ const EducationFormPage = () => {
         institution: formData.institution || null,
         start_date: formData.start_date || null,
         end_date: formData.end_date || null,
-        graduation_year: formData.graduation_year ? parseInt(formData.graduation_year, 10) : null,
+        graduation_year: formData.graduation_year
+          ? parseInt(formData.graduation_year, 10)
+          : null,
         status: formData.status || "dang_hoc",
         gpa: formData.gpa || null,
         thesis_title: formData.thesis_title || null,
@@ -138,12 +192,11 @@ const EducationFormPage = () => {
       }
 
       if (result.success) {
-        setMessage({
-          type: "success",
-          text: isEdit
-            ? "Đã cập nhật học vấn thành công!"
-            : "Đã thêm học vấn thành công!",
-        });
+        const successMsg = isEdit
+          ? "Đã cập nhật học vấn thành công!"
+          : "Đã thêm học vấn thành công!";
+        toast.success(successMsg);
+        setMessage({ type: "success", text: successMsg });
         setTimeout(() => {
           if (sisterId) {
             navigate(`/nu-tu/${sisterId}/hoc-van`);
@@ -152,10 +205,14 @@ const EducationFormPage = () => {
           }
         }, 1500);
       } else {
-        setMessage({ type: "danger", text: result.error });
+        const errorMsg = result.error || "Không thể lưu thông tin học vấn";
+        toast.error(errorMsg);
+        setMessage({ type: "danger", text: errorMsg });
       }
     } catch (error) {
-      setMessage({ type: "danger", text: "Lỗi khi lưu thông tin học vấn" });
+      const errorMsg = error?.response?.data?.message || "Lỗi khi lưu thông tin học vấn";
+      toast.error(errorMsg);
+      setMessage({ type: "danger", text: errorMsg });
     } finally {
       setSaving(false);
     }
@@ -276,26 +333,22 @@ const EducationFormPage = () => {
 
                 <Row>
                   <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Ngày bắt đầu</Form.Label>
-                      <Form.Control
-                        type="date"
-                        name="start_date"
-                        value={formData.start_date}
-                        onChange={handleChange}
-                      />
-                    </Form.Group>
+                    <DatePicker
+                      label="Ngày bắt đầu"
+                      name="start_date"
+                      value={formData.start_date}
+                      onChange={(value) => setFormData(prev => ({ ...prev, start_date: value }))}
+                      className="mb-3"
+                    />
                   </Col>
                   <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Ngày kết thúc</Form.Label>
-                      <Form.Control
-                        type="date"
-                        name="end_date"
-                        value={formData.end_date}
-                        onChange={handleChange}
-                      />
-                    </Form.Group>
+                    <DatePicker
+                      label="Ngày kết thúc"
+                      name="end_date"
+                      value={formData.end_date}
+                      onChange={(value) => setFormData(prev => ({ ...prev, end_date: value }))}
+                      className="mb-3"
+                    />
                   </Col>
                 </Row>
 
@@ -382,7 +435,8 @@ const EducationFormPage = () => {
                       maxSize={10 * 1024 * 1024}
                     />
                     <small className="text-muted d-block mt-2">
-                      Hỗ trợ: PDF, Word, hình ảnh (tối đa 5 file, mỗi file ≤ 10MB)
+                      Hỗ trợ: PDF, Word, hình ảnh (tối đa 5 file, mỗi file ≤
+                      10MB)
                     </small>
                   </Card.Body>
                 </Card>
