@@ -1,9 +1,26 @@
 /* src/features/users/pages/UserDetailPage.css */
 
+:root {
+  --user-primary: #042954;
+  --user-primary-light: #051f3e;
+  --user-accent: #ffa901;
+}
+
 .user-detail-card {
   border-radius: 12px;
   border: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.user-detail-card .card-header {
+  background: linear-gradient(135deg, var(--user-primary) 0%, var(--user-primary-light) 100%);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 1rem 1.5rem;
+}
+
+.user-detail-card .card-header i {
+  color: var(--user-accent);
 }
 
 .user-avatar-large {

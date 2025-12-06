@@ -1,0 +1,25 @@
+/* src/features/hoc-van/pages/EducationDetailPage.css */
+
+:root {
+  --education-primary: #042954;
+  --education-primary-light: #051f3e;
+  --education-accent: #ffa901;
+}
+
+.education-detail-card {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.education-detail-card .card-header {
+  background: linear-gradient(135deg, var(--education-primary) 0%, var(--education-primary-light) 100%);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 1rem 1.5rem;
+}
+
+.education-detail-card .card-header i,
+.education-detail-card .card-header svg {
+  color: var(--education-accent);
+}

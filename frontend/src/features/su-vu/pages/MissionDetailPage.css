@@ -1,9 +1,26 @@
 /* src/features/su-vu/pages/MissionDetailPage.css */
 
+:root {
+  --mission-primary: #042954;
+  --mission-primary-light: #051f3e;
+  --mission-accent: #ffa901;
+}
+
 .mission-detail-card {
   border-radius: 12px;
   border: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.mission-detail-card .card-header {
+  background: linear-gradient(135deg, var(--mission-primary) 0%, var(--mission-primary-light) 100%);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 1rem 1.5rem;
+}
+
+.mission-detail-card .card-header i {
+  color: var(--mission-accent);
 }
 
 .status-badge-large {

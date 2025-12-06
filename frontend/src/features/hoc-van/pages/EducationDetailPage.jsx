@@ -25,6 +25,7 @@ import {
 import { educationService } from "@services";
 import Breadcrumb from "@components/common/Breadcrumb";
 import LoadingSpinner from "@components/common/Loading/LoadingSpinner";
+import "./EducationDetailPage.css";
 
 const levelLabels = {
   secondary: "Trung học",
@@ -174,7 +175,7 @@ const EducationDetailPage = () => {
 
       <Row className="g-4">
         <Col lg={8}>
-          <Card className="mb-4">
+          <Card className="mb-4 education-detail-card">
             <Card.Header className="d-flex align-items-center gap-2">
               <FaGraduationCap />
               <span>Thông tin chung</span>
@@ -247,7 +248,7 @@ const EducationDetailPage = () => {
             </Card.Body>
           </Card>
 
-          <Card>
+          <Card className="education-detail-card">
             <Card.Header>Chi tiết học tập</Card.Header>
             <Card.Body>
               <Row className="g-3">
@@ -278,7 +279,7 @@ const EducationDetailPage = () => {
         </Col>
 
         <Col lg={4}>
-          <Card className="mb-4">
+          <Card className="mb-4 education-detail-card">
             <Card.Header>
               <FaPaperclip className="me-2" />
               Tài liệu đính kèm
@@ -319,7 +320,7 @@ const EducationDetailPage = () => {
             </Card.Body>
           </Card>
 
-          <Card>
+          <Card className="education-detail-card">
             <Card.Header>Hành động</Card.Header>
             <Card.Body>
               <div className="d-grid gap-2">

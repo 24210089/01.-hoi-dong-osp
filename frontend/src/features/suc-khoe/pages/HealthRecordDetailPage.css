@@ -120,29 +120,37 @@
 }
 
 .health-info-card .card-header.metrics-header {
-  background: linear-gradient(135deg, var(--health-success) 0%, #20b2aa 100%);
+  background: linear-gradient(135deg, var(--health-primary) 0%, var(--health-primary-light) 100%);
+}
+
+.health-info-card .card-header.metrics-header i {
+  color: var(--health-success);
 }
 
 .health-info-card .card-header.diagnosis-header {
-  background: linear-gradient(135deg, var(--health-accent) 0%, #ff8c00 100%);
-  color: var(--health-primary);
+  background: linear-gradient(135deg, var(--health-primary) 0%, var(--health-primary-light) 100%);
+  color: var(--health-white);
 }
 
 .health-info-card .card-header.diagnosis-header i {
-  color: var(--health-primary);
+  color: var(--health-accent);
 }
 
 .health-info-card .card-header.documents-header {
-  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  background: linear-gradient(135deg, var(--health-primary) 0%, var(--health-primary-light) 100%);
+}
+
+.health-info-card .card-header.documents-header i {
+  color: var(--health-accent);
 }
 
 .health-info-card .card-header.system-header {
-  background: var(--health-bg);
-  color: var(--health-text);
+  background: linear-gradient(135deg, var(--health-primary) 0%, var(--health-primary-light) 100%);
+  color: var(--health-white);
 }
 
 .health-info-card .card-header.system-header i {
-  color: var(--health-primary);
+  color: var(--health-accent);
 }
 
 .health-info-card .card-body {

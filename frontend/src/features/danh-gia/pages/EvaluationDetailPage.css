@@ -1,9 +1,26 @@
 /* src/features/danh-gia/pages/EvaluationDetailPage.css */
 
+:root {
+  --evaluation-primary: #042954;
+  --evaluation-primary-light: #051f3e;
+  --evaluation-accent: #ffa901;
+}
+
 .evaluation-detail-card {
   border-radius: 12px;
   border: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.evaluation-detail-card .card-header {
+  background: linear-gradient(135deg, var(--evaluation-primary) 0%, var(--evaluation-primary-light) 100%);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 1rem 1.5rem;
+}
+
+.evaluation-detail-card .card-header i {
+  color: var(--evaluation-accent);
 }
 
 .info-item {

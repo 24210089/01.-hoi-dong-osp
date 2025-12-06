@@ -5,6 +5,21 @@ class EvaluationModel extends BaseModel {
     super({ tableName: "evaluations", primaryKey: "id" });
     this.allowedFields = [
       "sister_id",
+      "evaluation_type",
+      "period",
+      "evaluation_date",
+      "evaluator",
+      "spiritual_life",
+      "community_life",
+      "apostolic_work",
+      "personal_development",
+      "overall_rating",
+      "strengths",
+      "weaknesses",
+      "recommendations",
+      "notes",
+      "documents",
+      // Legacy fields
       "evaluation_period",
       "evaluator_id",
       "spiritual_life_score",
@@ -13,11 +28,10 @@ class EvaluationModel extends BaseModel {
       "personality_score",
       "obedience_score",
       "general_comments",
-      "recommendations",
       "created_at",
       "updated_at",
     ];
-    this.requiredFields = ["sister_id", "evaluation_period"];
+    this.requiredFields = ["sister_id"];
   }
 
   validateData(data = {}, { partial = false } = {}) {

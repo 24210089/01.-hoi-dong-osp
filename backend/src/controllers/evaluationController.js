@@ -167,9 +167,22 @@ const buildCreatePayload = (body = {}) => {
   const {
     sister_id: sisterId,
     evaluation_period: evaluationPeriod,
+    period,
     evaluator_id: evaluatorId,
+    evaluator,
+    evaluation_type: evaluationType,
+    evaluation_date: evaluationDate,
+    spiritual_life: spiritualLife,
+    community_life: communityLife,
+    apostolic_work: apostolicWork,
+    personal_development: personalDevelopment,
+    overall_rating: overallRating,
+    strengths,
+    weaknesses,
     general_comments: generalComments,
     recommendations,
+    notes,
+    documents,
   } = body;
 
   const scoreSource =
@@ -178,10 +191,21 @@ const buildCreatePayload = (body = {}) => {
 
   return {
     sisterId,
-    evaluationPeriod,
-    evaluatorId,
+    evaluationPeriod: evaluationPeriod || period,
+    evaluatorId: evaluatorId || evaluator,
+    evaluationType,
+    evaluationDate,
+    spiritualLife,
+    communityLife,
+    apostolicWork,
+    personalDevelopment,
+    overallRating,
+    strengths,
+    weaknesses,
     generalComments: generalComments || null,
     recommendations: recommendations || null,
+    notes: notes || null,
+    documents: documents || null,
     scorePayload,
   };
 };
@@ -196,21 +220,26 @@ const createEvaluation = async (req, res) => {
       sisterId,
       evaluationPeriod,
       evaluatorId,
+      evaluationType,
+      evaluationDate,
+      spiritualLife,
+      communityLife,
+      apostolicWork,
+      personalDevelopment,
+      overallRating,
+      strengths,
+      weaknesses,
       generalComments,
       recommendations,
+      notes,
+      documents,
       scorePayload,
     } = buildCreatePayload(req.body);
 
-    if (!sisterId || !evaluationPeriod || !evaluatorId) {
+    if (!sisterId) {
       return res.status(400).json({
-        message: "sister_id, evaluation_period và evaluator_id là bắt buộc",
+        message: "sister_id là bắt buộc",
       });
-    }
-
-    if (!scorePayload || !Object.keys(scorePayload).length) {
-      return res
-        .status(400)
-        .json({ message: "Scores are required for a new evaluation" });
     }
 
     const context = await verifySisterScope(req, res, sisterId);
@@ -218,18 +247,24 @@ const createEvaluation = async (req, res) => {
       return;
     }
 
-    const evaluator = await validateEvaluator(evaluatorId);
-    if (!evaluator) {
-      return res.status(404).json({ message: "Evaluator not found" });
-    }
-
     const payload = {
       sister_id: sisterId,
-      evaluation_period: evaluationPeriod,
-      evaluator_id: evaluatorId,
-      ...scorePayload,
+      evaluation_type: evaluationType,
+      period: evaluationPeriod,
+      evaluation_date: evaluationDate,
+      evaluator: evaluatorId,
+      spiritual_life: spiritualLife,
+      community_life: communityLife,
+      apostolic_work: apostolicWork,
+      personal_development: personalDevelopment,
+      overall_rating: overallRating,
+      strengths,
+      weaknesses,
       general_comments: generalComments,
       recommendations,
+      notes,
+      documents,
+      ...scorePayload,
     };
 
     const created = await EvaluationModel.create(payload);

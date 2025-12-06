@@ -11,6 +11,7 @@ import {
   Alert,
 } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { evaluationService, sisterService } from "@services";
@@ -18,6 +19,7 @@ import LoadingSpinner from "@components/common/Loading/LoadingSpinner";
 import Breadcrumb from "@components/common/Breadcrumb";
 import SearchableSelect from "@components/forms/SearchableSelect";
 import DatePicker from "@components/forms/DatePicker";
+import MultiFileUpload from "@components/forms/MultiFileUpload";
 
 const validationSchema = Yup.object({
   sister_id: Yup.number().required("Vui lòng chọn Nữ Tu"),
@@ -36,6 +38,7 @@ const EvaluationFormPage = () => {
   const [initialLoading, setInitialLoading] = useState(isEdit);
   const [error, setError] = useState(null);
   const [sisters, setSisters] = useState([]);
+  const [documents, setDocuments] = useState([]);
 
   const formik = useFormik({
     initialValues: {
@@ -100,6 +103,19 @@ const EvaluationFormPage = () => {
           recommendations: evaluation.recommendations || "",
           notes: evaluation.notes || "",
         });
+        
+        // Load documents if available
+        if (evaluation.documents) {
+          try {
+            const docs =
+              typeof evaluation.documents === "string"
+                ? JSON.parse(evaluation.documents)
+                : evaluation.documents;
+            setDocuments(Array.isArray(docs) ? docs : []);
+          } catch {
+            setDocuments([]);
+          }
+        }
       }
     } catch (error) {
       console.error("Error fetching evaluation:", error);
@@ -131,6 +147,7 @@ const EvaluationFormPage = () => {
         overall_rating: values.overall_rating
           ? Number(values.overall_rating)
           : null,
+        documents: documents.length > 0 ? JSON.stringify(documents) : null,
       };
 
       let response;
@@ -141,20 +158,34 @@ const EvaluationFormPage = () => {
       }
 
       if (response.success) {
-        navigate(sisterId ? `/nu-tu/${sisterId}/danh-gia` : "/danh-gia");
+        const successMsg = isEdit
+          ? "Đã cập nhật đánh giá thành công!"
+          : "Đã thêm đánh giá thành công!";
+        toast.success(successMsg);
+        setTimeout(() => {
+          navigate(sisterId ? `/nu-tu/${sisterId}/danh-gia` : "/danh-gia");
+        }, 1500);
       } else {
-        setError(response.error || "Có lỗi xảy ra");
+        const errorMsg = response.error || "Có lỗi xảy ra";
+        toast.error(errorMsg);
+        setError(errorMsg);
       }
     } catch (error) {
       console.error("Error saving evaluation:", error);
-      setError("Có lỗi xảy ra khi lưu đánh giá");
+      const errorMsg =
+        error?.response?.data?.message || "Có lỗi xảy ra khi lưu đánh giá";
+      toast.error(errorMsg);
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
   }
 
   const handleCancel = () => {
-    navigate(sisterId ? `/nu-tu/${sisterId}/danh-gia` : "/danh-gia");
+    if (window.confirm("Bạn có chắc chắn muốn hủy? Các thay đổi sẽ không được lưu.")) {
+      toast.info("Đã hủy thao tác");
+      navigate(sisterId ? `/nu-tu/${sisterId}/danh-gia` : "/danh-gia");
+    }
   };
 
   // Calculate overall rating automatically
@@ -239,33 +270,20 @@ const EvaluationFormPage = () => {
                       onBlur={formik.handleBlur}
                       disabled={Boolean(sisterId)}
                       required
-                      placeholder="Nhập tên để tìm nữ tu..."
+                      placeholder="Nhập tên để tìm..."
                       maxDisplayItems={5}
                       isInvalid={
                         formik.touched.sister_id && formik.errors.sister_id
                       }
-                      options={(sisters || []).map((sister) => {
-                        const religiousName = sister.religious_name || "";
-                        const fullName = sister.full_name || "";
-                        const saintName = sister.saint_name || "";
-                        const birthName = sister.birth_name || "";
-                        const code = sister.code || "";
-
-                        let label =
-                          religiousName ||
-                          fullName ||
-                          saintName ||
-                          birthName ||
-                          `Nữ tu #${sister.id}`;
-                        if (code) {
-                          label += ` (${code})`;
-                        }
-
-                        return {
-                          value: sister.id,
-                          label: label,
-                        };
-                      })}
+                      options={(sisters || []).map((sister) => ({
+                        value: sister.id,
+                        label:
+                          `${
+                            sister.saint_name ? `${sister.saint_name} ` : ""
+                          }${sister.birth_name || ""}${
+                            sister.code ? ` (${sister.code})` : ""
+                          }`.trim() || `Nữ tu #${sister.id}`,
+                      }))}
                     />
                     {formik.touched.sister_id && formik.errors.sister_id && (
                       <div className="invalid-feedback d-block">
@@ -343,25 +361,33 @@ const EvaluationFormPage = () => {
                   </Col>
 
                   <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>
-                        Người đánh giá <span className="text-danger">*</span>
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="evaluator"
-                        placeholder="Tên người đánh giá"
-                        value={formik.values.evaluator}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        isInvalid={
-                          formik.touched.evaluator && formik.errors.evaluator
-                        }
-                      />
-                      <Form.Control.Feedback type="invalid">
+                    <SearchableSelect
+                      label="Người đánh giá"
+                      name="evaluator"
+                      value={formik.values.evaluator}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      required
+                      placeholder="Nhập tên để tìm..."
+                      maxDisplayItems={5}
+                      isInvalid={
+                        formik.touched.evaluator && formik.errors.evaluator
+                      }
+                      options={(sisters || []).map((sister) => ({
+                        value: sister.id,
+                        label:
+                          `${
+                            sister.saint_name ? `${sister.saint_name} ` : ""
+                          }${sister.birth_name || ""}${
+                            sister.code ? ` (${sister.code})` : ""
+                          }`.trim() || `Nữ tu #${sister.id}`,
+                      }))}
+                    />
+                    {formik.touched.evaluator && formik.errors.evaluator && (
+                      <div className="invalid-feedback d-block">
                         {formik.errors.evaluator}
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                      </div>
+                    )}
                   </Col>
                 </Row>
               </Card.Body>
@@ -522,6 +548,17 @@ const EvaluationFormPage = () => {
                         onChange={formik.handleChange}
                       />
                     </Form.Group>
+                  </Col>
+
+                  <Col md={12}>
+                    <MultiFileUpload
+                      label="Tài liệu đính kèm"
+                      files={documents}
+                      onChange={setDocuments}
+                      accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                      maxFiles={10}
+                      hint="Hỗ trợ PDF, Word, ảnh (tối đa 10 file)"
+                    />
                   </Col>
                 </Row>
               </Card.Body>

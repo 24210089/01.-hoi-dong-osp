@@ -1,9 +1,26 @@
 /* src/features/cong-doan/pages/CommunityDetailPage.css */
 
+:root {
+  --community-primary: #042954;
+  --community-primary-light: #051f3e;
+  --community-accent: #ffa901;
+}
+
 .community-profile-card {
   border-radius: 12px;
   border: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.community-profile-card .card-header {
+  background: linear-gradient(135deg, var(--community-primary) 0%, var(--community-primary-light) 100%);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 1rem 1.5rem;
+}
+
+.community-profile-card .card-header i {
+  color: var(--community-accent);
 }
 
 .community-icon-large {
