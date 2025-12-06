@@ -72,10 +72,6 @@ const SearchBox = ({
   return (
     <div className={`search-box ${className}`}>
       <InputGroup size={size} className="search-input-group">
-        <InputGroup.Text className="search-icon">
-          <i className={icon}></i>
-        </InputGroup.Text>
-
         <Form.Control
           type="text"
           placeholder={placeholder}

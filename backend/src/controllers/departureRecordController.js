@@ -18,8 +18,6 @@ const editorRoles = [
   "secretary",
 ];
 
-const LEFT_STATUS = "left";
-
 const ensurePermission = (req, res, allowedRoles) => {
   if (!req.user) {
     res.status(401).json({ message: "Unauthorized" });
@@ -50,6 +48,93 @@ const logAudit = async (req, action, recordId, oldValue, newValue) => {
   }
 };
 
+// Get all departure records with pagination
+const getDepartureRecords = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, viewerRoles)) {
+      return;
+    }
+
+    const { page = 1, limit = 10, search = "", sister_id } = req.query;
+
+    const result = await DepartureRecordModel.findAll({
+      page: parseInt(page),
+      limit: parseInt(limit),
+      search,
+      sister_id: sister_id ? parseInt(sister_id) : null,
+    });
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("getDepartureRecords error:", error.message);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch departure records" });
+  }
+};
+
+// Get single departure record by ID
+const getDepartureRecordById = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, viewerRoles)) {
+      return;
+    }
+
+    const { id } = req.params;
+    const record = await DepartureRecordModel.findById(id);
+
+    if (!record) {
+      return res.status(404).json({ message: "Departure record not found" });
+    }
+
+    // Get sister info
+    const sister = await SisterModel.findById(record.sister_id);
+
+    return res.status(200).json({
+      ...record,
+      sister: sister
+        ? {
+            id: sister.id,
+            code: sister.code,
+            religious_name: sister.religious_name,
+            civil_name: sister.civil_name,
+          }
+        : null,
+    });
+  } catch (error) {
+    console.error("getDepartureRecordById error:", error.message);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch departure record" });
+  }
+};
+
+// Delete departure record
+const deleteDepartureRecord = async (req, res) => {
+  try {
+    if (!ensurePermission(req, res, editorRoles)) {
+      return;
+    }
+
+    const { id } = req.params;
+    const existing = await DepartureRecordModel.findById(id);
+
+    if (!existing) {
+      return res.status(404).json({ message: "Departure record not found" });
+    }
+
+    await DepartureRecordModel.delete(id);
+    await logAudit(req, "DELETE", id, existing, null);
+
+    return res.status(200).json({ message: "Departure record deleted" });
+  } catch (error) {
+    console.error("deleteDepartureRecord error:", error.message);
+    return res
+      .status(500)
+      .json({ message: "Failed to delete departure record" });
+  }
+};
+
 const createDepartureRecord = async (req, res) => {
   try {
     if (!ensurePermission(req, res, editorRoles)) {
@@ -60,13 +145,22 @@ const createDepartureRecord = async (req, res) => {
       sister_id: sisterId,
       departure_date: departureDate,
       stage_at_departure: stageAtDeparture,
+      type,
+      expected_return_date: expectedReturnDate,
+      return_date: returnDate,
+      destination,
       reason,
+      contact_phone: contactPhone,
+      contact_address: contactAddress,
+      approved_by: approvedBy,
+      notes,
       support_notes: supportNotes,
+      documents,
     } = req.body;
 
-    if (!sisterId || !departureDate || !stageAtDeparture) {
+    if (!sisterId || !departureDate) {
       return res.status(400).json({
-        message: "sister_id, departure_date, stage_at_departure are required",
+        message: "sister_id and departure_date are required",
       });
     }
 
@@ -75,23 +169,24 @@ const createDepartureRecord = async (req, res) => {
       return res.status(404).json({ message: "Sister not found" });
     }
 
-    const existing = await DepartureRecordModel.findBySisterId(sisterId);
-    if (existing && existing.length) {
-      return res
-        .status(409)
-        .json({ message: "Departure record already exists for this sister" });
-    }
-
     const payload = {
       sister_id: sisterId,
       departure_date: departureDate,
-      stage_at_departure: stageAtDeparture,
+      stage_at_departure: stageAtDeparture || null,
+      type: type || null,
+      expected_return_date: expectedReturnDate || null,
+      return_date: returnDate || null,
+      destination: destination || null,
       reason: reason || null,
+      contact_phone: contactPhone || null,
+      contact_address: contactAddress || null,
+      approved_by: approvedBy || null,
+      notes: notes || null,
       support_notes: supportNotes || null,
+      documents: documents || null,
     };
 
     const created = await DepartureRecordModel.create(payload);
-    await SisterModel.update(sisterId, { status: LEFT_STATUS });
     await logAudit(req, "CREATE", created.id, null, created);
 
     return res.status(201).json({ departure: created });
@@ -127,8 +222,17 @@ const updateDepartureRecord = async (req, res) => {
     const mutableFields = [
       "departure_date",
       "stage_at_departure",
+      "type",
+      "expected_return_date",
+      "return_date",
+      "destination",
       "reason",
+      "contact_phone",
+      "contact_address",
+      "approved_by",
+      "notes",
       "support_notes",
+      "documents",
     ];
     const payload = {};
 
@@ -223,8 +327,11 @@ const getDepartureStatistics = async (req, res) => {
 };
 
 module.exports = {
+  getDepartureRecords,
+  getDepartureRecordById,
   createDepartureRecord,
   updateDepartureRecord,
+  deleteDepartureRecord,
   getDepartureRecordBySister,
   getDepartureStatistics,
 };

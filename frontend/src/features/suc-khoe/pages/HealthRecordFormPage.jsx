@@ -252,32 +252,15 @@ const HealthRecordFormPage = () => {
                       required
                       placeholder="Nhập tên để tìm..."
                       maxDisplayItems={5}
-                      options={(sisters || []).map((sister) => {
-                        // Build label from available name fields
-                        const saintName = sister.saint_name || "";
-                        const birthName = sister.birth_name || "";
-                        const code = sister.code || "";
-
-                        let label = "";
-                        if (saintName && birthName) {
-                          label = `${saintName} - ${birthName}`;
-                        } else if (birthName) {
-                          label = birthName;
-                        } else if (saintName) {
-                          label = saintName;
-                        } else {
-                          label = `Nữ tu #${sister.id}`;
-                        }
-
-                        if (code) {
-                          label += ` (${code})`;
-                        }
-
-                        return {
-                          value: sister.id,
-                          label: label,
-                        };
-                      })}
+                      options={(sisters || []).map((sister) => ({
+                        value: sister.id,
+                        label:
+                          `${
+                            sister.saint_name ? `${sister.saint_name} - ` : ""
+                          }${sister.birth_name || ""}${
+                            sister.code ? ` (${sister.code})` : ""
+                          }`.trim() || `Nữ tu #${sister.id}`,
+                      }))}
                     />
                   </Col>
 
@@ -294,10 +277,9 @@ const HealthRecordFormPage = () => {
                         required
                       >
                         <option value="">Chọn tình trạng</option>
-                        <option value="excellent">Tốt</option>
-                        <option value="good">Khá</option>
-                        <option value="fair">Trung bình</option>
-                        <option value="poor">Yếu</option>
+                        <option value="good">Tốt</option>
+                        <option value="average">Trung bình</option>
+                        <option value="weak">Yếu</option>
                       </Form.Select>
                     </Form.Group>
                   </Col>

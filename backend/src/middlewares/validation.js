@@ -237,8 +237,7 @@ const validateDepartureRecordCreate = [
     .isISO8601()
     .withMessage("departure_date must be a valid date"),
   body("stage_at_departure")
-    .notEmpty()
-    .withMessage("stage_at_departure is required")
+    .optional({ nullable: true })
     .isIn([
       "inquiry",
       "postulant",
@@ -249,6 +248,18 @@ const validateDepartureRecordCreate = [
       "left",
     ])
     .withMessage("invalid stage_at_departure value"),
+  body("type")
+    .optional({ nullable: true })
+    .isString()
+    .withMessage("type must be a string"),
+  body("expected_return_date")
+    .optional({ nullable: true })
+    .isISO8601()
+    .withMessage("expected_return_date must be a valid date"),
+  body("return_date")
+    .optional({ nullable: true })
+    .isISO8601()
+    .withMessage("return_date must be a valid date"),
 ];
 
 const handleValidationErrors = (req, res, next) => {

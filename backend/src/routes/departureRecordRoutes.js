@@ -10,20 +10,28 @@ const router = express.Router();
 
 router.use(authenticateToken);
 
-router.post(
-  "/",
-  validateDepartureRecordCreate,
-  handleValidationErrors,
-  departureRecordController.createDepartureRecord
-);
+// Get list of all departure records
+router.get("/", departureRecordController.getDepartureRecords);
 
-router.put("/:id", departureRecordController.updateDepartureRecord);
+// Get statistics
+router.get("/statistics", departureRecordController.getDepartureStatistics);
 
+// Get departures by sister
 router.get(
   "/sister/:sisterId",
   departureRecordController.getDepartureRecordBySister
 );
 
-router.get("/statistics", departureRecordController.getDepartureStatistics);
+// Get single departure by ID
+router.get("/:id", departureRecordController.getDepartureRecordById);
+
+// Create new departure
+router.post("/", departureRecordController.createDepartureRecord);
+
+// Update departure
+router.put("/:id", departureRecordController.updateDepartureRecord);
+
+// Delete departure
+router.delete("/:id", departureRecordController.deleteDepartureRecord);
 
 module.exports = router;

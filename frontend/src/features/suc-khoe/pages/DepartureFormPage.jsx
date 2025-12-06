@@ -9,11 +9,13 @@ import {
   Alert,
 } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { departureService, sisterService } from "@services";
 import LoadingSpinner from "@components/common/Loading/LoadingSpinner";
 import Breadcrumb from "@components/common/Breadcrumb";
 import SearchableSelect from "@components/forms/SearchableSelect";
 import DatePicker from "@components/forms/DatePicker";
+import MultiFileUpload from "@components/forms/MultiFileUpload";
 
 const DepartureFormPage = () => {
   const { id, sisterId } = useParams();
@@ -24,6 +26,7 @@ const DepartureFormPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [sisters, setSisters] = useState([]);
+  const [documents, setDocuments] = useState([]);
 
   const [formData, setFormData] = useState({
     sister_id: sisterId || "",
@@ -48,9 +51,24 @@ const DepartureFormPage = () => {
 
   const fetchSisters = async () => {
     try {
-      const response = await sisterService.getList({ page_size: 1000 });
-      if (response.success) {
-        setSisters(response.data.items || []);
+      const response = await sisterService.getList({ limit: 1000 });
+      console.log("Sisters API response:", response);
+      if (response && response.success && response.data) {
+        let sistersData = Array.isArray(response.data)
+          ? response.data
+          : response.data.items || [];
+        // Remove duplicates by id
+        const uniqueSisters = sistersData.filter(
+          (sister, index, self) =>
+            index === self.findIndex((s) => s.id === sister.id)
+        );
+        setSisters(uniqueSisters);
+      } else if (response && Array.isArray(response.data)) {
+        setSisters(response.data);
+      } else if (Array.isArray(response)) {
+        setSisters(response);
+      } else {
+        setSisters([]);
       }
     } catch (error) {
       console.error("Error fetching sisters:", error);
@@ -62,7 +80,29 @@ const DepartureFormPage = () => {
       setLoading(true);
       const response = await departureService.getById(id);
       if (response.success) {
-        setFormData(response.data);
+        const data = response.data;
+        setFormData({
+          ...data,
+          departure_date: data.departure_date
+            ? data.departure_date.split("T")[0]
+            : "",
+          expected_return_date: data.expected_return_date
+            ? data.expected_return_date.split("T")[0]
+            : "",
+          return_date: data.return_date ? data.return_date.split("T")[0] : "",
+        });
+        // Load documents if available
+        if (data.documents) {
+          try {
+            const docs =
+              typeof data.documents === "string"
+                ? JSON.parse(data.documents)
+                : data.documents;
+            setDocuments(Array.isArray(docs) ? docs : []);
+          } catch {
+            setDocuments([]);
+          }
+        }
       }
     } catch (error) {
       console.error("Error fetching departure:", error);
@@ -73,7 +113,18 @@ const DepartureFormPage = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    // Handle both event object and direct value
+    if (e && e.target) {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  // Separate handler for DatePicker (receives value directly)
+  const handleDateChange = (name) => (value) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -102,21 +153,38 @@ const DepartureFormPage = () => {
     try {
       setSubmitting(true);
 
+      // Prepare payload with documents
+      const payload = {
+        ...formData,
+        documents: documents.length > 0 ? JSON.stringify(documents) : null,
+      };
+
       let response;
       if (isEditMode) {
-        response = await departureService.update(id, formData);
+        response = await departureService.update(id, payload);
       } else {
-        response = await departureService.create(formData);
+        response = await departureService.create(payload);
       }
 
       if (response.success) {
-        navigate(sisterId ? `/nu-tu/${sisterId}/di-vang` : "/di-vang");
+        const successMsg = isEditMode
+          ? "Đã cập nhật phiếu đi vắng thành công!"
+          : "Đã đăng ký đi vắng thành công!";
+        toast.success(successMsg);
+        setTimeout(() => {
+          navigate(sisterId ? `/nu-tu/${sisterId}/di-vang` : "/di-vang");
+        }, 1500);
       } else {
-        setError(response.error || "Có lỗi xảy ra");
+        const errorMsg = response.error || "Không thể lưu phiếu đi vắng";
+        toast.error(errorMsg);
+        setError(errorMsg);
       }
     } catch (error) {
       console.error("Error saving departure:", error);
-      setError("Có lỗi xảy ra khi lưu phiếu đi vắng");
+      const errorMsg =
+        error?.response?.data?.message || "Lỗi khi lưu phiếu đi vắng";
+      toast.error(errorMsg);
+      setError(errorMsg);
     } finally {
       setSubmitting(false);
     }
@@ -183,35 +251,15 @@ const DepartureFormPage = () => {
                       required
                       placeholder="Nhập tên để tìm nữ tu..."
                       maxDisplayItems={5}
-                      options={(sisters || []).map((sister) => {
-                        const saintName = sister.saint_name || "";
-                        const religiousName = sister.religious_name || "";
-                        const birthName = sister.birth_name || "";
-                        const fullName = sister.full_name || "";
-                        const code = sister.code || "";
-
-                        let label = "";
-                        if (religiousName && fullName) {
-                          label = `${religiousName} - ${fullName}`;
-                        } else if (saintName && birthName) {
-                          label = `${saintName} - ${birthName}`;
-                        } else {
-                          label =
-                            fullName ||
-                            birthName ||
-                            saintName ||
-                            `Nữ tu #${sister.id}`;
-                        }
-
-                        if (code) {
-                          label += ` (${code})`;
-                        }
-
-                        return {
-                          value: sister.id,
-                          label: label,
-                        };
-                      })}
+                      options={(sisters || []).map((sister) => ({
+                        value: sister.id,
+                        label:
+                          `${
+                            sister.saint_name ? `${sister.saint_name} - ` : ""
+                          }${sister.birth_name || ""}${
+                            sister.code ? ` (${sister.code})` : ""
+                          }`.trim() || `Nữ tu #${sister.id}`,
+                      }))}
                     />
                   </Col>
 
@@ -241,7 +289,7 @@ const DepartureFormPage = () => {
                       label="Ngày đi"
                       name="departure_date"
                       value={formData.departure_date}
-                      onChange={handleChange}
+                      onChange={handleDateChange("departure_date")}
                       required
                       placeholder="dd/mm/yyyy"
                     />
@@ -252,7 +300,7 @@ const DepartureFormPage = () => {
                       label="Dự kiến về"
                       name="expected_return_date"
                       value={formData.expected_return_date}
-                      onChange={handleChange}
+                      onChange={handleDateChange("expected_return_date")}
                       placeholder="dd/mm/yyyy"
                     />
                   </Col>
@@ -262,7 +310,7 @@ const DepartureFormPage = () => {
                       label="Ngày về thực tế"
                       name="return_date"
                       value={formData.return_date}
-                      onChange={handleChange}
+                      onChange={handleDateChange("return_date")}
                       placeholder="dd/mm/yyyy"
                     />
                   </Col>
@@ -295,16 +343,23 @@ const DepartureFormPage = () => {
                   </Col>
 
                   <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Người phê duyệt</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="approved_by"
-                        value={formData.approved_by}
-                        onChange={handleChange}
-                        placeholder="Tên người phê duyệt"
-                      />
-                    </Form.Group>
+                    <SearchableSelect
+                      label="Người phê duyệt"
+                      name="approved_by"
+                      value={formData.approved_by}
+                      onChange={handleChange}
+                      placeholder="Nhập tên để tìm người phê duyệt..."
+                      maxDisplayItems={5}
+                      options={(sisters || []).map((sister) => ({
+                        value: sister.id,
+                        label:
+                          `${
+                            sister.saint_name ? `${sister.saint_name} - ` : ""
+                          }${sister.birth_name || ""}${
+                            sister.code ? ` (${sister.code})` : ""
+                          }`.trim() || `Nữ tu #${sister.id}`,
+                      }))}
+                    />
                   </Col>
                 </Row>
               </Card.Body>
@@ -348,6 +403,25 @@ const DepartureFormPage = () => {
                     </Form.Group>
                   </Col>
                 </Row>
+              </Card.Body>
+            </Card>
+
+            <Card className="mb-4">
+              <Card.Header className="bg-white border-bottom">
+                <h5 className="mb-0">
+                  <i className="fas fa-paperclip me-2 text-info"></i>
+                  Tài liệu đính kèm
+                </h5>
+              </Card.Header>
+              <Card.Body>
+                <MultiFileUpload
+                  label=""
+                  files={documents}
+                  onChange={setDocuments}
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  maxFiles={10}
+                  hint="Hỗ trợ PDF, Word, ảnh (tối đa 10 file)"
+                />
               </Card.Body>
             </Card>
 

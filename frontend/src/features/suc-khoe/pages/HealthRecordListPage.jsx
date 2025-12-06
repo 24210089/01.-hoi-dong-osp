@@ -85,10 +85,9 @@ const HealthRecordListPage = () => {
 
   // Map by general_health field from database (good, average, weak)
   const recordsByStatus = {
-    excellent: records.filter((r) => r.general_health === "good"),
-    good: records.filter((r) => r.general_health === "average"),
-    fair: [], // No mapping for fair
-    poor: records.filter((r) => r.general_health === "weak"),
+    good: records.filter((r) => r.general_health === "good"),
+    average: records.filter((r) => r.general_health === "average"),
+    weak: records.filter((r) => r.general_health === "weak"),
   };
 
   if (loading) {
@@ -145,7 +144,7 @@ const HealthRecordListPage = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div>
                   <small className="text-muted">Sức khỏe tốt</small>
-                  <h4 className="mb-0">{recordsByStatus.excellent.length}</h4>
+                  <h4 className="mb-0">{recordsByStatus.good.length}</h4>
                 </div>
                 <div className="stat-icon bg-success">
                   <i className="fas fa-smile"></i>
@@ -159,11 +158,11 @@ const HealthRecordListPage = () => {
             <Card.Body>
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <small className="text-muted">Cần theo dõi</small>
-                  <h4 className="mb-0">{recordsByStatus.fair.length}</h4>
+                  <small className="text-muted">Trung bình</small>
+                  <h4 className="mb-0">{recordsByStatus.average.length}</h4>
                 </div>
                 <div className="stat-icon bg-warning">
-                  <i className="fas fa-exclamation-triangle"></i>
+                  <i className="fas fa-meh"></i>
                 </div>
               </div>
             </Card.Body>
@@ -174,11 +173,11 @@ const HealthRecordListPage = () => {
             <Card.Body>
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <small className="text-muted">Cần chăm sóc</small>
-                  <h4 className="mb-0">{recordsByStatus.poor.length}</h4>
+                  <small className="text-muted">Sức khỏe yếu</small>
+                  <h4 className="mb-0">{recordsByStatus.weak.length}</h4>
                 </div>
                 <div className="stat-icon bg-danger">
-                  <i className="fas fa-ambulance"></i>
+                  <i className="fas fa-frown"></i>
                 </div>
               </div>
             </Card.Body>
@@ -208,27 +207,21 @@ const HealthRecordListPage = () => {
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="excellent">
-                    <i className="fas fa-smile me-2"></i>
-                    Tốt ({recordsByStatus.excellent.length})
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
                   <Nav.Link eventKey="good">
+                    <i className="fas fa-smile me-2"></i>
+                    Tốt ({recordsByStatus.good.length})
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="average">
                     <i className="fas fa-meh me-2"></i>
-                    Khá ({recordsByStatus.good.length})
+                    Trung bình ({recordsByStatus.average.length})
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="fair">
+                  <Nav.Link eventKey="weak">
                     <i className="fas fa-frown me-2"></i>
-                    Trung bình ({recordsByStatus.fair.length})
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="poor">
-                    <i className="fas fa-sad-tear me-2"></i>
-                    Yếu ({recordsByStatus.poor.length})
+                    Yếu ({recordsByStatus.weak.length})
                   </Nav.Link>
                 </Nav.Item>
               </Nav>

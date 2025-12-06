@@ -46,15 +46,33 @@ const HealthRecordDetailPage = () => {
   const getHealthStatusBadge = (status) => {
     const statusMap = {
       good: { label: "Tốt", variant: "status-good", icon: "fa-smile" },
+      excellent: {
+        label: "Rất tốt",
+        variant: "status-good",
+        icon: "fa-laugh-beam",
+      },
       average: {
         label: "Trung bình",
         variant: "status-average",
         icon: "fa-meh",
       },
+      normal: {
+        label: "Bình thường",
+        variant: "status-average",
+        icon: "fa-meh",
+      },
       weak: { label: "Yếu", variant: "status-weak", icon: "fa-frown" },
+      poor: { label: "Kém", variant: "status-weak", icon: "fa-sad-tear" },
+      critical: {
+        label: "Nghiêm trọng",
+        variant: "status-critical",
+        icon: "fa-exclamation-triangle",
+      },
     };
-    const statusInfo = statusMap[status] || {
-      label: status,
+    // Normalize status to lowercase
+    const normalizedStatus = status?.toLowerCase?.() || status;
+    const statusInfo = statusMap[normalizedStatus] || {
+      label: status || "Chưa xác định",
       variant: "status-average",
       icon: "fa-question",
     };

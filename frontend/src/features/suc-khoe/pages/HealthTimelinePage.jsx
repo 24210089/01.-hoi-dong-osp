@@ -1,19 +1,30 @@
 // src/features/suc-khoe/pages/HealthTimelinePage.jsx
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Timeline from "@components/common/Timeline";
 import { healthService } from "@services";
 import { formatDate } from "@utils";
 
-// Health status configurations
+// Health status configurations - Vietnamese labels
 const healthStatusConfig = {
   good: {
     label: "Tốt",
     icon: "fas fa-smile",
     className: "type-good",
   },
+  excellent: {
+    label: "Rất tốt",
+    icon: "fas fa-laugh-beam",
+    className: "type-good",
+  },
   average: {
     label: "Trung bình",
+    icon: "fas fa-meh",
+    className: "type-average",
+  },
+  normal: {
+    label: "Bình thường",
     icon: "fas fa-meh",
     className: "type-average",
   },
@@ -22,11 +33,23 @@ const healthStatusConfig = {
     icon: "fas fa-frown",
     className: "type-weak",
   },
+  poor: {
+    label: "Kém",
+    icon: "fas fa-sad-tear",
+    className: "type-weak",
+  },
+  critical: {
+    label: "Nghiêm trọng",
+    icon: "fas fa-exclamation-triangle",
+    className: "type-critical",
+  },
 };
 
 const getHealthConfig = (status) => {
+  // Normalize status to lowercase for matching
+  const normalizedStatus = status?.toLowerCase?.() || status;
   return (
-    healthStatusConfig[status] || {
+    healthStatusConfig[normalizedStatus] || {
       label: status || "Chưa xác định",
       icon: "fas fa-heartbeat",
       className: "type-health",
@@ -35,18 +58,21 @@ const getHealthConfig = (status) => {
 };
 
 const HealthTimelinePage = () => {
+  const navigate = useNavigate();
   // Fetch health records by sister
   const fetchDataBySister = async (sisterId) => {
     try {
-      const response = await healthService.getList({
-        sister_id: sisterId,
-        limit: 100,
-      });
+      const response = await healthService.getBySister(sisterId);
       if (response && response.success) {
-        const items = response.data?.items || response.data || [];
+        // API returns { sister, records } - interceptor returns response.data
+        const records = response.data?.records || response.data || [];
+        // Ensure records is an array
+        const items = Array.isArray(records) ? records : [];
         // Sort by checkup_date descending
         return items.sort(
-          (a, b) => new Date(b.checkup_date) - new Date(a.checkup_date)
+          (a, b) =>
+            new Date(b.checkup_date || b.created_at) -
+            new Date(a.checkup_date || a.created_at)
         );
       }
       return [];
@@ -161,16 +187,24 @@ const HealthTimelinePage = () => {
     ];
   };
 
+  // Handle click on timeline item to view detail
+  const handleItemClick = (item) => {
+    if (item && item.id) {
+      navigate(`/suc-khoe/${item.id}`);
+    }
+  };
+
   return (
     <Timeline
       title="Timeline Sức Khỏe"
-      subtitle="Xem lịch sử khám sức khỏe của nữ tu"
+      subtitle="Xem lịch sử khám sức khỏe của nữ tu - Nhấn vào từng giai đoạn để xem chi tiết"
       icon="fas fa-heartbeat"
       backUrl="/suc-khoe"
       fetchDataBySister={fetchDataBySister}
       getItemConfig={getItemConfig}
       renderItemContent={renderItemContent}
       calculateStats={calculateStats}
+      onItemClick={handleItemClick}
       emptyMessage="Chưa có hồ sơ sức khỏe"
       emptyDescription="Nữ tu này chưa có thông tin khám sức khỏe nào được ghi nhận."
     />

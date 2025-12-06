@@ -3,13 +3,13 @@
 import api from "./api";
 
 const DEPARTURE_ENDPOINTS = {
-  LIST: "/departures",
-  CREATE: "/departures",
-  DETAIL: (id) => `/departures/${id}`,
-  UPDATE: (id) => `/departures/${id}`,
-  DELETE: (id) => `/departures/${id}`,
-  BY_SISTER: (sisterId) => `/sisters/${sisterId}/departures`,
-  STATISTICS: "/departures/statistics",
+  LIST: "/departure-records",
+  CREATE: "/departure-records",
+  DETAIL: (id) => `/departure-records/${id}`,
+  UPDATE: (id) => `/departure-records/${id}`,
+  DELETE: (id) => `/departure-records/${id}`,
+  BY_SISTER: (sisterId) => `/departure-records/sister/${sisterId}`,
+  STATISTICS: "/departure-records/statistics",
 };
 
 const departureService = {
