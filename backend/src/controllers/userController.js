@@ -83,10 +83,22 @@ const getAllUsers = async (req, res) => {
     const users = await UserModel.executeQuery(
       "SELECT * FROM users ORDER BY created_at DESC"
     );
-    return res.status(200).json({ data: users.map(sanitizeUser) });
+
+    const sanitizedUsers = users.map(sanitizeUser);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        items: sanitizedUsers,
+        total: sanitizedUsers.length,
+      },
+    });
   } catch (error) {
     console.error("getAllUsers error:", error.message);
-    return res.status(500).json({ message: "Failed to fetch users" });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch users",
+    });
   }
 };
 
@@ -119,33 +131,63 @@ const createUser = async (req, res) => {
       return;
     }
 
-    const { username, password, email, role } = req.body;
+    const {
+      username,
+      password,
+      email,
+      role,
+      full_name,
+      phone,
+      avatar,
+      status,
+    } = req.body;
+
+    // Required fields validation
     if (!username || !password || !email || !role) {
-      return res
-        .status(400)
-        .json({ message: "username, password, email, role are required" });
+      return res.status(400).json({
+        success: false,
+        message: "username, password, email, role are required",
+      });
     }
 
+    // Check if username already exists
     const existing = await UserModel.findByUsername(username);
     if (existing) {
-      return res.status(409).json({ message: "Username already exists" });
+      return res.status(409).json({
+        success: false,
+        message: "Username already exists",
+      });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-    const created = await UserModel.create({
+
+    // Create user with all fields
+    const userData = {
       username,
       password: hashedPassword,
       email,
       role,
-      is_active: 1,
-    });
+      full_name: full_name || null,
+      phone: phone || null,
+      avatar: avatar || null,
+      is_active: status === "active" ? 1 : 0,
+    };
+
+    const created = await UserModel.create(userData);
 
     await logAudit(req, "CREATE", created.id, null, sanitizeUser(created));
 
-    return res.status(201).json({ user: sanitizeUser(created) });
+    return res.status(201).json({
+      success: true,
+      data: sanitizeUser(created),
+    });
   } catch (error) {
     console.error("createUser error:", error.message);
-    return res.status(500).json({ message: "Failed to create user" });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to create user",
+    });
   }
 };
 

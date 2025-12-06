@@ -76,6 +76,16 @@ const lookupService = {
       throw error;
     }
   },
+
+  // User Roles
+  getUserRoles: async () => {
+    try {
+      const response = await api.get("/lookup/user-roles");
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default lookupService;

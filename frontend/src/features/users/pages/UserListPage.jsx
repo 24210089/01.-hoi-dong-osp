@@ -37,20 +37,27 @@ const UserListPage = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, [table.currentPage, table.pageSize, debouncedSearch, table.filters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
       const params = table.getTableParams();
+      console.log("Fetching users with params:", params);
       const response = await userService.getList(params);
+      console.log("User service response:", response);
 
       if (response.success) {
-        setUsers(response.data.items);
-        table.setTotalItems(response.data.total);
+        setUsers(response.data.items || []);
+        table.setTotalItems(response.data.total || 0);
+      } else {
+        console.error("Failed to fetch users:", response.error);
+        setUsers([]);
       }
     } catch (error) {
       console.error("Error fetching users:", error);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -114,14 +121,14 @@ const UserListPage = () => {
   };
 
   const usersByRole = {
-    admin: users.filter((u) => u.role === "admin"),
-    manager: users.filter((u) => u.role === "manager"),
-    staff: users.filter((u) => u.role === "staff"),
-    viewer: users.filter((u) => u.role === "viewer"),
+    admin: (users || []).filter((u) => u.role === "admin"),
+    manager: (users || []).filter((u) => u.role === "manager"),
+    staff: (users || []).filter((u) => u.role === "staff"),
+    viewer: (users || []).filter((u) => u.role === "viewer"),
   };
 
-  const activeUsers = users.filter((u) => u.status === "active");
-  const inactiveUsers = users.filter((u) => u.status === "inactive");
+  const activeUsers = (users || []).filter((u) => u.status === "active");
+  const inactiveUsers = (users || []).filter((u) => u.status === "inactive");
 
   if (loading) {
     return (
@@ -142,14 +149,6 @@ const UserListPage = () => {
         items={[{ label: "Quản lý Người dùng" }]}
       />
 
-      {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <Button variant="primary" onClick={handleAdd}>
-          <i className="fas fa-plus me-2"></i>
-          Thêm Người dùng
-        </Button>
-      </div>
-
       {/* Statistics */}
       <Row className="g-3 mb-4">
         <Col xs={6} md={3}>
@@ -158,7 +157,7 @@ const UserListPage = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div>
                   <small className="text-muted">Tổng số</small>
-                  <h4 className="mb-0">{users.length}</h4>
+                  <h4 className="mb-0">{(users || []).length}</h4>
                 </div>
                 <div className="stat-icon bg-primary">
                   <i className="fas fa-users"></i>
@@ -233,7 +232,7 @@ const UserListPage = () => {
       </Row>
 
       {/* Content */}
-      {users.length > 0 ? (
+      {(users || []).length > 0 ? (
         <Tab.Container defaultActiveKey="all">
           <Card>
             <Card.Header className="bg-white">
@@ -241,7 +240,7 @@ const UserListPage = () => {
                 <Nav.Item>
                   <Nav.Link eventKey="all">
                     <i className="fas fa-list me-2"></i>
-                    Tất cả ({users.length})
+                    Tất cả ({(users || []).length})
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>

@@ -11,10 +11,12 @@ import {
   Alert,
 } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
-import { userService } from "@services";
+import { userService, lookupService } from "@services";
 import { useForm } from "@hooks";
 import Input from "@components/forms/Input";
 import Select from "@components/forms/Select";
+import SearchableSelect from "@components/forms/SearchableSelect";
+import FileUpload from "@components/forms/FileUpload/FileUpload";
 import { isValidEmail, isValidPhone } from "@utils/validators";
 import LoadingSpinner from "@components/common/Loading/LoadingSpinner";
 import Breadcrumb from "@components/common/Breadcrumb";
@@ -28,6 +30,11 @@ const UserFormPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [roles, setRoles] = useState([]);
+  const [userStatuses, setUserStatuses] = useState([
+    { value: "active", label: "Đang hoạt động" },
+    { value: "inactive", label: "Đã khóa" },
+  ]);
 
   const {
     values,
@@ -45,23 +52,55 @@ const UserFormPage = () => {
     full_name: "",
     email: "",
     phone: "",
-    role: "viewer",
+    role: "",
     status: "active",
     avatar: "",
   });
 
   useEffect(() => {
+    console.log("UserFormPage mounted, userStatuses:", userStatuses);
+    fetchRoles();
     if (isEditMode) {
       fetchUserData();
     }
   }, [id]);
+
+  const fetchRoles = async () => {
+    try {
+      const response = await lookupService.getUserRoles();
+      if (response && response.success && response.data) {
+        setRoles(response.data);
+        console.log("Roles loaded:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      // Fallback to default roles if API fails
+      setRoles([
+        { value: "admin", label: "Quản trị viên" },
+        { value: "superior_general", label: "Bề trên Tổng Quyền" },
+        { value: "superior_provincial", label: "Bề trên Tỉnh Dòng" },
+        { value: "superior_community", label: "Bề trên Cộng đoàn" },
+        { value: "secretary", label: "Thư ký" },
+        { value: "viewer", label: "Người xem" },
+      ]);
+    }
+  };
 
   const fetchUserData = async () => {
     try {
       setLoading(true);
       const response = await userService.getById(id);
       if (response.success) {
-        setValues(response.data);
+        const userData = { ...response.data };
+        // Map is_active từ backend (0/1) sang status cho frontend ('active'/'inactive')
+        if (userData.is_active !== undefined) {
+          userData.status =
+            userData.is_active === 1 || userData.is_active === true
+              ? "active"
+              : "inactive";
+        }
+        console.log("User data loaded:", userData);
+        setValues(userData);
       }
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -118,7 +157,11 @@ const UserFormPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log("Form submitted with values:", values);
+
     const validationErrors = validate();
+    console.log("Validation errors:", validationErrors);
+
     if (Object.keys(validationErrors).length > 0) {
       validateForm(validationErrors);
       return;
@@ -128,21 +171,44 @@ const UserFormPage = () => {
       setSubmitting(true);
       setError("");
 
+      // Prepare data for submission
+      const submitData = { ...values };
+
+      // If avatar is a File object, we need to handle it differently
+      // For now, skip avatar file upload and just send the data
+      if (
+        submitData.avatar &&
+        typeof submitData.avatar === "object" &&
+        submitData.avatar instanceof File
+      ) {
+        // TODO: Implement file upload to server
+        // For now, remove avatar from submission
+        delete submitData.avatar;
+      }
+
+      console.log("Sending data to API:", submitData);
+
       let response;
       if (isEditMode) {
-        response = await userService.update(id, values);
+        response = await userService.update(id, submitData);
       } else {
-        response = await userService.create(values);
+        response = await userService.create(submitData);
       }
+
+      console.log("API response:", response);
 
       if (response.success) {
         navigate(`/users/${response.data.id}`);
       } else {
-        setError(response.error);
+        setError(response.error || "Có lỗi xảy ra");
       }
     } catch (error) {
       console.error("Error saving user:", error);
-      setError("Có lỗi xảy ra khi lưu người dùng");
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Có lỗi xảy ra khi lưu người dùng"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -216,7 +282,7 @@ const UserFormPage = () => {
                   </Col>
 
                   <Col md={6}>
-                    <Select
+                    <SearchableSelect
                       label="Vai trò"
                       name="role"
                       value={values.role}
@@ -224,14 +290,11 @@ const UserFormPage = () => {
                       onBlur={handleBlur}
                       error={errors.role}
                       touched={touched.role}
+                      placeholder="Nhập để tìm vai trò..."
+                      maxDisplayItems={5}
+                      options={roles}
                       required
-                    >
-                      <option value="">Chọn vai trò</option>
-                      <option value="admin">Quản trị viên</option>
-                      <option value="manager">Quản lý</option>
-                      <option value="staff">Nhân viên</option>
-                      <option value="viewer">Xem</option>
-                    </Select>
+                    />
                   </Col>
 
                   {!isEditMode && (
@@ -338,14 +401,35 @@ const UserFormPage = () => {
                   </Col>
 
                   <Col md={12}>
-                    <Input
-                      label="URL Avatar"
+                    <FileUpload
+                      label="Ảnh đại diện"
                       name="avatar"
-                      value={values.avatar}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      placeholder="https://example.com/avatar.jpg"
+                      onChange={(files) => {
+                        if (files && files.length > 0) {
+                          setFieldValue("avatar", files[0]);
+                        }
+                      }}
+                      error={errors.avatar}
+                      touched={touched.avatar}
+                      accept="image/*"
+                      maxSize={5242880}
+                      showPreview={true}
+                      helpText="Chọn ảnh đại diện (tối đa 5MB, định dạng: JPG, PNG, GIF)"
                     />
+                    {values.avatar && typeof values.avatar === "string" && (
+                      <div className="mt-2">
+                        <img
+                          src={values.avatar}
+                          alt="Avatar hiện tại"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            objectFit: "cover",
+                            borderRadius: "8px",
+                          }}
+                        />
+                      </div>
+                    )}
                   </Col>
                 </Row>
               </Card.Body>
@@ -370,10 +454,9 @@ const UserFormPage = () => {
                       value={values.status}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                    >
-                      <option value="active">Đang hoạt động</option>
-                      <option value="inactive">Đã khóa</option>
-                    </Select>
+                      options={userStatuses}
+                      placeholder="Chọn trạng thái"
+                    />
                   </Col>
 
                   <Col xs={12}>

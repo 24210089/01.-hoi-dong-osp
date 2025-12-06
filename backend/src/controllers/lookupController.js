@@ -220,6 +220,29 @@ const deleteSisterStatus = async (req, res) => {
   }
 };
 
+// ============ User Roles ============
+
+const getUserRoles = async (req, res) => {
+  try {
+    const roles = [
+      { value: "admin", label: "Quản trị viên" },
+      { value: "superior_general", label: "Bề trên Tổng Quyền" },
+      { value: "superior_provincial", label: "Bề trên Tỉnh Dòng" },
+      { value: "superior_community", label: "Bề trên Cộng đoàn" },
+      { value: "secretary", label: "Thư ký" },
+      { value: "viewer", label: "Người xem" },
+    ];
+
+    return res.status(200).json({
+      success: true,
+      data: roles,
+    });
+  } catch (error) {
+    console.error("getUserRoles error:", error.message);
+    return res.status(500).json({ message: "Failed to fetch user roles" });
+  }
+};
+
 module.exports = {
   getJourneyStages,
   getAllJourneyStages,
@@ -231,4 +254,5 @@ module.exports = {
   createSisterStatus,
   updateSisterStatus,
   deleteSisterStatus,
+  getUserRoles,
 };

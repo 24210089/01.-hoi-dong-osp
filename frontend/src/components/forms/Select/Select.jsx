@@ -23,6 +23,7 @@ const Select = forwardRef(
       className = "",
       size = "md",
       icon = "fas fa-chevron-down",
+      children,
       ...props
     },
     ref
@@ -57,15 +58,16 @@ const Select = forwardRef(
                 {placeholder}
               </option>
             )}
-            {options.map((option, index) => (
-              <option
-                key={index}
-                value={option.value}
-                disabled={option.disabled}
-              >
-                {option.label}
-              </option>
-            ))}
+            {children ||
+              options.map((option, index) => (
+                <option
+                  key={index}
+                  value={option.value}
+                  disabled={option.disabled}
+                >
+                  {option.label}
+                </option>
+              ))}
           </Form.Select>
 
           {!multiple && (
