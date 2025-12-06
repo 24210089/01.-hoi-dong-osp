@@ -175,12 +175,12 @@ const UserFormPage = () => {
         setFieldError(fieldName, validationErrors[fieldName]);
         setFieldTouched(fieldName, true);
       });
-      
+
       // Hiển thị thông báo lỗi chung
       setError("Vui lòng kiểm tra lại thông tin đã nhập");
-      
+
       // Scroll to top để thấy thông báo lỗi
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
@@ -219,7 +219,7 @@ const UserFormPage = () => {
             ? "Cập nhật người dùng thành công!"
             : "Tạo người dùng thành công!"
         );
-        
+
         // Navigate sau 1 giây để user thấy thông báo
         setTimeout(() => {
           navigate(`/users/${response.data.id}`);
@@ -229,11 +229,11 @@ const UserFormPage = () => {
       }
     } catch (error) {
       console.error("Error saving user:", error);
-      
+
       // Xử lý lỗi từ backend
       if (error.response) {
         const { data } = error.response;
-        
+
         // Nếu backend trả về field-specific errors
         if (data.errors) {
           Object.keys(data.errors).forEach((fieldName) => {
@@ -241,7 +241,7 @@ const UserFormPage = () => {
             setFieldTouched(fieldName, true);
           });
         }
-        
+
         // Hiển thị message chung
         if (data.message) {
           setError(data.message);
@@ -250,14 +250,16 @@ const UserFormPage = () => {
         }
       } else if (error.request) {
         // Request được gửi nhưng không nhận được response
-        setError("Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng!");
+        setError(
+          "Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng!"
+        );
       } else {
         // Lỗi khác
         setError(error.message || "Có lỗi xảy ra khi lưu người dùng");
       }
-      
+
       // Scroll to top để thấy thông báo lỗi
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setSubmitting(false);
     }
@@ -305,7 +307,11 @@ const UserFormPage = () => {
 
       {/* Success Message */}
       {successMessage && (
-        <Alert variant="success" dismissible onClose={() => setSuccessMessage("")}>
+        <Alert
+          variant="success"
+          dismissible
+          onClose={() => setSuccessMessage("")}
+        >
           <i className="fas fa-check-circle me-2"></i>
           {successMessage}
         </Alert>

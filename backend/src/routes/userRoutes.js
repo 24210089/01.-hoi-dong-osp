@@ -46,4 +46,6 @@ router.post(
 
 router.post("/:id/toggle-status", adminOnly, userController.toggleUserStatus);
 
+router.get("/:id/activities", userController.getUserActivities);
+
 module.exports = router;

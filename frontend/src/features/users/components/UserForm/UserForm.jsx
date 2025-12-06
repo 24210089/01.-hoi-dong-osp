@@ -142,8 +142,10 @@ const UserForm = ({ show, onHide, user, onSubmit }) => {
               >
                 <option value="">Chọn vai trò</option>
                 <option value="admin">Quản trị viên</option>
-                <option value="manager">Quản lý</option>
-                <option value="staff">Nhân viên</option>
+                <option value="superior_general">Bề trên Tổng quyền</option>
+                <option value="superior_provincial">Bề trên Tỉnh</option>
+                <option value="superior_community">Bề trên Cộng đoàn</option>
+                <option value="secretary">Thư ký</option>
                 <option value="viewer">Xem</option>
               </Select>
             </Col>

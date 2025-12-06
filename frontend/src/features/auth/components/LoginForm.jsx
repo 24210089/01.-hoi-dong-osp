@@ -35,13 +35,13 @@ const LoginForm = ({
   // Custom handleChange để clear errors khi user gõ
   const handleInputChange = (e) => {
     handleChange(e);
-    
+
     // Clear field error khi user bắt đầu gõ
     const fieldName = e.target.name;
     if (errors[fieldName]) {
       setFieldError(fieldName, undefined);
     }
-    
+
     // Clear general error khi user bắt đầu gõ
     if (onClearError) {
       onClearError();
@@ -194,10 +194,10 @@ const LoginForm = ({
           className="btn btn-primary w-100 btn-login"
           disabled={loading}
           style={{
-            padding: '14px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            borderRadius: '6px'
+            padding: "14px",
+            fontSize: "16px",
+            fontWeight: "bold",
+            borderRadius: "6px",
           }}
         >
           {loading ? (

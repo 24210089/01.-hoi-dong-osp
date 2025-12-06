@@ -14,10 +14,8 @@ const userService = {
       const response = await api.get(API_ENDPOINTS.USER.LIST || "/users", {
         params,
       });
-      return {
-        success: true,
-        data: response.data,
-      };
+      // Backend already returns {success: true, data: {items: [], total: 0}}
+      return response;
     } catch (error) {
       return {
         success: false,
@@ -40,7 +38,7 @@ const userService = {
       const response = await api.get(endpoint);
       return {
         success: true,
-        data: response.data,
+        data: response,
       };
     } catch (error) {
       return {
@@ -63,7 +61,7 @@ const userService = {
       );
       return {
         success: true,
-        data: response.data,
+        data: response,
       };
     } catch (error) {
       return {
@@ -87,7 +85,7 @@ const userService = {
       const response = await api.put(endpoint, data);
       return {
         success: true,
-        data: response.data,
+        data: response,
       };
     } catch (error) {
       return {
@@ -107,9 +105,11 @@ const userService = {
       const endpoint = API_ENDPOINTS.USER.DELETE
         ? API_ENDPOINTS.USER.DELETE(id)
         : `/users/${id}`;
-      await api.delete(endpoint);
+      const response = await api.delete(endpoint);
       return {
-        success: true,
+        success: response.success !== false,
+        data: response,
+        message: response.message,
       };
     } catch (error) {
       return {
@@ -129,7 +129,7 @@ const userService = {
       const response = await api.post(`/users/${id}/reset-password`);
       return {
         success: true,
-        data: response.data,
+        data: response,
       };
     } catch (error) {
       return {
@@ -147,10 +147,10 @@ const userService = {
    */
   updateStatus: async (id, status) => {
     try {
-      const response = await api.patch(`/users/${id}/status`, { status });
+      const response = await api.post(`/users/${id}/toggle-status`, { status });
       return {
         success: true,
-        data: response.data,
+        data: response,
       };
     } catch (error) {
       return {

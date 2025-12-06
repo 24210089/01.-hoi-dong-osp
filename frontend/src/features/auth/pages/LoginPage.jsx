@@ -16,21 +16,21 @@ const LoginPage = () => {
   const handleLogin = async (values) => {
     setLoading(true);
     // KHÔNG clear errors ở đây - để LoginForm tự clear khi user gõ
-    
-    console.log('📝 Login attempt with:', values);
+
+    console.log("📝 Login attempt with:", values);
 
     const result = await login(values);
-    
-    console.log('📡 Login result:', result);
+
+    console.log("📡 Login result:", result);
 
     if (result.success) {
-      console.log('✅ Login successful, navigating to dashboard');
+      console.log("✅ Login successful, navigating to dashboard");
       navigate("/dashboard");
     } else {
-      console.log('❌ Login failed:', result);
+      console.log("❌ Login failed:", result);
       // Xử lý lỗi từ result
       if (result.errors && Object.keys(result.errors).length > 0) {
-        console.log('Setting field errors:', result.errors);
+        console.log("Setting field errors:", result.errors);
         setFieldErrors(result.errors);
       } else {
         // Nếu không có field errors, clear nó
@@ -38,7 +38,7 @@ const LoginPage = () => {
       }
       setError(result.error || "Đăng nhập thất bại. Vui lòng thử lại.");
     }
-    
+
     setLoading(false);
   };
 

@@ -259,20 +259,13 @@ const updateUser = async (req, res) => {
 
     const user = await UserModel.findById(id);
     if (!user) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: "User not found" 
+        message: "User not found",
       });
     }
 
-    const {
-      email,
-      role,
-      full_name,
-      phone,
-      avatar,
-      status,
-    } = req.body;
+    const { email, role, full_name, phone, avatar, status } = req.body;
 
     // Validation errors object
     const errors = {};
@@ -316,22 +309,22 @@ const updateUser = async (req, res) => {
 
     // Build update payload
     const payload = {};
-    
+
     if (email !== undefined) payload.email = email.trim();
     if (full_name !== undefined) payload.full_name = full_name.trim();
     if (phone !== undefined) payload.phone = phone ? phone.trim() : null;
     if (avatar !== undefined) payload.avatar = avatar;
     if (status !== undefined) payload.is_active = status === "active" ? 1 : 0;
-    
+
     // Admin can update role
     if (req.user.role === "admin" && role !== undefined) {
       payload.role = role;
     }
 
     if (!Object.keys(payload).length) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: "No fields provided for update" 
+        message: "No fields provided for update",
       });
     }
 
@@ -344,16 +337,16 @@ const updateUser = async (req, res) => {
       sanitizeUser(updated)
     );
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       success: true,
       message: "Cập nhật người dùng thành công",
-      data: sanitizeUser(updated) 
+      data: sanitizeUser(updated),
     });
   } catch (error) {
     console.error("updateUser error:", error.message);
-    return res.status(500).json({ 
+    return res.status(500).json({
       success: false,
-      message: "Lỗi server khi cập nhật người dùng" 
+      message: "Lỗi server khi cập nhật người dùng",
     });
   }
 };
@@ -367,22 +360,35 @@ const deleteUser = async (req, res) => {
     const { id } = req.params;
     const user = await UserModel.findById(id);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Người dùng không tồn tại",
+      });
     }
 
-    const updated = await UserModel.update(id, { is_active: 0 });
-    await logAudit(
-      req,
-      "DEACTIVATE",
-      id,
-      sanitizeUser(user),
-      sanitizeUser(updated)
-    );
+    // Log audit trước khi xóa
+    await logAudit(req, "DELETE", id, sanitizeUser(user), null);
 
-    return res.status(200).json({ message: "User deactivated" });
+    // Xóa người dùng khỏi database
+    const deleted = await UserModel.delete(id);
+
+    if (!deleted) {
+      return res.status(500).json({
+        success: false,
+        message: "Không thể xóa người dùng",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Đã xóa người dùng thành công",
+    });
   } catch (error) {
     console.error("deleteUser error:", error.message);
-    return res.status(500).json({ message: "Failed to deactivate user" });
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi khi xóa người dùng",
+    });
   }
 };
 
@@ -582,6 +588,41 @@ const changePassword = async (req, res) => {
   }
 };
 
+const getUserActivities = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if user has permission to view activities
+    const canView = canManageUser(req, id);
+    if (!canView && req.user.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Bạn không có quyền xem hoạt động này",
+      });
+    }
+
+    // Get user activities from audit_logs
+    const activities = await AuditLogModel.executeQuery(
+      `SELECT * FROM audit_logs 
+       WHERE user_id = ? 
+       ORDER BY created_at DESC 
+       LIMIT 50`,
+      [id]
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: activities,
+    });
+  } catch (error) {
+    console.error("getUserActivities error:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi khi tải hoạt động người dùng",
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -592,4 +633,5 @@ module.exports = {
   toggleUserStatus,
   updateProfile,
   changePassword,
+  getUserActivities,
 };

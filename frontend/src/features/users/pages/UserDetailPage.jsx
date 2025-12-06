@@ -12,6 +12,7 @@ import {
   Table,
 } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { userService } from "@services";
 import { formatDate } from "@utils";
 import LoadingSpinner from "@components/common/Loading/LoadingSpinner";
@@ -34,11 +35,31 @@ const UserDetailPage = () => {
     try {
       setLoading(true);
       const response = await userService.getById(id);
-      if (response.success) {
-        setUser(response.data);
+      console.log("User detail response:", response);
+      console.log("Response data:", response?.data);
+      console.log("Response error:", response?.error);
+      console.log("Response success:", response?.success);
+
+      if (response && response.success && response.data && response.data.user) {
+        // Map is_active từ backend sang status cho frontend
+        const userData = {
+          ...response.data.user,
+          status:
+            response.data.user.is_active === 1 ||
+            response.data.user.is_active === true
+              ? "active"
+              : "inactive",
+        };
+        setUser(userData);
+      } else {
+        const errorMsg =
+          response?.error || "Không thể tải thông tin người dùng";
+        console.error("Failed to fetch user:", errorMsg);
+        alert(errorMsg);
       }
     } catch (error) {
       console.error("Error fetching user detail:", error);
+      alert("Có lỗi xảy ra khi tải thông tin người dùng");
     } finally {
       setLoading(false);
     }
@@ -62,10 +83,16 @@ const UserDetailPage = () => {
   const handleDelete = async () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
       try {
-        await userService.delete(id);
-        navigate("/users");
+        const response = await userService.delete(id);
+        if (response.success) {
+          toast.success("Đã xóa người dùng thành công");
+          navigate("/users");
+        } else {
+          toast.error(response.error || "Không thể xóa người dùng");
+        }
       } catch (error) {
         console.error("Error deleting user:", error);
+        toast.error("Có lỗi xảy ra khi xóa người dùng");
       }
     }
   };
@@ -73,10 +100,15 @@ const UserDetailPage = () => {
   const handleResetPassword = async () => {
     if (window.confirm("Bạn có chắc chắn muốn đặt lại mật khẩu?")) {
       try {
-        await userService.resetPassword(id);
-        alert("Mật khẩu mới đã được gửi qua email");
+        const response = await userService.resetPassword(id);
+        if (response.success) {
+          toast.success("Mật khẩu mới đã được gửi qua email");
+        } else {
+          toast.error(response.error || "Không thể đặt lại mật khẩu");
+        }
       } catch (error) {
         console.error("Error resetting password:", error);
+        toast.error("Có lỗi xảy ra khi đặt lại mật khẩu");
       }
     }
   };
@@ -84,13 +116,20 @@ const UserDetailPage = () => {
   const handleToggleStatus = async () => {
     const newStatus = user.status === "active" ? "inactive" : "active";
     const action = newStatus === "active" ? "mở khóa" : "khóa";
+    const actionPast = newStatus === "active" ? "mở khóa" : "khóa";
 
     if (window.confirm(`Bạn có chắc chắn muốn ${action} tài khoản này?`)) {
       try {
-        await userService.updateStatus(id, newStatus);
-        fetchUserDetail();
+        const response = await userService.updateStatus(id, newStatus);
+        if (response.success) {
+          toast.success(`Đã ${actionPast} tài khoản thành công`);
+          fetchUserDetail();
+        } else {
+          toast.error(response.error || `Không thể ${action} tài khoản`);
+        }
       } catch (error) {
         console.error("Error updating status:", error);
+        toast.error(`Có lỗi xảy ra khi ${action} tài khoản`);
       }
     }
   };
@@ -98,8 +137,22 @@ const UserDetailPage = () => {
   const getRoleBadge = (role) => {
     const roles = {
       admin: { bg: "danger", label: "Quản trị viên", icon: "fa-user-shield" },
-      manager: { bg: "primary", label: "Quản lý", icon: "fa-user-tie" },
-      staff: { bg: "info", label: "Nhân viên", icon: "fa-user" },
+      superior_general: {
+        bg: "danger",
+        label: "Bề trên Tổng quyền",
+        icon: "fa-crown",
+      },
+      superior_provincial: {
+        bg: "primary",
+        label: "Bề trên Tỉnh",
+        icon: "fa-user-tie",
+      },
+      superior_community: {
+        bg: "info",
+        label: "Bề trên Cộng đoàn",
+        icon: "fa-users",
+      },
+      secretary: { bg: "success", label: "Thư ký", icon: "fa-user-edit" },
       viewer: { bg: "secondary", label: "Xem", icon: "fa-eye" },
     };
     return roles[role] || { bg: "secondary", label: role, icon: "fa-user" };

@@ -82,10 +82,16 @@ const UserListPage = () => {
       window.confirm(`Bạn có chắc chắn muốn xóa người dùng ${user.full_name}?`)
     ) {
       try {
-        await userService.delete(user.id);
-        fetchUsers();
+        const response = await userService.delete(user.id);
+        if (response.success) {
+          alert(response.message || "Đã xóa người dùng thành công");
+          fetchUsers();
+        } else {
+          alert(response.error || "Không thể xóa người dùng");
+        }
       } catch (error) {
         console.error("Error deleting user:", error);
+        alert("Có lỗi xảy ra khi xóa người dùng");
       }
     }
   };
@@ -122,8 +128,16 @@ const UserListPage = () => {
 
   const usersByRole = {
     admin: (users || []).filter((u) => u.role === "admin"),
-    manager: (users || []).filter((u) => u.role === "manager"),
-    staff: (users || []).filter((u) => u.role === "staff"),
+    superior_general: (users || []).filter(
+      (u) => u.role === "superior_general"
+    ),
+    superior_provincial: (users || []).filter(
+      (u) => u.role === "superior_provincial"
+    ),
+    superior_community: (users || []).filter(
+      (u) => u.role === "superior_community"
+    ),
+    secretary: (users || []).filter((u) => u.role === "secretary"),
     viewer: (users || []).filter((u) => u.role === "viewer"),
   };
 
@@ -250,15 +264,27 @@ const UserListPage = () => {
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="manager">
-                    <i className="fas fa-user-tie me-2"></i>
-                    Quản lý ({usersByRole.manager.length})
+                  <Nav.Link eventKey="superior_general">
+                    <i className="fas fa-crown me-2"></i>
+                    Tổng quyền ({usersByRole.superior_general.length})
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="staff">
-                    <i className="fas fa-user me-2"></i>
-                    Nhân viên ({usersByRole.staff.length})
+                  <Nav.Link eventKey="superior_provincial">
+                    <i className="fas fa-user-tie me-2"></i>
+                    Tỉnh ({usersByRole.superior_provincial.length})
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="superior_community">
+                    <i className="fas fa-users me-2"></i>
+                    Cộng đoàn ({usersByRole.superior_community.length})
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="secretary">
+                    <i className="fas fa-user-edit me-2"></i>
+                    Thư ký ({usersByRole.secretary.length})
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
